@@ -14,22 +14,44 @@ interface NewTopicFormProps {
 // Função para destacar código em verde e texto/comentário em cinza
 function renderCodePreview(text: string) {
   const lines = text.split('\n');
-  // Regex para detectar linhas de código JS/Python
-  const codeRegex = /^\s*(let|const|var|function|if|for|while|return|class|import|export|console\.log|{|}|[a-zA-Z0-9_$]+\s*=|def |print\(|for |while |if |else:|elif )/;
+  let inCodeBlock = false;
+
+  const codeStartRegex = /^\s*(let|const|var|function|função|if|se|for|para|while|enquanto|return|retorne|class|classe|import|importar|export|de|from|print\(|console\.log|{|}|[a-zA-Z0-9_$]+\s*=|def |caso|case|switch|escolha|tente|try|exceto|except|finalmente|finally|com|with|passe|pass|continue|soma\s*=|sum\s*=|mover_frente\s*\(|move_forward\s*\(|virar_direita\s*\(|turn_right\s*\(|virar_esquerda\s*\(|turn_left\s*\(|repita\s+\d+\s+vezes|repita\s*\(.*\)\s*{|repeat\s+\d+\s+times|Sequência:|Repetição:|Escolha:|Condição:)/i;
+
+  const codeContinueRegex = /^\s*(até|[a-zA-Z0-9_$]+\s*=\s*[a-zA-Z0-9_$+\-%\s]+|\%|[a-zA-Z0-9_$]+\s*\+\s*[a-zA-Z0-9_$+\-%\s]+)/i;
+
+  const codeEndRegex = /^\s*(fimse|fimpara|fimenquanto|fimfunção|fimclasse)$/i;
 
   return (
     <div style={{ fontFamily: 'Fira Mono, monospace', fontSize: '1rem', whiteSpace: 'pre-wrap' }}>
-      {lines.map((line, idx) =>
-        codeRegex.test(line) ? (
-          <span key={idx} style={{ color: '#22c55e' }}>
-            {line + '\n'}
-          </span>
-        ) : (
+      {lines.map((line, idx) => {
+        if (codeStartRegex.test(line)) {
+          inCodeBlock = true;
+          return (
+            <span key={idx} style={{ color: '#22c55e' }}>
+              {line + '\n'}
+            </span>
+          );
+        }
+
+        if (inCodeBlock && (codeContinueRegex.test(line) || /^\s+/.test(line) || codeEndRegex.test(line))) {
+          if (codeEndRegex.test(line)) {
+            inCodeBlock = false;
+          }
+          return (
+            <span key={idx} style={{ color: '#22c55e' }}>
+              {line + '\n'}
+            </span>
+          );
+        }
+
+        inCodeBlock = false;
+        return (
           <span key={idx} style={{ color: '#d1d5db' }}>
             {line + '\n'}
           </span>
-        )
-      )}
+        );
+      })}
     </div>
   );
 }

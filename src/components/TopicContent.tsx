@@ -13,48 +13,46 @@ function autoSplitCodeBlocks(text: string) {
   let codeBuffer: string[] = [];
   let inCode = false;
 
-  // Regex para detectar linhas que parecem código
-  const codeLineRegex = /^(\s{2,}|\t|\/\/|let |const |var |if\s*\(|for\s*\(|while\s*\(|function |class |def |print\(|case |break;|default:|else\s*{|elif |{|}|switch\s*\(|return |import |from |try:|except |finally:|with |pass|continue|console\.log|[a-zA-Z_]+\s*=\s*|^\s*\d+\s*$)/;
-  const pythonBlockRegex = /:\s*$/;
+  const codeStartRegex = /^(\s{2,}|\t|\/\/|let |const |var |function|função|if\s*\(|se\s|for\s*\(|para\s|while\s*\(|enquanto\s|class |classe |def |print\(|caso |case |switch|escolha|break;|pare;|default:|else\s*{|senão\s*{|elif |senão\s+se|{|}|retorne|return |import |importar |from |de |tente|try|exceto|except|finalmente|finally|com |with |passe|pass|continue|console\.log|[a-zA-Z_]+\s*=\s*|^\s*\d+\s*$|soma\s*=|sum\s*=|mover_frente\s*\(|move_forward\s*\(|virar_direita\s*\(|turn_right\s*\(|virar_esquerda\s*\(|turn_left\s*\(|repita\s+\d+\s+vezes|repita\s*\(.*\)\s*{|repeat\s+\d+\s+times|Sequência:|Repetição:|Escolha:|Condição:)/i;
 
-  function isCodeBlock(buffer: string[]) {
-    // Todas as linhas do buffer devem parecer código OU
-    // Primeira termina com : e as demais estão indentadas
-    if (buffer.length < 2) return false;
-    const allCode = buffer.every(line => codeLineRegex.test(line) || pythonBlockRegex.test(line));
-    const pythonStyle =
-      pythonBlockRegex.test(buffer[0]) &&
-      buffer.slice(1).every(line => /^\s+/.test(line));
-    return allCode || pythonStyle;
-  }
+  const codeContinueRegex = /(até|[a-zA-Z0-9_$]+\s*=\s*[a-zA-Z0-9_$+\-%\s]+|\%|[a-zA-Z0-9_$]+\s*\+\s*[a-zA-Z0-9_$+\-%\s]+)/i;
+
+  const codeEndRegex = /^(fimse|fimpara|fimenquanto|fimfunção|fimclasse)$/i;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     codeBuffer.push(line);
 
-    if (isCodeBlock(codeBuffer)) {
+    if (codeStartRegex.test(line)) {
       inCode = true;
       continue;
     }
 
-    // Se não é bloco de código, finalize bloco anterior se houver
+    if (inCode && (codeContinueRegex.test(line) || /^\s+/.test(line) || codeEndRegex.test(line))) {
+      if (codeEndRegex.test(line)) {
+        inCode = false;
+        result += '```python\n' + codeBuffer.join('\n') + '\n```\n';
+        codeBuffer = [];
+      }
+      continue;
+    }
+
     if (inCode) {
       result += '```python\n' + codeBuffer.slice(0, -1).join('\n') + '\n```\n';
       codeBuffer = [line];
       inCode = false;
     } else if (codeBuffer.length > 1) {
-      // Não é código, solta como texto normal
       result += codeBuffer.slice(0, -1).join('\n') + '\n';
       codeBuffer = [line];
     }
   }
 
-  // Finaliza bloco se necessário
-  if (inCode && isCodeBlock(codeBuffer)) {
+  if (inCode && codeBuffer.length) {
     result += '```python\n' + codeBuffer.join('\n') + '\n```\n';
   } else if (codeBuffer.length) {
     result += codeBuffer.join('\n') + '\n';
   }
+
   return result.trim();
 }
 
