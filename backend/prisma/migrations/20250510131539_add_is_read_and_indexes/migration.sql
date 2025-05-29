@@ -1,5 +1,5 @@
 -- AlterTable
-ALTER TABLE "Message" ADD COLUMN     "isRead" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Message" ADD "isRead" BOOLEAN NOT NULL DEFAULT false;
 
 -- CreateIndex
 CREATE INDEX "ChallengeParticipation_userId_idx" ON "ChallengeParticipation"("userId");
