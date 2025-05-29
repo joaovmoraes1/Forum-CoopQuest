@@ -17,34 +17,39 @@ enum EventType {
   Workshop
   Meetup
 }
-
 model User {
-  id                      Int                      @id @default(autoincrement())
-  name                    String
-  email                   String                   @unique
-  password                String
-  avatar                  String?
-  phone                   String?
-  location                String?
-  bio                     String?
-  createdAt               DateTime                 @default(now())
-  lastActivity            DateTime?
-  isOnline                Boolean                  @default(false)
-  level                   Int                      @default(1) // Novo campo para o nível do usuário
-  projects                Int                      @default(0) // Novo campo para o número de projetos
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(100)
+  email        String   @unique @db.VarChar(255)
+  password     String
+  avatar       String?
+  phone        String?
+  location     String?  @db.VarChar(255)
+  bio          String?
+  title        String?  @db.VarChar(100)
+  instagramUrl String?  @db.VarChar(255)
+  linkedinUrl  String?  @db.VarChar(255)
+  githubUrl    String?  @db.VarChar(255) // Novo campo
+  skills       String[] @default([]) // Alterado para array de strings
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+  lastActivity DateTime?
+  isOnline     Boolean  @default(false)
+  level        Int      @default(1)
+  projects     Int      @default(0)
+
   challengeParticipations ChallengeParticipation[]
-  
-  // Relacionamentos com GameRoom
-  hostedGameRooms GameRoom[] @relation("HostUser")
-  guestGameRooms  GameRoom[] @relation("GuestUser")
-  
-  
-  reports                 Report[]                 @relation("ReportUser")
-  topics                  Topic[]                  @relation("TopicAuthor")
-  replies                 TopicReply[]             @relation("ReplyAuthor")
-  eventParticipations     EventParticipation[]     @relation("UserEvents")
-  sentMessages            Message[]                @relation("Sender")
-  receivedMessages        Message[]                @relation("Recipient")
+  hostedGameRooms         GameRoom[] @relation("HostUser")
+  guestGameRooms          GameRoom[] @relation("GuestUser")
+  reports                 Report[]   @relation("ReportUser")
+  topics                  Topic[]    @relation("TopicAuthor")
+  replies                 TopicReply[] @relation("ReplyAuthor")
+  eventParticipations     EventParticipation[] @relation("UserEvents")
+  sentMessages            Message[] @relation("Sender")
+  receivedMessages        Message[] @relation("Recipient")
+
+  @@index([isOnline])
+  @@index([lastActivity])
 }
 model Topic {
   id           Int          @id @default(autoincrement())

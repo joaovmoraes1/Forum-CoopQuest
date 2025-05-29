@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { UserCircle, Calendar, Activity, Edit, LogOut, Upload } from 'lucide-react';
+import { UserCircle, Calendar, Activity, Edit, LogOut, Upload, MapPin, Briefcase, Instagram, Linkedin, Star, Github } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -9,6 +9,7 @@ import EditProfileModal from '@/components/EditProfileModal';
 import { updateProfile } from '@/services/authService';
 import { toast } from 'sonner';
 import { useAccessibility } from '@/components/Layout';
+import api from '@/services/api';
 
 interface Activity {
   id: string;
@@ -28,6 +29,23 @@ export default function Profile() {
   const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        if (!user) return;
+        const response = await api.get(`/users/${user.id}`);
+        setUser(response.data);
+        setProfileImage(response.data.avatar || null);
+      } catch (error) {
+        console.error('Erro ao carregar dados do usuário:', error);
+      }
+    };
+
+    if (user?.id) {
+      fetchUserData();
+    }
+  }, [user?.id, setUser]);
+
+  useEffect(() => {
     const loadActivities = async () => {
       try {
         const activities = [
@@ -45,15 +63,10 @@ export default function Profile() {
     loadActivities();
   }, []);
 
-  useEffect(() => {
-    setProfileImage(user?.avatar || null);
-  }, [user]);
-
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
-    // Validação do tamanho do arquivo (limite de 10 MB)
     const maxSizeInBytes = 10 * 1024 * 1024; // 10 MB
     if (file.size > maxSizeInBytes) {
       toast.error('A imagem deve ter menos de 10 MB.', {
@@ -63,7 +76,6 @@ export default function Profile() {
       return;
     }
 
-    // Validação do tipo de arquivo
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
     if (!allowedTypes.includes(file.type)) {
       toast.error('Apenas imagens JPEG, PNG ou GIF são permitidas.', {
@@ -85,15 +97,16 @@ export default function Profile() {
             email: user.email,
             bio: user.bio || undefined,
             avatar: newAvatarUrl,
+            title: user.title || undefined,
+            location: user.location || undefined,
+            instagramUrl: user.instagramUrl || undefined,
+            linkedinUrl: user.linkedinUrl || undefined,
+            skills: user.skills || undefined,
           });
 
           if (response?.data) {
-            const updatedUser = response.data as typeof user;
-            if (!updatedUser.createdAt) {
-              throw new Error('Resposta do servidor não inclui createdAt');
-            }
-            setUser(updatedUser); // Atualiza o estado global
-            setProfileImage(updatedUser.avatar || null); // Atualiza o estado local
+            setUser(response.data);
+            setProfileImage(response.data.avatar || null);
             toast.success('Imagem de perfil atualizada com sucesso!', {
               duration: 3000,
               className: 'success-toast',
@@ -109,8 +122,7 @@ export default function Profile() {
       reader.readAsDataURL(file);
     } catch (error: any) {
       console.error('Erro ao atualizar imagem de perfil:', error);
-      const errorMessage = error.response?.data?.error || error.message || 'Erro ao atualizar imagem de perfil. Tente novamente.';
-      toast.error(errorMessage, {
+      toast.error(error.response?.data?.error || error.message || 'Erro ao atualizar imagem de perfil. Tente novamente.', {
         duration: 5000,
         className: 'error-toast',
       });
@@ -119,6 +131,27 @@ export default function Profile() {
       setIsUploading(false);
     }
   };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR');
+  };
+
+  const extractUsername = (url?: string) => {
+  if (!url) return null;
+  try {
+    const parsedUrl = new URL(url.startsWith('http') ? url : `https://${url}`);
+    const pathSegments = parsedUrl.pathname.split('/').filter(segment => segment); // Remove segmentos vazios
+    // Para LinkedIn, o nome de usuário vem depois de "/in/"
+    if (parsedUrl.hostname.includes('linkedin.com')) {
+      const inIndex = pathSegments.indexOf('in');
+      return inIndex !== -1 && inIndex + 1 < pathSegments.length ? pathSegments[inIndex + 1] : null;
+    }
+    // Para Instagram e GitHub, pegamos o primeiro segmento após a barra
+    return pathSegments[0] || null;
+  } catch {
+    return null;
+  }
+};
 
   if (isLoading || !user) {
     return (
@@ -131,33 +164,32 @@ export default function Profile() {
     );
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
-  };
+  const instagramUsername = extractUsername(user.instagramUrl);
+  const linkedinUsername = extractUsername(user.linkedinUrl);
+  const githubUsername = extractUsername(user.githubUrl);
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-12 px-4"
+      className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-12 px-4 w-full"
       style={{ fontSize: `${fontSize}px` }}
     >
-      <div className="container mx-auto">
+      <div className="container mx-auto max-w-full">
         <Card
           className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500"
         >
-          {/* Profile Header */}
           <div
             className="bg-gradient-to-r from-orange-500 to-yellow-500 p-8 rounded-t-2xl"
           >
-            <div className="flex items-center gap-6">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
               <div className="relative">
                 <img
                   src={profileImage || "/default-avatar.png"}
                   alt={user.name}
-                  className="h-24 w-24 rounded-full object-cover border-4 border-white shadow-sm"
+                  className="h-24 w-24 rounded-full object-cover border-4 border-white shadow-lg transition-transform duration-300 hover:scale-105"
                 />
                 <label
                   htmlFor="image-upload"
-                  className="absolute bottom-0 right-0 bg-white rounded-full p-2 cursor-pointer transform transition-all hover:scale-110 duration-300"
+                  className="absolute bottom-0 right-0 bg-white rounded-full p-2 cursor-pointer transform transition-all hover:scale-110 duration-300 shadow-md"
                 >
                   {isUploading ? (
                     <svg
@@ -193,58 +225,136 @@ export default function Profile() {
                   />
                 </label>
               </div>
-              <div>
-                <h1 className="text-3xl font-extrabold text-white tracking-tight">
-                  {user.name}
-                </h1>
-                <p className="text-gray-200 text-lg">{user.email}</p>
-                <p className="text-sm text-gray-300">
-                  Membro desde {formatDate(user.createdAt)}
-                </p>
+              <div className="text-center sm:text-left">
+                <h1 className="text-3xl font-extrabold text-white tracking-tight">{user.name}</h1>
+                <p className="text-gray-200 text-lg mt-1">{user.email}</p>
+                <p className="text-sm text-gray-300">Membro desde {formatDate(user.createdAt)}</p>
               </div>
             </div>
           </div>
 
-          {/* Tabs */}
           <div className="p-8">
             <Tabs defaultValue="info" className="w-full">
-              <TabsList className="bg-gray-700/50 rounded-xl p-1">
+              <TabsList className="bg-gray-700/50 rounded-xl p-1 mb-6">
                 <TabsTrigger
                   value="info"
-                  className="text-gray-200 data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-lg px-4 py-2"
+                  className="text-gray-200 data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-lg px-4 py-2 transition-all duration-300"
                 >
                   Informações
                 </TabsTrigger>
                 <TabsTrigger
                   value="activities"
-                  className="text-gray-200 data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-lg px-4 py-2"
+                  className="text-gray-200 data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-lg px-4 py-2 transition-all duration-300"
                 >
                   Atividades
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="info" className="mt-6 space-y-4">
-                <div className="flex items-center gap-3">
-                  <UserCircle className="text-orange-400" size={24} />
-                  <span className="text-gray-200">{user.name}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Calendar className="text-orange-400" size={24} />
-                  <span className="text-gray-200">{formatDate(user.createdAt)}</span>
+              <TabsContent value="info" className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50 transition-colors duration-300">
+                    <UserCircle className="text-orange-400" size={24} />
+                    <div>
+                      <p className="text-sm text-gray-400">Nome</p>
+                      <p className="text-gray-200">{user.name}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50 transition-colors duration-300">
+                    <Calendar className="text-orange-400" size={24} />
+                    <div>
+                      <p className="text-sm text-gray-400">Membro desde</p>
+                      <p className="text-gray-200">{formatDate(user.createdAt)}</p>
+                    </div>
+                  </div>
+                  {user.title && (
+                    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50 transition-colors duration-300">
+                      <Briefcase className="text-orange-400" size={24} />
+                      <div>
+                        <p className="text-sm text-gray-400">Profissão</p>
+                        <p className="text-gray-200">{user.title}</p>
+                      </div>
+                    </div>
+                  )}
+                  {user.location && (
+                    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50 transition-colors duration-300">
+                      <MapPin className="text-orange-400" size={24} />
+                      <div>
+                        <p className="text-sm text-gray-400">Localização</p>
+                        <p className="text-gray-200">{user.location}</p>
+                      </div>
+                    </div>
+                  )}
+                  {instagramUsername && (
+                    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50 transition-colors duration-300">
+                      <Instagram className="text-orange-400" size={24} />
+                      <div>
+                        <p className="text-sm text-gray-400">Instagram</p>
+                        <a
+                          href={user.instagramUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-400 hover:underline"
+                        >
+                          @{instagramUsername}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                  {linkedinUsername && (
+                    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50 transition-colors duration-300">
+                      <Linkedin className="text-orange-400" size={24} />
+                      <div>
+                        <p className="text-sm text-gray-400">LinkedIn</p>
+                        <a
+                          href={user.linkedinUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-400 hover:underline"
+                        >
+                          @{linkedinUsername}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                  {githubUsername && (
+                    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50 transition-colors duration-300">
+                      <Github className="text-orange-400" size={24} />
+                      <div>
+                        <p className="text-sm text-gray-400">GitHub</p>
+                        <a
+                          href={user.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-400 hover:underline"
+                        >
+                          @{githubUsername}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                  {user.skills && (
+                    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50 transition-colors duration-300">
+                      <Star className="text-orange-400" size={24} />
+                      <div>
+                        <p className="text-sm text-gray-400">Habilidades</p>
+                        <p className="text-gray-200">{user.skills}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 {user.bio && (
-                  <div className="mt-4">
+                  <div className="mt-6 p-4 rounded-lg bg-gray-600/30">
                     <h3 className="text-white text-xl font-bold mb-2">Sobre</h3>
-                    <p className="text-gray-200">{user.bio}</p>
+                    <p className="text-gray-200 leading-relaxed">{user.bio}</p>
                   </div>
                 )}
               </TabsContent>
 
-              <TabsContent value="activities" className="mt-6 space-y-4">
+              <TabsContent value="activities" className="space-y-4">
                 {recentActivities.map((activity) => (
                   <div
                     key={activity.id}
-                    className="flex items-center gap-3 p-4 bg-gray-700/50 rounded-xl border border-gray-600/50"
+                    className="flex items-center gap-3 p-4 bg-gray-700/50 rounded-xl border border-gray-600/50 hover:bg-gray-600/50 transition-colors duration-300"
                   >
                     <Activity className="text-orange-400" size={24} />
                     <div>
@@ -257,24 +367,23 @@ export default function Profile() {
             </Tabs>
           </div>
 
-          {/* Actions */}
-          <div className="border-t border-gray-600/50 p-8 flex gap-4">
+          <div className="border-t border-gray-600/50 p-8 flex justify-end gap-4">
             <Button
               onClick={() => setIsEditProfileModalOpen(true)}
-              className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-3 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300"
+              className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300"
             >
               <Edit className="w-4 h-4 mr-2" />
               Editar Perfil
             </Button>
             <Button
               onClick={() => navigate('/configuracoes')}
-              className="bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700 hover:text-white rounded-xl py-3 px-4 transition-all duration-300 hover:shadow-lg transform hover:scale-105"
+              className="bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700 hover:text-white rounded-xl py-3 px-6 transition-all duration-300 hover:shadow-lg transform hover:scale-105"
             >
               Configurações
             </Button>
             <Button
               onClick={logout}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300"
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300"
             >
               <LogOut className="w-4 h-4 mr-2" />
               Sair
@@ -287,7 +396,9 @@ export default function Profile() {
         isOpen={isEditProfileModalOpen}
         onClose={() => setIsEditProfileModalOpen(false)}
         user={user}
-        onProfileUpdated={(updatedUser) => setUser(updatedUser)}
+        onProfileUpdated={(updatedUser) =>
+          setUser({ ...user, ...updatedUser, createdAt: updatedUser.createdAt || user.createdAt })
+        }
       />
     </div>
   );

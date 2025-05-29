@@ -83,14 +83,7 @@ const MembrosTab = ({ members, onViewProfile, onSendMessage }: {
                 <p className="text-sm text-text/80 font-light">
                   Membro desde: {new Date(member.createdAt).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })}
                 </p>
-                <div className="flex gap-2 mt-2">
-                  <span className="px-3 py-1 bg-transparent border border-coopquest-yellow/50 text-coopquest-yellow text-xs rounded-md">
-                    Nível {member.level || 'N/A'}
-                  </span>
-                  <span className="px-3 py-1 bg-transparent border border-blue-400/50 text-blue-400 text-xs rounded-md">
-                    {member.projects || 0} Projetos
-                  </span>
-                </div>
+            
               </div>
             </div>
 

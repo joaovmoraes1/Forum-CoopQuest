@@ -22,11 +22,15 @@ export interface RegisterData {
 }
 
 export interface UpdateProfileData {
-  name: string;
-  email: string;
+  name?: string;
+  email?: string;
   bio?: string;
   avatar?: string;
-  username?: string;
+  title?: string;
+  location?: string;
+  instagramUrl?: string;
+  linkedinUrl?: string;
+  skills?: string;
 }
 
 export interface ChangePasswordData {

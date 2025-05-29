@@ -119,6 +119,7 @@ const authMiddleware = async (req, res, next) => {
     req.userId = decoded.id;
     next();
   } catch (error) {
+    console.error('Erro no middleware de autenticação:', error.message);
     return res.status(401).json({ error: 'Token inválido', details: error.message });
   }
 };
@@ -130,15 +131,8 @@ const authMiddleware = async (req, res, next) => {
 app.get('/api/users/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   try {
-    const userId = Number(id);
-    console.log(`Buscando usuário com ID ${userId}`);
-    if (isNaN(userId)) {
-      console.log('ID do usuário inválido:', id);
-      return res.status(400).json({ error: 'ID do usuário deve ser um número' });
-    }
-    // Remova a verificação de autorização para permitir acesso a qualquer perfil autenticado
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: Number(id) },
       select: {
         id: true,
         name: true,
@@ -150,19 +144,26 @@ app.get('/api/users/:id', authMiddleware, async (req, res) => {
         isOnline: true,
         level: true,
         projects: true,
+        title: true,
+        location: true,
+        instagramUrl: true,
+        linkedinUrl: true,
+        githubUrl: true,
+        skills: true,
       },
     });
+
     if (!user) {
-      console.log(`Usuário com ID ${userId} não encontrado`);
-      return res.status(404).json({ error: 'Usuário não encontrado' });
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
     }
-    console.log(`Usuário encontrado: ${user.name} (ID: ${user.id})`);
-    res.json({
+
+    // Formatar skills como string separada por vírgulas
+    const formattedUser = {
       ...user,
-      createdAt: user.createdAt.toISOString(),
-      lastActivity: user.lastActivity?.toISOString(),
-      avatar: user.avatar || '/default-avatar.png',
-    });
+      skills: user.skills?.join(', ') || '', // Corrigir aqui
+    };
+
+    res.json(formattedUser);
   } catch (error) {
     console.error('Erro ao buscar usuário:', error.message);
     res.status(500).json({ error: 'Erro ao buscar usuário', details: error.message });
@@ -251,14 +252,36 @@ app.get('/api/topics/:id', async (req, res) => {
   }
 });
 // Rota temporária para listar usuários (depuração)
-app.get('/api/debug/users', async (req, res) => {
+app.get('/api/debug/user-details/:id', async (req, res) => {
+  const { id } = req.params;
   try {
-    const users = await prisma.user.findMany({
-      select: { id: true, email: true, name: true },
+    const user = await prisma.user.findUnique({
+      where: { id: Number(id) },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatar: true,
+        bio: true,
+        createdAt: true,
+        lastActivity: true,
+        isOnline: true,
+        level: true,
+        projects: true,
+        title: true,
+        location: true,
+        instagramUrl: true,
+        linkedinUrl: true,
+        githubUrl: true,
+        skills: true,
+      },
     });
-    res.json(users);
+    if (!user) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+    res.json(user);
   } catch (error) {
-    res.status(500).json({ error: 'Erro ao listar usuários', details: error.message });
+    res.status(500).json({ error: 'Erro ao buscar detalhes do usuário', details: error.message });
   }
 });
 
@@ -497,50 +520,60 @@ app.post('/api/auth/change-password', authMiddleware, async (req, res) => {
 // Atualizar perfil do usuário
 app.put('/api/users/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
-  const { name, email, bio, avatar, phone, location } = req.body;
+  const { name, email, bio, avatar, title, location, instagramUrl, linkedinUrl, githubUrl, skills } = req.body;
+
+  console.log('Recebendo dados para atualizar perfil:', {
+    id,
+    name,
+    email,
+    bio,
+    avatar,
+    title,
+    location,
+    instagramUrl,
+    linkedinUrl,
+    githubUrl,
+    skills,
+  });
 
   try {
-    if (Number(id) !== req.userId) {
-      return res.status(403).json({ error: 'Não autorizado' });
+    const userId = Number(id);
+    if (isNaN(userId)) {
+      return res.status(400).json({ error: 'ID do usuário deve ser um número' });
     }
 
-    if (!name || !email) {
-      return res.status(400).json({ error: 'Nome e email são obrigatórios' });
-    }
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      return res.status(400).json({ error: 'Email inválido' });
-    }
+    const formattedSkills = skills
+      ? Array.isArray(skills)
+        ? skills
+        : skills.split(',').map((skill) => skill.trim())
+      : [];
+const normalizedGithubUrl = githubUrl ? `https://github.com/${githubUrl.replace('https://github.com/', '')}` : undefined;
+const normalizedLinkedinUrl = linkedinUrl ? `https://www.linkedin.com/in/${linkedinUrl.replace('https://www.linkedin.com/in/', '')}` : undefined;
+const normalizedInstagramUrl = instagramUrl ? `https://www.instagram.com/${instagramUrl.replace('https://www.instagram.com/', '')}` : undefined;
 
-    const updatedUser = await prisma.user.update({
-      where: { id: Number(id) },
-      data: { name, email, bio, avatar, phone, location },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        bio: true,
-        avatar: true,
-        phone: true,
-        location: true,
-        createdAt: true,
-        lastActivity: true,
-        isOnline: true,
-        level: true,
-        projects: true,
-      },
-    });
+const updatedUser = await prisma.user.update({
+  where: { id: userId },
+  data: {
+    name,
+    email,
+    bio,
+    avatar,
+    title,
+    location,
+    instagramUrl: normalizedInstagramUrl,
+    linkedinUrl: normalizedLinkedinUrl,
+    githubUrl: normalizedGithubUrl,
+    skills: formattedSkills,
+  },
+});
 
-    res.json({
-      ...updatedUser,
-      createdAt: updatedUser.createdAt.toISOString(),
-      lastActivity: updatedUser.lastActivity?.toISOString(),
-    });
+    console.log('Usuário atualizado com sucesso:', updatedUser);
+    res.json(updatedUser);
   } catch (error) {
-    console.error('Erro ao atualizar perfil:', error.message);
+    console.error('Erro ao atualizar perfil:', error);
     res.status(500).json({ error: 'Erro ao atualizar perfil', details: error.message });
   }
 });
-
 // Excluir conta de usuário
 app.delete('/api/users/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
@@ -583,12 +616,8 @@ app.get('/api/support-user', async (req, res) => {
 // Listar membros online
 app.get('/api/members/online', async (req, res) => {
   try {
-    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
     const onlineMembers = await prisma.user.findMany({
-      where: {
-        lastActivity: { gte: fifteenMinutesAgo },
-        isOnline: true,
-      },
+      where: { isOnline: true },
       select: {
         id: true,
         name: true,
@@ -598,40 +627,28 @@ app.get('/api/members/online', async (req, res) => {
         createdAt: true,
         level: true,
         projects: true,
+        title: true,
+        location: true,
+        instagramUrl: true,
+        linkedinUrl: true,
+        githubUrl: true,
+        skills: true,
       },
     });
 
-    const formattedMembers = onlineMembers.map(member => ({
-      ...member,
-      createdAt: member.createdAt.toISOString(),
-    }));
-
-    res.json(formattedMembers);
+    res.json(onlineMembers);
   } catch (error) {
     console.error('Erro ao buscar membros online:', error.message);
-    res.status(500).json({
-      error: 'Erro ao buscar membros online',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
-    });
+    res.status(500).json({ error: 'Erro ao buscar membros online', details: error.message });
   }
 });
-
 
 // Listar membros em destaque
 app.get('/api/members/featured', async (req, res) => {
   try {
-    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000); // 15 minutos atrás
+    console.log('Buscando membros em destaque...');
     const featuredMembers = await prisma.user.findMany({
-      where: {
-        isOnline: true, // Apenas usuários explicitamente online
-        lastActivity: { gte: fifteenMinutesAgo }, // Atividade recente
-      },
-      orderBy: [
-        { projects: 'desc' },
-        { level: 'desc' },
-        { createdAt: 'asc' },
-      ],
-      take: 5,
+      where: { isOnline: true },
       select: {
         id: true,
         name: true,
@@ -641,28 +658,22 @@ app.get('/api/members/featured', async (req, res) => {
         createdAt: true,
         level: true,
         projects: true,
-        isOnline: true,
+        title: true,
+        location: true,
+        instagramUrl: true,
+        linkedinUrl: true,
+        githubUrl: true, // <-- ADICIONE ESTA LINHA
+        skills: true,
       },
     });
 
-    const formattedMembers = featuredMembers.map(member => ({
-      ...member,
-      createdAt: member.createdAt.toISOString(),
-    }));
-
-    // Adiciona log para depuração
-    console.log('Membros em destaque encontrados:', formattedMembers.map(m => m.name));
-
-    res.json(formattedMembers);
+    console.log('Membros encontrados:', featuredMembers);
+    res.json(featuredMembers);
   } catch (error) {
     console.error('Erro ao buscar membros em destaque:', error.message);
-    res.status(500).json({
-      error: 'Erro ao buscar membros em destaque',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
-    });
+    res.status(500).json({ error: 'Erro ao buscar membros em destaque', details: error.message });
   }
 });
-
 // ...outras rotas...
 
 // Adicione aqui:
@@ -671,13 +682,20 @@ app.get('/api/members/all', authMiddleware, async (req, res) => {
     const users = await prisma.user.findMany({
       where: { id: { not: req.userId } },
       select: {
-        id: true,
+     id: true,
         name: true,
         avatar: true,
         email: true,
         bio: true,
         createdAt: true,
         level: true,
+        projects: true,
+        title: true,
+        location: true,
+        instagramUrl: true,
+        linkedinUrl: true,
+        githubUrl: true, // <-- ADICIONE ESTA LINHA
+        skills: true,
       },
       orderBy: { name: 'asc' },
     });
@@ -2630,10 +2648,10 @@ app.get('/api/messages/history/:userId', authMiddleware, async (req, res) => {
           { senderId: otherUserId, recipientId: userId },
         ],
       },
-      orderBy: { date: 'asc' }, // Ordenar por data em ordem crescente
+      orderBy: { date: 'asc' },
     });
 
-    // Atualizar mensagens como lidas
+    // Marcar como lidas as mensagens recebidas
     await prisma.message.updateMany({
       where: {
         recipientId: userId,
@@ -2645,7 +2663,6 @@ app.get('/api/messages/history/:userId', authMiddleware, async (req, res) => {
 
     res.json({ messages });
   } catch (error) {
-    console.error('Erro ao buscar histórico de mensagens:', error.message);
     res.status(500).json({ error: 'Erro ao buscar histórico de mensagens' });
   }
 });
@@ -2739,12 +2756,18 @@ require("./games")(io);
 //initializeGameServer(server);
 
      // --- Inicialização do Servidor ---
-
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, async () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-  await createSupportUser();
+  try {
+    await prisma.$connect();
+    console.log(`Servidor rodando na porta ${PORT}`);
+    await createSupportUser();
+  } catch (error) {
+    console.error('Erro ao conectar ao banco de dados:', error.message);
+    process.exit(1);
+  }
 });
+
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
+import UserProfileDetails from './UserProfileDetails';
 
 interface User {
   id: number;
@@ -10,6 +11,12 @@ interface User {
   createdAt: string;
   level?: number;
   projects?: number;
+  title?: string;
+  location?: string;
+  instagramUrl?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  skills?: string;
 }
 
 interface Message {
@@ -157,27 +164,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
         {/* Conteúdo */}
         <div className="min-h-[20rem] max-h-[30rem] overflow-y-auto scrollbar-thin scrollbar-thumb-orange-500 scrollbar-track-gray-700">
           {activeTab === 'info' && (
-            <div className="space-y-6">
-              <div className="flex items-center gap-5">
-                <img
-                  src={user.avatar || '/default-avatar.png'}
-                  alt={user.name}
-                  className="w-24 h-24 rounded-full border-4 border-orange-400 shadow-lg"
-                />
-                <div>
-                  <h4 className="text-2xl font-semibold text-white">{user.name}</h4>
-                  <p className="text-sm text-gray-300">{user.email}</p>
-                </div>
-              </div>
-              <p className="text-gray-200 text-lg">{user.bio || 'Sem bio disponível.'}</p>
-              <div className="text-sm text-gray-300">
-                Membro desde: {new Date(user.createdAt).toLocaleDateString('pt-BR')}
-              </div>
-              <div className="flex gap-6 text-sm text-gray-300">
-                <span>Nível: {user.level || 'N/A'}</span>
-                <span>Projetos: {user.projects || 0}</span>
-              </div>
-            </div>
+            <UserProfileDetails userId={user.id} />
           )}
 
           {activeTab === 'received' && isOwnProfile && (

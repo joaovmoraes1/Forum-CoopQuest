@@ -1,230 +1,241 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { useAuth, User } from '@/contexts/AuthContext'; // Importa o tipo User correto
-import { updateProfile } from '@/services/authService';
 import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { UserCircle, Mail, User as UserIcon } from 'lucide-react';
+import api from '../services/api';
+import { UserCircle, Pencil, MapPin, Instagram, Linkedin, Star, Briefcase, Github } from 'lucide-react';
+
+interface User {
+  createdAt: string;
+  id: number;
+  name: string;
+  email: string;
+  bio?: string;
+  title?: string;
+  location?: string;
+  instagramUrl?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  skills?: string;
+}
 
 interface EditProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  user: User; // Usa o tipo User do AuthContext
-  onProfileUpdated?: (updatedUser: User) => void; // Usa o tipo User do AuthContext
+  user: User;
+  onProfileUpdated: (updatedUser: User) => void;
 }
 
 const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, user, onProfileUpdated }) => {
-  const { setUser } = useAuth();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    bio: '',
+  const [formData, setFormData] = useState<User>({
+    ...user,
+    instagramUrl: user.instagramUrl?.replace('https://www.instagram.com/', '').replace('/', '') || '',
+    linkedinUrl: user.linkedinUrl?.replace('https://www.linkedin.com/in/', '').replace('/', '') || '',
+    githubUrl: user.githubUrl?.replace('https://github.com/', '').replace('/', '') || '',
+    skills: user.skills || '',
   });
-  const [errors, setErrors] = useState({
-    name: '',
-    email: '',
-    bio: '',
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (user && isOpen) {
+    if (isOpen) {
       setFormData({
-        name: user.name || '',
-        email: user.email || '',
-        bio: user.bio || '',
+        ...user,
+        instagramUrl: user.instagramUrl?.replace('https://www.instagram.com/', '').replace('/', '') || '',
+        linkedinUrl: user.linkedinUrl?.replace('https://www.linkedin.com/in/', '').replace('/', '') || '',
+        githubUrl: user.githubUrl?.replace('https://github.com/', '').replace('/', '') || '',
+        skills: Array.isArray(user.skills) ? user.skills.join(', ') : (user.skills || ''),
       });
     }
-  }, [user, isOpen]);
+  }, [isOpen, user]);
 
-  const validateForm = () => {
-    let valid = true;
-    const newErrors = { name: '', email: '', bio: '' };
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Nome é obrigatório';
-      valid = false;
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email é obrigatório';
-      valid = false;
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email inválido';
-      valid = false;
-    }
-
-    setErrors(newErrors);
-    return valid;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.name.trim()) {
+      toast.error('O nome é obrigatório.');
+      return;
+    }
 
-    if (!validateForm()) return;
-
-    setIsLoading(true);
-
+    setIsSubmitting(true);
     try {
-      const response = await updateProfile(user.id, {
-        name: formData.name,
-        email: formData.email,
-        bio: formData.bio || undefined,
-        avatar: user.avatar || undefined, // Preserve the existing avatar
-      });
+      const payload = {
+        ...formData,
+        instagramUrl: formData.instagramUrl ? `https://www.instagram.com/${formData.instagramUrl.trim()}` : undefined,
+        linkedinUrl: formData.linkedinUrl ? `https://www.linkedin.com/in/${formData.linkedinUrl.trim()}` : undefined,
+        githubUrl: formData.githubUrl ? `https://github.com/${formData.githubUrl.trim().replace('https://github.com/', '')}` : undefined,
+        skills: formData.skills ? formData.skills.split(',').map((skill) => skill.trim()).filter((skill) => skill) : [],
+      };
 
-      if (response?.data) {
-        const updatedUser = response.data as User; // Tipa explicitamente como User do AuthContext
-        // Verifica se createdAt está presente (deve estar, pois o backend retorna)
-        if (!updatedUser.createdAt) {
-          throw new Error('Resposta do servidor não inclui createdAt');
-        }
-        setUser(updatedUser);
-        if (onProfileUpdated) {
-          onProfileUpdated(updatedUser);
-        }
-        toast.success('Perfil atualizado com sucesso!', {
-          duration: 3000,
-          className: 'success-toast',
-        });
-        onClose();
-      } else {
-        throw new Error('Resposta inválida do servidor');
-      }
+      const response = await api.put(`/users/${user.id}`, payload);
+      onProfileUpdated(response.data);
+      toast.success('Perfil atualizado com sucesso!');
+      onClose();
     } catch (error: any) {
-      console.error('Erro ao atualizar perfil:', error);
-      const errorMessage = error.response?.data?.error || error.message || 'Erro ao atualizar perfil. Verifique seus dados e tente novamente.';
-      toast.error(errorMessage, {
-        duration: 5000,
-        className: 'error-toast',
-      });
+      console.error('Erro ao atualizar perfil:', error.response?.data || error.message);
+      toast.error('Erro ao atualizar perfil. Tente novamente.');
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-slate-900 text-white border-orange-500">
-        <DialogHeader>
-          <div className="bg-orange-500 p-3 rounded-full w-12 h-12 mx-auto flex items-center justify-center">
-            <UserCircle className="h-6 w-6 text-white" />
-          </div>
-          <DialogTitle className="text-xl font-bold text-center text-orange-400">
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+      <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-2xl shadow-2xl border border-gray-600 w-full max-w-2xl transform transition-all duration-300 overflow-y-auto max-h-[80vh]">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+            <UserCircle className="text-orange-400" size={28} />
             Editar Perfil
-          </DialogTitle>
-          <DialogDescription className="text-center text-slate-400">
-            Atualize suas informações pessoais abaixo.
-          </DialogDescription>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="space-y-4 pt-2">
-          <div className="space-y-2">
-            <Label htmlFor="name" className="text-slate-300 flex items-center gap-2">
-              <UserIcon size={16} className="text-orange-400" />
+          </h3>
+          <button
+            onClick={onClose}
+            className="text-gray-300 hover:text-white transition-colors duration-200 text-xl p-2 rounded-full hover:bg-gray-600"
+          >
+            ✕
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+              <Pencil className="text-orange-400" size={18} />
               Nome
-            </Label>
-            <div className="relative">
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                value={formData.name}
-                onChange={handleChange}
-                className="bg-slate-800 border-slate-700 text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent pl-3"
-                placeholder="Seu nome completo"
-              />
-            </div>
-            {errors.name && <p className="text-red-400 text-sm">{errors.name}</p>}
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="Seu nome"
+              required
+            />
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-slate-300 flex items-center gap-2">
-              <Mail size={16} className="text-orange-400" />
-              Email
-            </Label>
-            <div className="relative">
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="bg-slate-800 border-slate-700 text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent pl-3"
-                placeholder="seu.email@exemplo.com"
-              />
-            </div>
-            {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="bio" className="text-slate-300 flex items-center gap-2">
-              <UserIcon size={16} className="text-orange-400" />
+          <div>
+            <label className="text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+              <Pencil className="text-orange-400" size={18} />
               Bio
-            </Label>
-            <div className="relative">
-              <Input
-                id="bio"
-                name="bio"
-                type="text"
-                value={formData.bio}
-                onChange={handleChange}
-                className="bg-slate-800 border-slate-700 text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent pl-3"
-                placeholder="Fale sobre você"
-              />
-            </div>
-            {errors.bio && <p className="text-red-400 text-sm">{errors.bio}</p>}
+            </label>
+            <textarea
+              name="bio"
+              value={formData.bio || ''}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 h-24 resize-none"
+              placeholder="Fale sobre você"
+            />
           </div>
-
-          <DialogFooter className="pt-4">
-            <Button
+          <div>
+            <label className="text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+              <Briefcase className="text-orange-400" size={18} />
+              Título
+            </label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title || ''}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="Sua profissão ou cargo"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+              <MapPin className="text-orange-400" size={18} />
+              Localização
+            </label>
+            <input
+              type="text"
+              name="location"
+              value={formData.location || ''}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="Onde você está?"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+              <Instagram className="text-orange-400" size={18} />
+              Instagram
+            </label>
+            <input
+              type="text"
+              name="instagramUrl"
+              value={formData.instagramUrl || ''}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="Seu usuário do Instagram"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+              <Linkedin className="text-orange-400" size={18} />
+              LinkedIn
+            </label>
+            <input
+              type="text"
+              name="linkedinUrl"
+              value={formData.linkedinUrl || ''}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="Seu usuário do LinkedIn"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+              <Github className="text-orange-400" size={18} />
+              GitHub
+            </label>
+            <input
+              type="text"
+              name="githubUrl"
+              value={formData.githubUrl || ''}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="Seu usuário do GitHub"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+              <Star className="text-orange-400" size={18} />
+              Habilidades
+            </label>
+            <input
+              type="text"
+              name="skills"
+              value={formData.skills || ''}
+              onChange={handleChange}
+              className="w-full p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="Habilidades (separadas por vírgula)"
+            />
+          </div>
+          <div className="mt-8 flex justify-end gap-4">
+            <button
               type="button"
               onClick={onClose}
-              variant="outline"
-              className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white"
+              className="px-6 py-3 bg-gray-600 hover:bg-gray-500 text-white rounded-lg font-semibold transition-colors duration-200"
+              disabled={isSubmitting}
             >
               Cancelar
-            </Button>
-            <Button
+            </button>
+            <button
               type="submit"
-              disabled={isLoading}
-              className="bg-orange-500 hover:bg-orange-600 text-white"
+              className="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold transition-colors duration-200 flex items-center gap-2"
+              disabled={isSubmitting}
             >
-              {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  Salvando...
-                </span>
-              ) : (
-                'Salvar Alterações'
+              {isSubmitting && (
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
               )}
-            </Button>
-          </DialogFooter>
+              Salvar Alterações
+            </button>
+          </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 };
 

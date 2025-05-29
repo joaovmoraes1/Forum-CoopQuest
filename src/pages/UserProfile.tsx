@@ -5,7 +5,7 @@ import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, Users, Activity } from 'lucide-react';
+import { Calendar, Users, Activity, MapPin, Briefcase, Instagram, Linkedin, Star, Github } from 'lucide-react';
 import { useAccessibility } from '@/components/Layout';
 
 interface User {
@@ -19,6 +19,12 @@ interface User {
   isOnline?: boolean;
   level?: number;
   projects?: number;
+  title?: string;
+  location?: string;
+  instagramUrl?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  skills?: string;
 }
 
 const UserProfile = () => {
@@ -49,25 +55,18 @@ const UserProfile = () => {
       try {
         setIsLoading(true);
         const response = await api.get(`/users/${id}`);
-        console.log('Dados do usuário recebidos:', response.data);
         setUser(response.data);
       } catch (error: any) {
-        console.error('Erro ao buscar usuário:', error);
         let errorMessage = 'Erro ao carregar perfil do usuário.';
         if (error.response) {
-          if (error.response.status === 404) {
-            errorMessage = `Usuário com ID ${id} não encontrado.`;
-          } else if (error.response.status === 401) {
+          if (error.response.status === 404) errorMessage = `Usuário com ID ${id} não encontrado.`;
+          else if (error.response.status === 401) {
             errorMessage = 'Sessão expirada. Faça login novamente.';
             localStorage.removeItem('authToken');
             navigate('/login');
             return;
-          } else {
-            errorMessage = error.response.data?.error || errorMessage;
-          }
-        } else if (error.request) {
-          errorMessage = 'Não foi possível conectar ao servidor. Verifique sua conexão.';
-        }
+          } else errorMessage = error.response.data?.error || errorMessage;
+        } else if (error.request) errorMessage = 'Não foi possível conectar ao servidor. Verifique sua conexão.';
         setError(errorMessage);
         toast.error(errorMessage);
       } finally {
@@ -75,21 +74,33 @@ const UserProfile = () => {
       }
     };
 
-    if (isAuthenticated) {
-      fetchUser();
-    }
+    if (isAuthenticated) fetchUser();
   }, [id, isAuthenticated, authLoading, navigate]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR');
   };
 
+  const extractUsername = (url?: string) => {
+    if (!url) return null;
+    try {
+      const parsedUrl = new URL(url.startsWith('http') ? url : `https://${url}`);
+      const pathSegments = parsedUrl.pathname.split('/').filter(segment => segment); // Remove segmentos vazios
+      // Para LinkedIn, o nome de usuário vem depois de "/in/"
+      if (parsedUrl.hostname.includes('linkedin.com')) {
+        const inIndex = pathSegments.indexOf('in');
+        return inIndex !== -1 && inIndex + 1 < pathSegments.length ? pathSegments[inIndex + 1] : null;
+      }
+      // Para Instagram e GitHub, pegamos o primeiro segmento após a barra
+      return pathSegments[0] || null;
+    } catch {
+      return null;
+    }
+  };
+
   if (authLoading || isLoading) {
     return (
-      <div
-        className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800"
-        style={{ fontSize: `${fontSize}px` }}
-      >
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
         <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500" />
       </div>
     );
@@ -97,10 +108,7 @@ const UserProfile = () => {
 
   if (error) {
     return (
-      <div
-        className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800"
-        style={{ fontSize: `${fontSize}px` }}
-      >
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
         <Card className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 p-8">
           <h2 className="text-2xl font-bold text-white mb-4">Erro</h2>
           <p className="text-gray-200 mb-6">{error}</p>
@@ -117,84 +125,124 @@ const UserProfile = () => {
 
   if (!user) {
     return (
-      <div
-        className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800"
-        style={{ fontSize: `${fontSize}px` }}
-      >
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
         <p className="text-gray-200">Usuário não encontrado.</p>
       </div>
     );
   }
 
-  // Construção correta da URL do avatar
-  const avatarUrl = user.avatar && user.avatar.startsWith('data:image/')
-    ? user.avatar
-    : user.avatar
-    ? `http://localhost:3000/${user.avatar}` // Usando a porta correta do backend
-    : 'http://localhost:3000/default-avatar.png'; // Fallback para o avatar padrão
+  const avatarUrl = user.avatar || '/default-avatar.png';
+  const instagramUsername = extractUsername(user.instagramUrl);
+  const linkedinUsername = extractUsername(user.linkedinUrl);
+  const githubUsername = extractUsername(user.githubUrl);
 
   return (
-    <div
-      className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-12 px-4"
-      style={{ fontSize: `${fontSize}px` }}
-    >
-      <div className="container mx-auto">
-        <Card className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-12 px-4">
+      <div className="container mx-auto max-w-4xl">
+        <Card className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50">
           <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-8 rounded-t-2xl">
-            <div className="flex items-center gap-6">
-              <div className="relative">
-                <img
-                  src={avatarUrl}
-                  alt={user.name}
-                  className="h-24 w-24 rounded-full object-cover border-4 border-white shadow-sm"
-                  onError={(e) => {
-                    console.log(`Erro ao carregar avatar do usuário ${user.name} (URL: ${avatarUrl}):`, e);
-                    e.currentTarget.src = 'https://via.placeholder.com/150';
-                  }}
-                />
-                <span
-                  className={`absolute bottom-0 right-0 w-8 h-8 rounded-full border-2 border-white ${
-                    user.isOnline ? 'bg-green-500' : 'bg-gray-500'
-                  }`}
-                ></span>
-              </div>
-              <div>
-                <h1 className="text-3xl font-extrabold text-white tracking-tight">{user.name}</h1>
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+              <img
+                src={avatarUrl}
+                alt={user.name}
+                className="h-24 w-24 rounded-full object-cover border-4 border-white shadow-lg"
+              />
+              <div className="text-center sm:text-left">
+                <h1 className="text-3xl font-extrabold text-white">{user.name}</h1>
                 <p className="text-gray-200 text-lg">{user.email}</p>
                 <p className="text-sm text-gray-300">Membro desde {formatDate(user.createdAt)}</p>
               </div>
             </div>
           </div>
-          <div className="p-8 space-y-4">
-            <div className="flex items-center gap-3">
-              <Calendar className="text-orange-400" size={24} />
-              <span className="text-gray-200">Membro desde {formatDate(user.createdAt)}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Activity className="text-orange-400" size={24} />
-              <span className="text-gray-200">
-                Última atividade: {user.lastActivity ? formatDate(user.lastActivity) : 'N/A'}
-              </span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Users className="text-orange-400" size={24} />
-              <span className="text-gray-200">Nível: {user.level || 'N/A'}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Users className="text-orange-400" size={24} />
-              <span className="text-gray-200">Projetos: {user.projects || 0}</span>
-            </div>
+          <div className="p-8 space-y-6">
+         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  {user.title && (
+    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
+      <Briefcase className="text-orange-400" size={24} />
+      <div>
+        <p className="text-sm text-gray-400">Título</p>
+        <p className="text-gray-200">{user.title}</p>
+      </div>
+    </div>
+  )}
+  {user.location && (
+    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
+      <MapPin className="text-orange-400" size={24} />
+      <div>
+        <p className="text-sm text-gray-400">Localização</p>
+        <p className="text-gray-200">{user.location}</p>
+      </div>
+    </div>
+  )}
+  {instagramUsername && (
+    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
+      <Instagram className="text-orange-400" size={24} />
+      <div>
+        <p className="text-sm text-gray-400">Instagram</p>
+        <a
+          href={user.instagramUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 hover:underline"
+        >
+          @{instagramUsername}
+        </a>
+      </div>
+    </div>
+  )}
+ {linkedinUsername && (
+  <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50 transition-colors duration-300">
+    <Linkedin className="text-orange-400" size={24} />
+    <div>
+      <p className="text-sm text-gray-400">LinkedIn</p>
+      <a
+        href={user.linkedinUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-400 hover:underline"
+      >
+        @{linkedinUsername}
+      </a>
+    </div>
+  </div>
+)}
+  {user.githubUrl && (
+    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
+      <Github className="text-orange-400" size={24} />
+      <div>
+        <p className="text-sm text-gray-400">GitHub</p>
+        <a
+          href={user.githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 hover:underline"
+        >
+          @{extractUsername(user.githubUrl) || 'Usuário não especificado'}
+        </a>
+      </div>
+    </div>
+  )}
+  {user.skills && (
+    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
+      <Star className="text-orange-400" size={24} />
+      <div>
+        <p className="text-sm text-gray-400">Habilidades</p>
+        <p className="text-gray-200">{user.skills}</p>
+      </div>
+    </div>
+  )}
+</div>
             {user.bio && (
-              <div className="mt-4">
+              <div className="mt-6 p-4 rounded-lg bg-gray-600/30">
                 <h3 className="text-white text-xl font-bold mb-2">Sobre</h3>
                 <p className="text-gray-200">{user.bio}</p>
               </div>
             )}
           </div>
-          <div className="border-t border-gray-600/50 p-8 flex gap-4">
+          <div className="border-t border-gray-600/50 p-8 flex justify-end">
             <Button
               onClick={() => navigate('/comunidade')}
-              className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-3 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300"
+              className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-3 px-6 rounded-xl"
             >
               Voltar para Comunidade
             </Button>

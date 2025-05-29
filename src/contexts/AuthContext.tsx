@@ -4,12 +4,18 @@ import { toast } from 'sonner';
 import api from '../services/api';
 
 export interface User {
+  instagramUrl: string;
   id: number;
   name: string;
   email: string;
   avatar?: string;
   bio?: string;
   createdAt: string;
+  title?: string;
+  location?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  skills?: string;
 }
 
 interface AuthContextType {
@@ -21,6 +27,7 @@ interface AuthContextType {
   register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   setUser: (user: User | null) => void;
+  updateUser: (updatedUser: User) => void; // Adicionado
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -74,23 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setIsLoading(true);
 
-      const trimmedEmail = email.trim();
-      const trimmedPassword = password.trim();
-
-      if (!trimmedEmail || !trimmedPassword) {
-        toast.error('Email e senha não podem ser vazios.');
-        return false;
-      }
-
-      if (!/\S+@\S+\.\S+/.test(trimmedEmail)) {
-        toast.error('Por favor, insira um email válido.');
-        return false;
-      }
-
-      const response = await api.post('/auth/login', {
-        email: trimmedEmail.toLowerCase(),
-        password: trimmedPassword,
-      });
+      const response = await api.post('/auth/login', { email, password });
 
       if (response.data?.token && response.data?.user) {
         localStorage.setItem('authToken', response.data.token);
@@ -118,25 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setIsLoading(true);
 
-      const trimmedName = name.trim();
-      const trimmedEmail = email.trim();
-      const trimmedPassword = password.trim();
-
-      if (!trimmedName || !trimmedEmail || !trimmedPassword) {
-        toast.error('Todos os campos são obrigatórios.');
-        return false;
-      }
-
-      if (!/\S+@\S+\.\S+/.test(trimmedEmail)) {
-        toast.error('Por favor, insira um email válido.');
-        return false;
-      }
-
-      const response = await api.post('/auth/register', {
-        name: trimmedName,
-        email: trimmedEmail.toLowerCase(),
-        password: trimmedPassword,
-      });
+      const response = await api.post('/auth/register', { name, email, password });
 
       if (response.data.token && response.data.user) {
         localStorage.setItem('authToken', response.data.token);
@@ -176,6 +149,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateUser = (updatedUser: User) => {
+    setUser((prevUser) => ({ ...prevUser, ...updatedUser }));
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -187,6 +164,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         register,
         logout,
         setUser,
+        updateUser, // Adicionado
       }}
     >
       {children}
