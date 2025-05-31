@@ -199,36 +199,49 @@ async function main() {
     ],
   });
 
-  // Seed Event
-  await prisma.event.create({
-    data: {
-      title: "Workshop de JavaScript Avançado",
-      description:
-        "Aprenda técnicas avançadas de JavaScript com especialistas.",
-      date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // Daqui a 14 dias
-      time: "14:00",
-      participants: 2,
-      type: "Workshop",
-    },
-  });
-
-  // Fetch created event to get its ID
-  const event = await prisma.event.findFirst({
-    where: { title: "Workshop de JavaScript Avançado" },
-  });
-
-  // Seed EventParticipation
-  await prisma.eventParticipation.createMany({
+  // Seed Events
+  await prisma.event.createMany({
     data: [
       {
-        userId: joao.id,
-        eventId: event.id,
+        title: "Introdução à Lógica de Programação",
+        description: "Aprenda os conceitos básicos de lógica de programação.",
+        date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // Daqui a 2 dias
+        time: "18:00",
+        participants: 0,
+        type: "Workshop",
       },
       {
-        userId: sofia.id,
-        eventId: event.id,
+        title: "Desafios de Lógica para Iniciantes",
+        description: "Resolva problemas práticos de lógica de programação.",
+        date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // Daqui a 5 dias
+        time: "19:00",
+        participants: 0,
+        type: "Competicao",
+      },
+      {
+        title: "Lógica de Programação Avançada",
+        description: "Aprofunde seus conhecimentos em lógica.",
+        date: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // Daqui a 10 dias
+        time: "20:00",
+        participants: 0,
+        type: "Meetup",
       },
     ],
+  });
+
+  // Fetch all created events
+  const events = await prisma.event.findMany();
+
+  // Seed EventParticipation (João e Sofia participam de todos os eventos)
+  const eventParticipationData = [];
+  for (const event of events) {
+    eventParticipationData.push(
+      { userId: joao.id, eventId: event.id },
+      { userId: sofia.id, eventId: event.id }
+    );
+  }
+  await prisma.eventParticipation.createMany({
+    data: eventParticipationData,
   });
 
   // Seed Messages
@@ -237,7 +250,7 @@ async function main() {
       {
         senderId: joao.id,
         recipientId: angela.id,
-        content: "Oi Angela, você vai ao workshop de JavaScript?",
+        content: "Oi Angela, você vai ao workshop de lógica?",
         date: new Date(),
       },
       {

@@ -27,6 +27,7 @@ model User {
   phone                   String?
   location                String?
   bio                     String?
+  title                   String?                
   createdAt               DateTime                 @default(now())
   lastActivity            DateTime?
   isOnline                Boolean                  @default(false)
