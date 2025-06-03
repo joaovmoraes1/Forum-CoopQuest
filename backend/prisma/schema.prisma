@@ -7,50 +7,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum ContentType {
-  topic
-  reply
-}
-
-enum EventType {
-  Competicao
-  Workshop
-  Meetup
-}
 model User {
-  id           Int      @id @default(autoincrement())
-  name         String   @db.VarChar(100)
-  email        String   @unique @db.VarChar(255)
-  password     String
-  avatar       String?
-  phone        String?
-  location     String?  @db.VarChar(255)
-  bio          String?
-  title        String?  @db.VarChar(100)
-  instagramUrl String?  @db.VarChar(255)
-  linkedinUrl  String?  @db.VarChar(255)
-  githubUrl    String?  @db.VarChar(255) // Novo campo
-  skills       String[] @default([]) // Alterado para array de strings
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
-  lastActivity DateTime?
-  isOnline     Boolean  @default(false)
-  level        Int      @default(1)
-  projects     Int      @default(0)
-
+  id                      Int                      @id @default(autoincrement())
+  name                    String                   @db.VarChar(100)
+  email                   String                   @unique @db.VarChar(255)
+  password                String
+  avatar                  String?
+  phone                   String?
+  location                String?                  @db.VarChar(255)
+  bio                     String?
+  title                   String?                  @db.VarChar(100)
+  instagramUrl            String?                  @db.VarChar(255)
+  linkedinUrl             String?                  @db.VarChar(255)
+  githubUrl               String?                  @db.VarChar(255)
+  skills                  String[]                 @default([])
+  createdAt               DateTime                 @default(now()) @db.Timestamp(6)
+  updatedAt               DateTime                 @default(now()) @updatedAt @db.Timestamp(6)
+  lastActivity            DateTime?                @db.Timestamp(6)
+  isOnline                Boolean                  @default(false)
+  level                   Int                      @default(1)
+  projects                Int                      @default(0)
   challengeParticipations ChallengeParticipation[]
-  hostedGameRooms         GameRoom[] @relation("HostUser")
-  guestGameRooms          GameRoom[] @relation("GuestUser")
-  reports                 Report[]   @relation("ReportUser")
-  topics                  Topic[]    @relation("TopicAuthor")
-  replies                 TopicReply[] @relation("ReplyAuthor")
-  eventParticipations     EventParticipation[] @relation("UserEvents")
-  sentMessages            Message[] @relation("Sender")
-  receivedMessages        Message[] @relation("Recipient")
+  eventParticipations     EventParticipation[]     @relation("UserEvents")
+  guestGameRooms          GameRoom[]               @relation("GuestUser")
+  hostedGameRooms         GameRoom[]               @relation("HostUser")
+  receivedMessages        Message[]                @relation("Recipient")
+  sentMessages            Message[]                @relation("Sender")
+  reports                 Report[]                 @relation("ReportUser")
+  topics                  Topic[]                  @relation("TopicAuthor")
+  replies                 TopicReply[]             @relation("ReplyAuthor")
 
   @@index([isOnline])
   @@index([lastActivity])
 }
+
 model Topic {
   id           Int          @id @default(autoincrement())
   title        String
@@ -58,12 +48,12 @@ model Topic {
   category     String       @default("")
   author       String
   authorId     Int
-  date         DateTime     @default(now())
+  date         DateTime     @default(now()) @db.Timestamp(6)
   repliesCount Int          @default(0)
   views        Int          @default(0)
   likes        Int          @default(0)
   tags         String[]     @default([])
-  authorUser   User         @relation("TopicAuthor", fields: [authorId], references: [id])
+  authorUser   User         @relation("TopicAuthor", fields: [authorId], references: [id], onDelete: NoAction)
   replies      TopicReply[] @relation("TopicReplies")
 }
 
@@ -73,20 +63,21 @@ model TopicReply {
   content    String   @default("")
   author     String
   authorId   Int
-  date       DateTime @default(now())
+  date       DateTime @default(now()) @db.Timestamp(6)
   likes      Int      @default(0)
-  authorUser User     @relation("ReplyAuthor", fields: [authorId], references: [id])
-  topic      Topic    @relation("TopicReplies", fields: [topicId], references: [id])
+  authorUser User     @relation("ReplyAuthor", fields: [authorId], references: [id], onDelete: NoAction)
+  topic      Topic    @relation("TopicReplies", fields: [topicId], references: [id], onDelete: NoAction)
 }
 
 model Report {
-  id            Int         @id @default(autoincrement())
-  userId        Int
-  user          User        @relation("ReportUser", fields: [userId], references: [id])
-  date          DateTime    @default(now())
-  contentId     Int
-  contentType   ContentType
-  reason        String
+  id          Int         @id @default(autoincrement())
+  userId      Int
+  date        DateTime    @default(now()) @db.Timestamp(6)
+  contentId   Int
+  contentType ContentType
+  reason      String
+  user        User        @relation("ReportUser", fields: [userId], references: [id], onDelete: NoAction)
+
   @@index([contentId])
 }
 
@@ -95,8 +86,8 @@ model DailyChallenge {
   title          String
   description    String
   tips           String
-  startDate      DateTime
-  endDate        DateTime?
+  startDate      DateTime                 @db.Timestamp(6)
+  endDate        DateTime?                @db.Timestamp(6)
   active         Boolean                  @default(true)
   reward         Int                      @default(0)
   participations ChallengeParticipation[] @relation("ChallengeParticipations")
@@ -105,53 +96,55 @@ model DailyChallenge {
 model ChallengeParticipation {
   userId      Int
   challengeId Int
-  user        User             @relation(fields: [userId], references: [id])
-  challenge   DailyChallenge   @relation("ChallengeParticipations", fields: [challengeId], references: [id])
-  progress    Int              @default(0)
-  completed   Boolean          @default(false)
+  progress    Int            @default(0)
+  completed   Boolean        @default(false)
+  challenge   DailyChallenge @relation("ChallengeParticipations", fields: [challengeId], references: [id], onDelete: NoAction)
+  user        User           @relation(fields: [userId], references: [id], onDelete: NoAction)
+
   @@id([userId, challengeId])
 }
 
 model Event {
-  id             Int                   @id @default(autoincrement())
+  id             Int                  @id @default(autoincrement())
   title          String
   description    String
-  date           DateTime
+  date           DateTime             @db.Timestamp(6)
   time           String
-  participants   Int                   @default(0)
+  participants   Int                  @default(0)
   type           EventType
-  participations EventParticipation[]  @relation("EventParticipants")
+  participations EventParticipation[] @relation("EventParticipants")
 }
 
 model EventParticipation {
-  userId     Int
-  eventId    Int
-  user       User    @relation("UserEvents", fields: [userId], references: [id])
-  event      Event   @relation("EventParticipants", fields: [eventId], references: [id])
+  userId  Int
+  eventId Int
+  event   Event @relation("EventParticipants", fields: [eventId], references: [id], onDelete: NoAction)
+  user    User  @relation("UserEvents", fields: [userId], references: [id], onDelete: NoAction)
+
   @@id([userId, eventId])
 }
 
 model Message {
-  id           Int      @id @default(autoincrement())
-  senderId     Int
-  recipientId  Int
-  content      String
-  
-  date         DateTime @default(now())
-  isRead       Boolean  @default(false) // Add this field
-  sender       User     @relation("Sender", fields: [senderId], references: [id])
-  recipient    User     @relation("Recipient", fields: [recipientId], references: [id])
+  id          Int      @id @default(autoincrement())
+  senderId    Int
+  recipientId Int
+  content     String
+  date        DateTime @default(now()) @db.Timestamp(6)
+  isRead      Boolean  @default(false)
+  recipient   User     @relation("Recipient", fields: [recipientId], references: [id], onDelete: NoAction)
+  sender      User     @relation("Sender", fields: [senderId], references: [id], onDelete: NoAction)
+
   @@index([senderId])
   @@index([recipientId])
 }
 
 model Faq {
-  id         Int      @id @default(autoincrement())
-  category   String
-  question   String
-  answer     String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  category  String
+  question  String
+  answer    String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
 }
 
 model Tutorial {
@@ -159,9 +152,9 @@ model Tutorial {
   title       String
   description String
   link        String
-  icon        String?  // Store icon name or path if needed
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  icon        String?
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @updatedAt @db.Timestamp(6)
 }
 
 model GameRoom {
@@ -169,9 +162,19 @@ model GameRoom {
   code      String   @unique
   hostId    Int
   guestId   Int?
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @db.Timestamp(6)
   isActive  Boolean  @default(true)
+  guest     User?    @relation("GuestUser", fields: [guestId], references: [id])
+  host      User     @relation("HostUser", fields: [hostId], references: [id], onDelete: NoAction)
+}
 
-  host       User     @relation("HostUser", fields: [hostId], references: [id])
-  guest      User?    @relation("GuestUser", fields: [guestId], references: [id])
+enum ContentType {
+  topic
+  reply
+}
+
+enum EventType {
+  Competicao
+  Workshop
+  Meetup
 }

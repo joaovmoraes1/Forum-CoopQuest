@@ -1358,7 +1358,7 @@ app.post('/api/reports', authMiddleware, async (req, res) => {
             - Usuário ID: ${userId}
             - Nome: ${user.name}
             - E-mail: ${user.email}
-          Data: ${new Date().toLocaleString('pt-BR')}
+          Data: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}}
 
           Por favor, revise a denúncia no sistema.
         `,
@@ -1941,7 +1941,7 @@ app.post('/api/send-code', authMiddleware, async (req, res) => {
             - Usuário ID: ${senderIdNum}
             - Nome: ${sender.name}
             - E-mail: ${sender.email}
-          Data: ${new Date().toLocaleString('pt-BR')}
+          Data: ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}}
 
           Por favor, revise o código submetido.
         `,

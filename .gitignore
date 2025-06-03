@@ -8,8 +8,8 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Arquivos sensíveis
-.env
-prisma/.env
+
+
 
 # Dependências
 node_modules
