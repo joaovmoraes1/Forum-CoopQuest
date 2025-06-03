@@ -23,7 +23,6 @@ const UserProfile = lazy(() => import('./pages/UserProfile')); // Componente par
 const DailyChallengeDisplay = lazy(() => import('./pages/DailyChallengeDisplay'));
 const Settings = lazy(() => import('./pages/Settings'));
 const SearchBar = lazy(() => import('./pages/SearchBar'));
-const Forum = lazy(() => import('./pages/Forum'));
 const SupportForum = lazy(() => import('./pages/SupportForum'));
 const TopicsPage = lazy(() => import('./pages/TopicsPage'));
 const Tutorials = lazy(() => import('./pages/Tutorials'));
@@ -83,7 +82,6 @@ const App = () => {
                   {/* Rotas Protegidas */}
                   <Route path="/jogos" element={<ProtectedRoute><Jogos /></ProtectedRoute>} />
                   <Route path="/comunidade" element={<ProtectedRoute><Comunidade /></ProtectedRoute>} />
-                  <Route path="/forum" element={<ProtectedRoute><Forum /></ProtectedRoute>} />
                   <Route path="/support-forum" element={<ProtectedRoute><SupportForum /></ProtectedRoute>} />
                   <Route path="/topico/:id" element={<ProtectedRoute><Topico /></ProtectedRoute>} />
                   <Route path="/search" element={<ProtectedRoute><SearchResults /></ProtectedRoute>} />

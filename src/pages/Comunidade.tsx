@@ -234,75 +234,6 @@ const EventosTab = ({ events }: { events: Event[] }) => {
   );
 };
 
-const DiscussoesTab = ({ discussions }: { discussions: Discussion[] }) => {
-  const navigate = useNavigate();
-
-  const getTagClasses = (tag: string) => {
-    if (tag === 'Algoritmos') {
-      return 'bg-blue-900/50 text-blue-300 border border-blue-700/50';
-    } else if (tag === 'Machine Learning') {
-      return 'bg-green-900/50 text-green-300 border border-green-700/50';
-    }
-    return 'bg-orange-900/50 text-orange-300 border border-orange-700/50';
-  };
-
-  return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-text">Discussões Recentes</h2>
-        <div className="px-4 py-1 bg-purple-900/50 text-purple-400 border border-purple-800/50 rounded-full text-sm shadow-sm">
-          Novos Tópicos: {discussions.length}
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        {discussions.map((discussion) => (
-          <div
-            key={discussion.id}
-            className="bg-secondary rounded-2xl shadow-2xl border border-border transform transition-all hover:shadow-3xl hover:border-border/50 duration-500 p-6 cursor-pointer"
-            onClick={() => navigate(`/topico/${discussion.id}`)}
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-xl font-medium text-text">{discussion.title}</h3>
-                <p className="text-text/80 text-sm mt-1 font-light">
-                  Iniciado por {discussion.author} • {discussion.responses} respostas • {discussion.updatedAt}
-                </p>
-              </div>
-              <span
-                className={`px-4 py-1 rounded-md text-white text-sm font-medium ${
-                  discussion.featured ? 'bg-purple-600' : 'bg-secondary/70'
-                } shadow-sm`}
-              >
-                {discussion.featured ? 'Em Destaque' : 'Discussão'}
-              </span>
-            </div>
-
-            <div className="flex gap-2 mt-3">
-              {discussion.tags.map((tag, idx) => (
-                <span
-                  key={idx}
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${getTagClasses(tag)} shadow-sm`}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        ))}
-
-        <div className="flex justify-center mt-8">
-          <button
-            className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-xl font-semibold transform transition-all hover:scale-105 duration-300 shadow-lg"
-            onClick={() => navigate('/forum')}
-          >
-            Ver Todas as Discussões
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const Comunidade = () => {
   const { isAuthenticated, isLoading: authLoading, user } = useAuth();
@@ -310,7 +241,7 @@ const Comunidade = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [discussions, setDiscussions] = useState<Discussion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'membros' | 'eventos' | 'discussoes'>('membros');
+  const [activeTab, setActiveTab] = useState<'membros' | 'eventos'>('membros');
   const [showMessageModal, setShowMessageModal] = useState<User | null>(null);
   const [showProfileModal, setShowProfileModal] = useState<User | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -485,15 +416,6 @@ const handleOpenMessages = async () => {
               <CalendarIcon size={20} className="text-coopquest-yellow" />
               <span>Eventos</span>
             </button>
-            <button
-              className={`px-6 py-3 flex items-center gap-2 text-text font-medium ${
-                activeTab === 'discussoes' ? 'bg-secondary/80' : 'hover:bg-secondary/70'
-              } transition-colors duration-300`}
-              onClick={() => setActiveTab('discussoes')}
-            >
-              <MessageSquareIcon size={20} className="text-coopquest-yellow" />
-              <span>Discussões</span>
-            </button>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -535,7 +457,7 @@ const handleOpenMessages = async () => {
           />
         )}
         {activeTab === 'eventos' && <EventosTab events={events} />}
-        {activeTab === 'discussoes' && <DiscussoesTab discussions={discussions} />}
+     
       </div>
 
   {showMessageModal && user && (
