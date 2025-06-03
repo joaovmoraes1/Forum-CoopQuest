@@ -1,4 +1,5 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
+import { Outlet } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import AccessibilityMenu from '../components/AccessibilityMenu';
@@ -29,8 +30,8 @@ interface AccessibilityContextType {
   highContrast: boolean;
   setHighContrast: (value: boolean) => void;
   toggleHighContrast: () => void;
-  ttsEnabled: boolean; // Added for text-to-speech
-  toggleTts: () => void; // Added to toggle TTS
+  ttsEnabled: boolean;
+  toggleTts: () => void;
 }
 
 export const AccessibilityContext = createContext<
@@ -47,11 +48,11 @@ export const useAccessibility = () => {
   return context;
 };
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = () => {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [fontSize, setFontSize] = useState<number>(16);
   const [highContrast, setHighContrast] = useState<boolean>(false);
-  const [ttsEnabled, setTtsEnabled] = useState<boolean>(false); // Added TTS state
+  const [ttsEnabled, setTtsEnabled] = useState<boolean>(false);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
@@ -64,7 +65,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const toggleTts = () => {
     setTtsEnabled((prev) => {
       if (prev) {
-        window.speechSynthesis.cancel(); // Stop any ongoing speech when disabling TTS
+        window.speechSynthesis.cancel();
       }
       return !prev;
     });
@@ -83,7 +84,15 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <AccessibilityContext.Provider
-        value={{ fontSize, highContrast, toggleHighContrast, setFontSize, setHighContrast, ttsEnabled, toggleTts }}
+        value={{
+          fontSize,
+          highContrast,
+          toggleHighContrast,
+          setFontSize,
+          setHighContrast,
+          ttsEnabled,
+          toggleTts,
+        }}
       >
         <div
           className={`min-h-screen flex flex-col bg-[var(--background)] text-[var(--text)] transition-colors duration-300`}
@@ -93,8 +102,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <style>
               {`
                 :root {
-                  --background: #fafafae1; /* Um branco mais suave */
-                  --text: #333333; /* Um tom de texto mais escuro, mas suave */
+                  --background: #fafafae1;
+                  --text: #333333;
                 }
                 .light main,
                 .light div,
@@ -131,7 +140,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   stroke: var(--primary) !important;
                 }
                 .light img:not(.profile-image) {
-                  filter: brightness(1.2) contrast(1.1) !important; /* Ajuste mais suave para imagens, excluindo profile-image */
+                  filter: brightness(1.2) contrast(1.1) !important;
                 }
               `}
             </style>
@@ -177,7 +186,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             </style>
           )}
           <NavBar />
-          {children}
+          <Outlet />
           <Footer />
           <div className="fixed bottom-4 right-4 z-50 space-y-3">
             <AccessibilityMenu />

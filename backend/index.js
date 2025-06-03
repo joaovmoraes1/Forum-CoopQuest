@@ -438,11 +438,12 @@ app.post('/api/auth/forgot-password', async (req, res) => {
       data: { userId: user.id, token, expiresAt: expires },
     });
 
-  await transporter.sendMail({
+await transporter.sendMail({
   to: user.email,
   subject: 'Recuperação de senha',
-  text: `Clique para redefinir: https://forum-coopquest.onrender.com/redefinir-senha?token=${token}`,
+  text: `Clique para redefinir: https://forum-coop-quest.vercel.app/redefinir-senha?token=${token}`,
 });
+
 
     res.json({ message: 'Se o e-mail existir, enviaremos instruções.' });
   } catch (error) {

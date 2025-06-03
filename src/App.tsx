@@ -31,7 +31,8 @@ const Support = lazy(() => import('./pages/Support'));
 const Videos = lazy(() => import('./pages/Videos'));
 const Lobby = lazy(() => import('./pages/jogos/Lobby'));
 const GameRoom = lazy(() => import('./pages/jogos/GameRoom'));
-const ForgotPassword = lazy(() => import('./pages/ForgotPassword')); // <-- Adicione esta linha
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -64,9 +65,9 @@ const App = () => {
         <ThemeAccessibilityProvider>
           <TooltipProvider>
             <Toaster position="top-right" richColors closeButton />
-            <Layout>
-              <Suspense fallback={<LoadingSpinner />}>
-                <Routes>
+            <Suspense fallback={<LoadingSpinner />}>
+              <Routes>
+                <Route element={<Layout />}>
                   {/* Rotas Públicas */}
                   <Route path="/" element={<Index />} />
                   <Route path="/login" element={<Login />} />
@@ -77,7 +78,8 @@ const App = () => {
                   <Route path="/tutoriais/:slug" element={<TutorialPage />} />
                   <Route path="/suporte" element={<Support />} />
                   <Route path="/videos" element={<Videos />} />
-                  <Route path="/esqueci-senha" element={<ForgotPassword />} /> {/* <-- Adicione esta linha */}
+                  <Route path="/esqueci-senha" element={<ForgotPassword />} />
+                  <Route path="/redefinir-senha" element={<ResetPassword />} />
 
                   {/* Rotas Protegidas */}
                   <Route path="/jogos" element={<ProtectedRoute><Jogos /></ProtectedRoute>} />
@@ -95,9 +97,9 @@ const App = () => {
 
                   {/* Rota 404 */}
                   <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </Layout>
+                </Route>
+              </Routes>
+            </Suspense>
           </TooltipProvider>
         </ThemeAccessibilityProvider>
       </AuthProvider>
