@@ -423,6 +423,41 @@ app.post('/api/auth/login', async (req, res) => {
     });
   }
 });
+// Solicitar recuperação
+app.post('/api/auth/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) return res.json({ message: 'Se o e-mail existir, enviaremos instruções.' });
+
+  const token = crypto.randomBytes(32).toString('hex');
+  const expires = new Date(Date.now() + 3600 * 1000); // 1 hora
+
+  await prisma.passwordResetToken.create({
+    data: { userId: user.id, token, expiresAt: expires },
+  });
+
+  // Envie o e-mail com o link (exemplo)
+  await transporter.sendMail({
+    to: user.email,
+    subject: 'Recuperação de senha',
+    text: `Clique para redefinir: https://seusite.com/redefinir-senha?token=${token}`,
+  });
+
+  res.json({ message: 'Se o e-mail existir, enviaremos instruções.' });
+});
+
+// Redefinir senha
+app.post('/api/auth/reset-password', async (req, res) => {
+  const { token, newPassword } = req.body;
+  const reset = await prisma.passwordResetToken.findUnique({ where: { token } });
+  if (!reset || reset.expiresAt < new Date()) {
+    return res.status(400).json({ error: 'Token inválido ou expirado' });
+  }
+  const hashed = await bcrypt.hash(newPassword, 10);
+  await prisma.user.update({ where: { id: reset.userId }, data: { password: hashed } });
+  await prisma.passwordResetToken.delete({ where: { token } });
+  res.json({ message: 'Senha redefinida com sucesso' });
+});
 
 // Obter dados do usuário autenticado
 app.get('/api/auth/me', authMiddleware, async (req, res) => {

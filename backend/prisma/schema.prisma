@@ -36,9 +36,18 @@ model User {
   reports                 Report[]                 @relation("ReportUser")
   topics                  Topic[]                  @relation("TopicAuthor")
   replies                 TopicReply[]             @relation("ReplyAuthor")
+  passwordResetTokens     PasswordResetToken[]  
 
   @@index([isOnline])
   @@index([lastActivity])
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String   @unique
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Topic {
