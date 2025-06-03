@@ -19,7 +19,7 @@ const Topico = lazy(() => import('./pages/Topico'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const SearchResults = lazy(() => import('./pages/SearchResults'));
 const Profile = lazy(() => import('./pages/Profile'));
-const UserProfile = lazy(() => import('./pages/UserProfile')); // Componente para exibir o perfil de outros usuários
+const UserProfile = lazy(() => import('./pages/UserProfile'));
 const DailyChallengeDisplay = lazy(() => import('./pages/DailyChallengeDisplay'));
 const Settings = lazy(() => import('./pages/Settings'));
 const SearchBar = lazy(() => import('./pages/SearchBar'));
@@ -31,9 +31,8 @@ const Support = lazy(() => import('./pages/Support'));
 const Videos = lazy(() => import('./pages/Videos'));
 const Lobby = lazy(() => import('./pages/jogos/Lobby'));
 const GameRoom = lazy(() => import('./pages/jogos/GameRoom'));
-//const Socket = lazy(() => import('./lib/socket'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword')); // <-- Adicione esta linha
 
-// Componente de Rota Protegida com tipagem correta
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
@@ -78,6 +77,7 @@ const App = () => {
                   <Route path="/tutoriais/:slug" element={<TutorialPage />} />
                   <Route path="/suporte" element={<Support />} />
                   <Route path="/videos" element={<Videos />} />
+                  <Route path="/esqueci-senha" element={<ForgotPassword />} /> {/* <-- Adicione esta linha */}
 
                   {/* Rotas Protegidas */}
                   <Route path="/jogos" element={<ProtectedRoute><Jogos /></ProtectedRoute>} />
@@ -87,13 +87,11 @@ const App = () => {
                   <Route path="/search" element={<ProtectedRoute><SearchResults /></ProtectedRoute>} />
                   <Route path="/search-bar" element={<ProtectedRoute><SearchBar /></ProtectedRoute>} />
                   <Route path="/perfil" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                  <Route path="/perfil/:id" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} /> {/* Rota para exibir o perfil de outros usuários */}
+                  <Route path="/perfil/:id" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
                   <Route path="/configuracoes" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                   <Route path="/daily-challenge" element={<ProtectedRoute><DailyChallengeDisplay /></ProtectedRoute>} />
                   <Route path="/lobby" element={<Lobby />} />
                   <Route path="/game/:roomCode" element={<GameRoom />} />
-
-
 
                   {/* Rota 404 */}
                   <Route path="*" element={<NotFound />} />

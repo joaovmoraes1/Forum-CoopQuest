@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { useAccessibility } from '@/components/Layout';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const { login } = useAuth();
@@ -15,7 +16,6 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log('Enviando dados de login:', { email, password });
       await login(email, password);
     } catch (error) {
       // Erro já tratado no AuthContext com toast
@@ -44,6 +44,7 @@ const Login = () => {
               <Input
                 id="email"
                 type="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -57,6 +58,7 @@ const Login = () => {
               <Input
                 id="password"
                 type="password"
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -69,6 +71,14 @@ const Login = () => {
             >
               Entrar
             </Button>
+            <div className="text-center mt-2">
+              <Link
+                to="/esqueci-senha"
+               className="text-orange-400 hover:text-orange-500 font-medium"
+              >
+                Esqueci minha senha
+              </Link>
+            </div>
           </form>
         </CardContent>
       </Card>
