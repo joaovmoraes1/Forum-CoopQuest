@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: Forum-CoopQuest
+    env: node
+    plan: free
+    buildCommand: npm install && npx prisma generate
+    startCommand: node index.js
+    envVars:
+      - key: NODE_VERSION
+        value: 20

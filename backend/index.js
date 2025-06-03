@@ -8,6 +8,7 @@ const nodemailer = require('nodemailer');
 const http = require('http');
 const { Server } = require('socket.io');
 const DOMPurify = require('isomorphic-dompurify'); // ADICIONADO PARA SANITIZAÇÃO
+const crypto = require('crypto');
 const app = express();
 const prisma = new PrismaClient();
 const server = http.createServer(app);
