@@ -32,7 +32,8 @@ const Videos = lazy(() => import('./pages/Videos'));
 const Lobby = lazy(() => import('./pages/jogos/Lobby'));
 const GameRoom = lazy(() => import('./pages/jogos/GameRoom'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
-const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+// Importe ResetPassword corretamente:
+const ResetPassword = lazy(() => import('./pages/ResetPassword')); 
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -65,9 +66,9 @@ const App = () => {
         <ThemeAccessibilityProvider>
           <TooltipProvider>
             <Toaster position="top-right" richColors closeButton />
-            <Suspense fallback={<LoadingSpinner />}>
-              <Routes>
-                <Route element={<Layout />}>
+            <Layout>
+              <Suspense fallback={<LoadingSpinner />}>
+                <Routes>
                   {/* Rotas Públicas */}
                   <Route path="/" element={<Index />} />
                   <Route path="/login" element={<Login />} />
@@ -79,7 +80,7 @@ const App = () => {
                   <Route path="/suporte" element={<Support />} />
                   <Route path="/videos" element={<Videos />} />
                   <Route path="/esqueci-senha" element={<ForgotPassword />} />
-                  <Route path="/redefinir-senha" element={<ResetPassword />} />
+                  <Route path="/redefinir-senha" element={<ResetPassword />} /> {/* <-- Adicionada a rota */}
 
                   {/* Rotas Protegidas */}
                   <Route path="/jogos" element={<ProtectedRoute><Jogos /></ProtectedRoute>} />
@@ -97,9 +98,9 @@ const App = () => {
 
                   {/* Rota 404 */}
                   <Route path="*" element={<NotFound />} />
-                </Route>
-              </Routes>
-            </Suspense>
+                </Routes>
+              </Suspense>
+            </Layout>
           </TooltipProvider>
         </ThemeAccessibilityProvider>
       </AuthProvider>
