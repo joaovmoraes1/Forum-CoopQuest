@@ -425,25 +425,29 @@ app.post('/api/auth/login', async (req, res) => {
 });
 // Solicitar recuperação
 app.post('/api/auth/forgot-password', async (req, res) => {
-  const { email } = req.body;
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) return res.json({ message: 'Se o e-mail existir, enviaremos instruções.' });
+  try {
+    const { email } = req.body;
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return res.json({ message: 'Se o e-mail existir, enviaremos instruções.' });
 
-  const token = crypto.randomBytes(32).toString('hex');
-  const expires = new Date(Date.now() + 3600 * 1000); // 1 hora
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires = new Date(Date.now() + 3600 * 1000); // 1 hora
 
-  await prisma.passwordResetToken.create({
-    data: { userId: user.id, token, expiresAt: expires },
-  });
+    await prisma.passwordResetToken.create({
+      data: { userId: user.id, token, expiresAt: expires },
+    });
 
-  // Envie o e-mail com o link (exemplo)
   await transporter.sendMail({
-    to: user.email,
-    subject: 'Recuperação de senha',
-    text: `Clique para redefinir: https://seusite.com/redefinir-senha?token=${token}`,
-  });
+  to: user.email,
+  subject: 'Recuperação de senha',
+  text: `Clique para redefinir: https://forum-coopquest.onrender.com/redefinir-senha?token=${token}`,
+});
 
-  res.json({ message: 'Se o e-mail existir, enviaremos instruções.' });
+    res.json({ message: 'Se o e-mail existir, enviaremos instruções.' });
+  } catch (error) {
+    console.error('Erro em /api/auth/forgot-password:', error);
+    res.status(500).json({ error: 'Erro interno no servidor', details: error.message });
+  }
 });
 
 // Redefinir senha
