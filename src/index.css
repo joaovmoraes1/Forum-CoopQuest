@@ -426,18 +426,7 @@
     padding: 0.05rem !important;
   }
 }
-@media (max-width: 768px) {
-  .faq-tabs-list {
-    overflow-x: auto !important;
-    width: 100% !important;
-    flex-wrap: nowrap !important;
-    -webkit-overflow-scrolling: touch;
-  }
-  .faq-tabs-list > * {
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-  }
-}
+
 /* Garante que imagens e vídeos nunca ultrapassem o container */
 img, video {
   max-width: 100%;

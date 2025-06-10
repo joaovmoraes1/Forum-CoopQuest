@@ -507,28 +507,34 @@ app.put('/api/users/:id', authMiddleware, async (req, res) => {
         ? skills
         : skills.split(',').map((skill) => skill.trim())
       : [];
-const normalizedGithubUrl = githubUrl ? `https://github.com/${githubUrl.replace('https://github.com/', '')}` : undefined;
-const normalizedLinkedinUrl = linkedinUrl ? `https://www.linkedin.com/in/${linkedinUrl.replace('https://www.linkedin.com/in/', '')}` : undefined;
-const normalizedInstagramUrl = instagramUrl ? `https://www.instagram.com/${instagramUrl.replace('https://www.instagram.com/', '')}` : undefined;
+    const normalizedGithubUrl = githubUrl ? `https://github.com/${githubUrl.replace('https://github.com/', '')}` : undefined;
+    const normalizedLinkedinUrl = linkedinUrl ? `https://www.linkedin.com/in/${linkedinUrl.replace('https://www.linkedin.com/in/', '')}` : undefined;
+    const normalizedInstagramUrl = instagramUrl ? `https://www.instagram.com/${instagramUrl.replace('https://www.instagram.com/', '')}` : undefined;
 
-const updatedUser = await prisma.user.update({
-  where: { id: userId },
-  data: {
-    name,
-    email,
-    bio,
-    avatar,
-    title,
-    location,
-    instagramUrl: normalizedInstagramUrl,
-    linkedinUrl: normalizedLinkedinUrl,
-    githubUrl: normalizedGithubUrl,
-    skills: formattedSkills,
-  },
-});
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        name,
+        email,
+        bio,
+        avatar,
+        title,
+        location,
+        instagramUrl: normalizedInstagramUrl,
+        linkedinUrl: normalizedLinkedinUrl,
+        githubUrl: normalizedGithubUrl,
+        skills: formattedSkills,
+      },
+    });
 
-    console.log('Usuário atualizado com sucesso:', updatedUser);
-    res.json(updatedUser);
+    // Corrija aqui: sempre retorne skills como string
+    const formattedUser = {
+      ...updatedUser,
+      skills: updatedUser.skills?.join(', ') || '',
+    };
+
+    console.log('Usuário atualizado com sucesso:', formattedUser);
+    res.json(formattedUser);
   } catch (error) {
     console.error('Erro ao atualizar perfil:', error);
     res.status(500).json({ error: 'Erro ao atualizar perfil', details: error.message });

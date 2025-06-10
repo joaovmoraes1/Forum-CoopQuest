@@ -285,23 +285,21 @@ export default function Profile() {
                       </div>
                     </div>
                   )}
-                  {instagramUsername && (
+                {instagramUsername && (
                     <div className="flex items-center gap-3 p-2 sm:p-3 md:p-4 rounded-lg hover:bg-gray-600/50 transition-colors duration-300">
-                      <Instagram className="text-orange-400" size={24} />
-                      <div>
-                        <p className="text-sm text-gray-400">Instagram</p>
-                        <a
-                          href={user.instagramUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-400 hover:underline"
-                        >
-                          @{instagramUsername}
-                        </a>
-                      </div>
+                      <a
+                        href={user.instagramUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-blue-400 hover:underline"
+                        aria-label={`Perfil do Instagram de ${instagramUsername}`}
+                      >
+                        <Instagram className="text-orange-400" size={24} />
+                        <span>@{instagramUsername}</span>
+                      </a>
                     </div>
                   )}
-                 {linkedinUsername && (
+                  {linkedinUsername && (
                     <div className="flex items-center gap-3 p-2 sm:p-3 md:p-4 rounded-lg hover:bg-gray-600/50 transition-colors duration-300">
                       <a
                         href={user.linkedinUrl}
@@ -317,18 +315,16 @@ export default function Profile() {
                   )}
                   {githubUsername && (
                     <div className="flex items-center gap-3 p-2 sm:p-3 md:p-4 rounded-lg hover:bg-gray-600/50 transition-colors duration-300">
-                      <Github className="text-orange-400" size={24} />
-                      <div>
-                        <p className="text-sm text-gray-400">GitHub</p>
-                        <a
-                          href={user.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-400 hover:underline"
-                        >
-                          @{githubUsername}
-                        </a>
-                      </div>
+                      <a
+                        href={user.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-blue-400 hover:underline"
+                        aria-label={`Perfil do GitHub de ${githubUsername}`}
+                      >
+                        <Github className="text-orange-400" size={24} />
+                        <span>@{githubUsername}</span>
+                      </a>
                     </div>
                   )}
                   {user.skills && (
@@ -396,7 +392,14 @@ export default function Profile() {
         onClose={() => setIsEditProfileModalOpen(false)}
         user={user}
         onProfileUpdated={(updatedUser) =>
-          setUser({ ...user, ...updatedUser, createdAt: updatedUser.createdAt || user.createdAt })
+          setUser({ 
+            ...user, 
+            ...updatedUser, 
+            createdAt: updatedUser.createdAt || user.createdAt,
+            skills: Array.isArray(updatedUser.skills)
+              ? updatedUser.skills.join(', ')
+              : updatedUser.skills
+          })
         }
       />
     </div>

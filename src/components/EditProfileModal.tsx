@@ -1,7 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { toast } from 'sonner';
-import api from '../services/api';
-import { UserCircle, Pencil, MapPin, Instagram, Linkedin, Star, Briefcase, Github } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
+import api from "../services/api";
+import {
+  UserCircle,
+  Pencil,
+  MapPin,
+  Instagram,
+  Linkedin,
+  Star,
+  Briefcase,
+  Github,
+} from "lucide-react";
 
 interface User {
   createdAt: string;
@@ -14,7 +23,7 @@ interface User {
   instagramUrl?: string;
   linkedinUrl?: string;
   githubUrl?: string;
-  skills?: string;
+  skills?: string | string[];
 }
 
 interface EditProfileModalProps {
@@ -24,13 +33,30 @@ interface EditProfileModalProps {
   onProfileUpdated: (updatedUser: User) => void;
 }
 
-const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, user, onProfileUpdated }) => {
+const EditProfileModal: React.FC<EditProfileModalProps> = ({
+  isOpen,
+  onClose,
+  user,
+  onProfileUpdated,
+}) => {
   const [formData, setFormData] = useState<User>({
     ...user,
-    instagramUrl: user.instagramUrl?.replace('https://www.instagram.com/', '').replace('/', '') || '',
-    linkedinUrl: user.linkedinUrl?.replace('https://www.linkedin.com/in/', '').replace('/', '') || '',
-    githubUrl: user.githubUrl?.replace('https://github.com/', '').replace('/', '') || '',
-    skills: user.skills || '',
+    instagramUrl: user.instagramUrl
+      ? user.instagramUrl
+          .replace("https://www.instagram.com/", "")
+          .replace("/", "")
+      : "",
+    linkedinUrl: user.linkedinUrl
+      ? user.linkedinUrl
+          .replace("https://www.linkedin.com/in/", "")
+          .replace("/", "")
+      : "",
+    githubUrl: user.githubUrl
+      ? user.githubUrl.replace("https://github.com/", "").replace("/", "")
+      : "",
+    skills: Array.isArray(user.skills)
+      ? user.skills.join(", ")
+      : user.skills || "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -38,15 +64,30 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, us
     if (isOpen) {
       setFormData({
         ...user,
-        instagramUrl: user.instagramUrl?.replace('https://www.instagram.com/', '').replace('/', '') || '',
-        linkedinUrl: user.linkedinUrl?.replace('https://www.linkedin.com/in/', '').replace('/', '') || '',
-        githubUrl: user.githubUrl?.replace('https://github.com/', '').replace('/', '') || '',
-        skills: Array.isArray(user.skills) ? user.skills.join(', ') : (user.skills || ''),
+        instagramUrl: user.instagramUrl
+          ? user.instagramUrl
+              .replace("https://www.instagram.com/", "")
+              .replace("/", "")
+          : "",
+        linkedinUrl: user.linkedinUrl
+          ? user.linkedinUrl
+              .replace("https://www.linkedin.com/in/", "")
+              .replace("/", "")
+          : "",
+        githubUrl: user.githubUrl
+          ? user.githubUrl.replace("https://github.com/", "").replace("/", "")
+          : "",
+        skills: Array.isArray(user.skills)
+          ? user.skills.join(", ")
+          : user.skills || "",
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, user]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -54,7 +95,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, us
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim()) {
-      toast.error('O nome é obrigatório.');
+      toast.error("O nome é obrigatório.");
       return;
     }
 
@@ -62,19 +103,53 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, us
     try {
       const payload = {
         ...formData,
-        instagramUrl: formData.instagramUrl ? `https://www.instagram.com/${formData.instagramUrl.trim()}` : undefined,
-        linkedinUrl: formData.linkedinUrl ? `https://www.linkedin.com/in/${formData.linkedinUrl.trim()}` : undefined,
-        githubUrl: formData.githubUrl ? `https://github.com/${formData.githubUrl.trim().replace('https://github.com/', '')}` : undefined,
-        skills: formData.skills ? formData.skills.split(',').map((skill) => skill.trim()).filter((skill) => skill) : [],
+        instagramUrl: formData.instagramUrl
+          ? `https://www.instagram.com/${formData.instagramUrl
+              .trim()
+              .replace(/^@/, "")
+              .replace(/\//g, "")}`
+          : undefined,
+        linkedinUrl: formData.linkedinUrl
+          ? `https://www.linkedin.com/in/${formData.linkedinUrl
+              .trim()
+              .replace(/^@/, "")
+              .replace(/\//g, "")}`
+          : undefined,
+        githubUrl: formData.githubUrl
+          ? `https://github.com/${formData.githubUrl
+              .trim()
+              .replace(/^@/, "")
+              .replace(/\//g, "")}`
+          : undefined,
+        skills: formData.skills
+          ? typeof formData.skills === "string"
+            ? formData.skills
+                .split(",")
+                .map((skill: string) => skill.trim())
+                .filter((skill) => skill)
+            : formData.skills
+          : [],
       };
 
       const response = await api.put(`/users/${user.id}`, payload);
-      onProfileUpdated(response.data);
-      toast.success('Perfil atualizado com sucesso!');
+
+      // Garante que skills será string no retorno para o contexto do usuário
+      const updatedUser = {
+        ...response.data,
+        skills: Array.isArray(response.data.skills)
+          ? response.data.skills.join(", ")
+          : response.data.skills || "",
+      };
+
+      onProfileUpdated(updatedUser);
+      toast.success("Perfil atualizado com sucesso!");
       onClose();
     } catch (error: any) {
-      console.error('Erro ao atualizar perfil:', error.response?.data || error.message);
-      toast.error('Erro ao atualizar perfil. Tente novamente.');
+      console.error(
+        "Erro ao atualizar perfil:",
+        error.response?.data || error.message
+      );
+      toast.error("Erro ao atualizar perfil. Tente novamente.");
     } finally {
       setIsSubmitting(false);
     }
@@ -97,7 +172,10 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, us
             ✕
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-2 sm:gap-4">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 gap-2 sm:gap-4"
+        >
           <div>
             <label className="text-xs sm:text-sm font-medium text-gray-300 mb-1 sm:mb-2 flex items-center gap-2">
               <Pencil className="text-orange-400 w-4 h-4 sm:w-5 sm:h-5" />
@@ -120,7 +198,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, us
             </label>
             <textarea
               name="bio"
-              value={formData.bio || ''}
+              value={formData.bio || ""}
               onChange={handleChange}
               className="w-full p-2 sm:p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 h-20 sm:h-24 resize-none"
               placeholder="Fale sobre você"
@@ -134,7 +212,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, us
             <input
               type="text"
               name="title"
-              value={formData.title || ''}
+              value={formData.title || ""}
               onChange={handleChange}
               className="w-full p-2 sm:p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="Sua profissão ou cargo"
@@ -148,7 +226,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, us
             <input
               type="text"
               name="location"
-              value={formData.location || ''}
+              value={formData.location || ""}
               onChange={handleChange}
               className="w-full p-2 sm:p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="Onde você está?"
@@ -162,7 +240,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, us
             <input
               type="text"
               name="instagramUrl"
-              value={formData.instagramUrl || ''}
+              value={formData.instagramUrl || ""}
               onChange={handleChange}
               className="w-full p-2 sm:p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="Seu usuário do Instagram"
@@ -176,7 +254,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, us
             <input
               type="text"
               name="linkedinUrl"
-              value={formData.linkedinUrl || ''}
+              value={formData.linkedinUrl || ""}
               onChange={handleChange}
               className="w-full p-2 sm:p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="Seu usuário do LinkedIn"
@@ -190,7 +268,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, us
             <input
               type="text"
               name="githubUrl"
-              value={formData.githubUrl || ''}
+              value={formData.githubUrl || ""}
               onChange={handleChange}
               className="w-full p-2 sm:p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="Seu usuário do GitHub"
@@ -204,7 +282,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, us
             <input
               type="text"
               name="skills"
-              value={formData.skills || ''}
+              value={formData.skills || ""}
               onChange={handleChange}
               className="w-full p-2 sm:p-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="Habilidades (separadas por vírgula)"
@@ -225,9 +303,25 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, us
               disabled={isSubmitting}
             >
               {isSubmitting && (
-                <svg className="animate-spin h-4 w-4 sm:h-5 sm:w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin h-4 w-4 sm:h-5 sm:w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
               )}
               Salvar Alterações
