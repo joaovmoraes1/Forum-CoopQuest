@@ -232,7 +232,7 @@ const Ajuda = () => {
           <p className="text-gray-200 text-center font-light">Nenhum resultado encontrado para "{searchQuery}".</p>
         ) : (
           <Tabs defaultValue="geral" className="w-full">
-            <TabsList className="mb-6 bg-gray-700/50 p-1 rounded-xl shadow-lg">
+         <TabsList className="faq-tabs-list mb-6 bg-gray-700/50 p-1 rounded-xl shadow-lg">
               {faqCategories
                 .filter((category: { id: string; title: string }) => !searchQuery || filteredFaqItems[category.id])
                 .map(category => (

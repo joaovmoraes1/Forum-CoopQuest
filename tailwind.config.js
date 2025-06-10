@@ -1,6 +1,6 @@
-import type { Config } from 'tailwindcss';
 
-export default {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   darkMode: ['class'],
   content: [
     './src/pages/**/*.{ts,tsx}',
@@ -56,10 +56,10 @@ export default {
           foreground: 'hsl(var(--sidebar-foreground))',
           primary: 'hsl(var(--sidebar-primary))',
         },
-        'coopquest-orange': '#FFA500', // Adicionando a cor personalizada
-        'coopquest-dark-gray': '#333333', // Adicionando a cor personalizada
-        'coopquest-yellow': '#FFD700', // Adicionando a cor personalizada
+        'coopquest-orange': '#FFA500',
+        'coopquest-dark-gray': '#333333',
+        'coopquest-yellow': '#FFD700',
       },
     },
   },
-} as Config;
+}
