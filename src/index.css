@@ -330,6 +330,7 @@
 }
 /* Tablets pequenos e celulares grandes (ex: iPhone Plus, Galaxy S Ultra) */
 @media (max-width: 768px) {
+  
   body {
     font-size: 13.5px;
     padding: 0 4px;
@@ -364,7 +365,18 @@
     background: #000;
     border-radius: 12px;
   }
+    .faq-tabs-list {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .faq-tabs-list > *:first-child {
+    margin-left: 8px !important;
+  }
+  .faq-tabs-list > *:last-child {
+    margin-right: 8px !important;
+  }
 }
+
 
 /* Celulares médios (ex: iPhone XR, Galaxy S8+) */
 @media (max-width: 600px) {
