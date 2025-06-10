@@ -6,8 +6,8 @@ const AccountManagementSection: React.FC = () => {
   const { logout } = useAuth();
 
   return (
-    <section className="bg-slate-800 rounded-lg p-6">
-      <h2 className="text-xl font-bold text-white mb-4">Gerenciamento da Conta</h2>
+    <section className="bg-slate-800 rounded-lg p-5 sm:p-6">
+      <h2 className="text-xl font-bold text-white mb-5 sm:mb-6">Gerenciamento da Conta</h2>
       <div className="space-y-4">
         <Button 
           variant="destructive"

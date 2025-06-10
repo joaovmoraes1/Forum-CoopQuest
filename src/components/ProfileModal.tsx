@@ -108,25 +108,25 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-      <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-xl shadow-2xl border border-gray-600 w-full max-w-2xl transform transition-all duration-500">
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-2 sm:p-6 rounded-xl shadow-2xl border border-gray-600 w-full max-w-md sm:max-w-2xl transform transition-all duration-500 overflow-y-auto max-h-[90vh]">
         {/* Cabeçalho */}
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-2xl font-bold text-white flex items-center gap-3">
-            <span className="text-orange-400">👤</span> Perfil de {user.name}
+        <div className="flex justify-between items-center mb-2 sm:mb-6">
+          <h3 className="text-base sm:text-2xl font-bold text-white flex items-center gap-2 sm:gap-3">
+            <span className="text-orange-400 text-sm sm:text-lg">👤</span> Perfil de {user.name}
           </h3>
           <button
             onClick={onClose}
-            className="text-gray-300 hover:text-white transition-colors duration-200"
+            className="text-gray-300 hover:text-white transition-colors duration-200 text-sm sm:text-lg p-1 sm:p-2 rounded-full hover:bg-gray-600"
           >
-            ✕ Fechar
+            ✕
           </button>
         </div>
 
         {/* Abas */}
-        <div className="border-b border-gray-500 mb-6">
+        <div className="border-b border-gray-500 mb-2 sm:mb-6 flex flex-wrap gap-2 sm:gap-4">
           <button
-            className={`px-5 py-3 text-sm font-semibold transition-colors duration-300 ${
+            className={`px-2 sm:px-5 py-1 sm:py-3 text-xs sm:text-sm font-semibold transition-colors duration-300 ${
               activeTab === 'info'
                 ? 'text-orange-400 border-b-2 border-orange-400'
                 : 'text-gray-300 hover:text-orange-300'
@@ -138,7 +138,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           {isOwnProfile && (
             <>
               <button
-                className={`px-5 py-3 text-sm font-semibold transition-colors duration-300 ${
+                className={`px-2 sm:px-5 py-1 sm:py-3 text-xs sm:text-sm font-semibold transition-colors duration-300 ${
                   activeTab === 'received'
                     ? 'text-orange-400 border-b-2 border-orange-400'
                     : 'text-gray-300 hover:text-orange-300'
@@ -148,7 +148,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                 Mensagens Recebidas
               </button>
               <button
-                className={`px-5 py-3 text-sm font-semibold transition-colors duration-300 ${
+                className={`px-2 sm:px-5 py-1 sm:py-3 text-xs sm:text-sm font-semibold transition-colors duration-300 ${
                   activeTab === 'sent'
                     ? 'text-orange-400 border-b-2 border-orange-400'
                     : 'text-gray-300 hover:text-orange-300'
@@ -162,45 +162,45 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
         </div>
 
         {/* Conteúdo */}
-        <div className="min-h-[20rem] max-h-[30rem] overflow-y-auto scrollbar-thin scrollbar-thumb-orange-500 scrollbar-track-gray-700">
+        <div className="min-h-[16rem] sm:min-h-[20rem] max-h-[24rem] sm:max-h-[30rem] overflow-y-auto scrollbar-thin scrollbar-thumb-orange-500 scrollbar-track-gray-700">
           {activeTab === 'info' && (
             <UserProfileDetails userId={user.id} />
           )}
 
           {activeTab === 'received' && isOwnProfile && (
-            <div className="space-y-4">
-              <h4 className="text-xl font-semibold text-white">Mensagens Recebidas</h4>
+            <div className="grid grid-cols-1 gap-2 sm:gap-4">
+              <h4 className="text-base sm:text-xl font-semibold text-white">Mensagens Recebidas</h4>
               {loading ? (
-                <p className="text-gray-300">Carregando mensagens...</p>
+                <p className="text-xs sm:text-sm text-gray-300">Carregando mensagens...</p>
               ) : receivedMessages.length === 0 ? (
-                <p className="text-gray-300">Nenhuma mensagem recebida.</p>
+                <p className="text-xs sm:text-sm text-gray-300">Nenhuma mensagem recebida.</p>
               ) : (
                 receivedMessages.map((msg) => (
                   <div
                     key={msg.id}
-                    className={`p-4 rounded-lg shadow-md flex items-start gap-4 ${
+                    className={`p-2 sm:p-4 rounded-lg shadow-md flex flex-col sm:flex-row items-start gap-2 sm:gap-4 ${
                       msg.read ? 'bg-gray-700' : 'bg-gray-600'
                     } transition-all duration-200 hover:shadow-lg`}
                   >
                     <img
                       src={msg.senderAvatar || '/default-avatar.png'}
                       alt={msg.senderName}
-                      className="w-12 h-12 rounded-full border-2 border-orange-400"
+                      className="w-8 h-8 sm:w-12 sm:h-12 rounded-full border-2 border-orange-400"
                     />
                     <div className="flex-1">
-                      <p className="text-sm text-gray-200">
+                      <p className="text-xs sm:text-sm text-gray-200">
                         De: <span className="font-semibold">{msg.senderName}</span>
                       </p>
-                      <p className="text-gray-100 mt-1">{msg.content}</p>
+                      <p className="text-sm sm:text-base text-gray-100 mt-1">{msg.content}</p>
                       <p className="text-xs text-gray-400 mt-1">
                         {new Date(msg.sentAt).toLocaleString('pt-BR')}
                       </p>
                     </div>
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-1 sm:gap-2">
                       {!msg.read && (
                         <button
                           onClick={() => markAsRead(msg.id)}
-                          className="text-orange-400 hover:text-orange-300 text-sm font-medium transition-colors duration-200"
+                          className="text-orange-400 hover:text-orange-300 text-xs sm:text-sm font-medium transition-colors duration-200"
                         >
                           Marcar como lida
                         </button>
@@ -216,7 +216,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                               createdAt: ''
                             })
                           }
-                          className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-200"
+                          className="text-blue-400 hover:text-blue-300 text-xs sm:text-sm font-medium transition-colors duration-200"
                         >
                           Abrir Chat
                         </button>
@@ -229,28 +229,28 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           )}
 
           {activeTab === 'sent' && isOwnProfile && (
-            <div className="space-y-4">
-              <h4 className="text-xl font-semibold text-white">Mensagens Enviadas</h4>
+            <div className="grid grid-cols-1 gap-2 sm:gap-4">
+              <h4 className="text-base sm:text-xl font-semibold text-white">Mensagens Enviadas</h4>
               {loading ? (
-                <p className="text-gray-300">Carregando mensagens...</p>
+                <p className="text-xs sm:text-sm text-gray-300">Carregando mensagens...</p>
               ) : sentMessages.length === 0 ? (
-                <p className="text-gray-300">Nenhuma mensagem enviada.</p>
+                <p className="text-xs sm:text-sm text-gray-300">Nenhuma mensagem enviada.</p>
               ) : (
                 sentMessages.map((msg) => (
                   <div
                     key={msg.id}
-                    className="p-4 rounded-lg bg-gray-700 shadow-md flex items-start gap-4 transition-all duration-200 hover:shadow-lg"
+                    className="p-2 sm:p-4 rounded-lg bg-gray-700 shadow-md flex flex-col sm:flex-row items-start gap-2 sm:gap-4 transition-all duration-200 hover:shadow-lg"
                   >
                     <img
                       src={msg.receiverAvatar || '/default-avatar.png'}
                       alt={msg.receiverName}
-                      className="w-12 h-12 rounded-full border-2 border-orange-400"
+                      className="w-8 h-8 sm:w-12 sm:h-12 rounded-full border-2 border-orange-400"
                     />
                     <div className="flex-1">
-                      <p className="text-sm text-gray-200">
+                      <p className="text-xs sm:text-sm text-gray-200">
                         Para: <span className="font-semibold">{msg.receiverName}</span>
                       </p>
-                      <p className="text-gray-100 mt-1">{msg.content}</p>
+                      <p className="text-sm sm:text-base text-gray-100 mt-1">{msg.content}</p>
                       <p className="text-xs text-gray-400 mt-1">
                         {new Date(msg.sentAt).toLocaleString('pt-BR')}
                       </p>
@@ -266,7 +266,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                             createdAt: ''
                           })
                         }
-                        className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-200"
+                        className="text-blue-400 hover:text-blue-300 text-xs sm:text-sm font-medium transition-colors duration-200"
                       >
                         Abrir Chat
                       </button>

@@ -47,7 +47,7 @@ const AccessibilityToolbar: React.FC = () => {
                   ? 'Mudar para tema escuro'
                   : 'Mudar para tema claro'
               }
-              className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 p-3 rounded-full shadow-lg transform transition-all hover:scale-105 duration-300"
+              className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 p-2 sm:p-6 rounded-full shadow-lg transform transition-all hover:scale-105 duration-300"
             >
               {theme === 'light' ? (
                 <Moon className="h-6 w-6 text-white" />
@@ -77,7 +77,7 @@ const AccessibilityToolbar: React.FC = () => {
                   variant="ghost"
                   size="icon"
                   aria-label="Abrir menu de acessibilidade"
-                  className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 p-3 rounded-full shadow-lg transform transition-all hover:scale-105 duration-300"
+                  className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 p-2 sm:p-6 rounded-full shadow-lg transform transition-all hover:scale-105 duration-300"
                 >
                   <Accessibility className="h-6 w-6 text-white" />
                 </Button>
@@ -90,9 +90,9 @@ const AccessibilityToolbar: React.FC = () => {
           <PopoverContent
             side="left"
             align="end"
-            className="w-80 bg-gradient-to-br from-gray-800 to-gray-700 border-gray-600/50 text-gray-200 rounded-xl shadow-2xl"
+            className="w-full max-w-lg sm:max-w-2xl bg-gradient-to-br from-gray-800 to-gray-700 border-gray-600/50 text-gray-200 rounded-xl shadow-2xl p-2 sm:p-6"
           >
-            <div className="space-y-4 p-5">
+            <div className="space-y-4">
               <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                 <Accessibility size={20} className="text-orange-400" />
                 Acessibilidade

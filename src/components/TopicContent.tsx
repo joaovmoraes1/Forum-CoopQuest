@@ -58,7 +58,11 @@ function autoSplitCodeBlocks(text: string) {
 
 const TopicContent: React.FC<TopicContentProps> = ({ content }) => {
   const processedContent = autoSplitCodeBlocks(content);
-  return <MarkdownPreview source={processedContent} />;
+  return (
+    <div className="w-full max-w-3xl p-2 sm:p-4 text-sm sm:text-base text-left"> {/* Removido mx-auto */}
+      <MarkdownPreview source={processedContent} />
+    </div>
+  );
 };
 
 export default TopicContent;

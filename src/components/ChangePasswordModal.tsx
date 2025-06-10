@@ -46,58 +46,58 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ isOpen, onClo
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-gray-800 text-white">
-        <DialogHeader>
-          <DialogTitle>Alterar Senha</DialogTitle>
+      <DialogContent className="w-full max-w-md mx-auto bg-gray-800 text-white p-2 sm:p-6">
+        <DialogHeader className="grid grid-cols-1 gap-2 sm:gap-4">
+          <DialogTitle className="text-lg sm:text-xl font-bold">Alterar Senha</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-2 sm:gap-4">
+          <div className="grid grid-cols-1 gap-1 sm:gap-2">
             <Input
               type="password"
               placeholder="Senha atual"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="bg-gray-700 border-gray-600"
+              className="w-full p-2 sm:p-3 bg-gray-700 border-gray-600"
               required
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 gap-1 sm:gap-2">
             <Input
               type="password"
               placeholder="Nova senha"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="bg-gray-700 border-gray-600"
+              className="w-full p-2 sm:p-3 bg-gray-700 border-gray-600"
               required
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 gap-1 sm:gap-2">
             <Input
               type="password"
               placeholder="Confirme a nova senha"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="bg-gray-700 border-gray-600"
+              className="w-full p-2 sm:p-3 bg-gray-700 border-gray-600"
               required
             />
           </div>
 
-          <div className="flex justify-end gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              className="bg-gray-700 hover:bg-gray-600"
+              className="w-full p-2 sm:p-3 bg-gray-700 hover:bg-gray-600"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={isLoading}
-              className="bg-green-500 hover:bg-green-600"
+              className="w-full p-2 sm:p-3 bg-green-500 hover:bg-green-600"
             >
               {isLoading ? 'Alterando...' : 'Alterar Senha'}
             </Button>

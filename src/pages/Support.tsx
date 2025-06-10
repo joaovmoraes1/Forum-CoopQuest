@@ -10,6 +10,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import axios from 'axios';
 import { useAccessibility } from '@/components/Layout';
+import BackArrow from '@/components/BackArrow';
 
 interface FormData {
   name: string;
@@ -105,28 +106,31 @@ const Support = () => {
 
   return (
     <main
-      className="flex-grow bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen w-full"
+      className="flex-grow bg-transparent min-h-screen w-full"
       style={{ fontSize: `${fontSize}px` }}
     >
-      <div className="mb-8 text-center pt-12">
+      <div className="mb-4 mt-4 sm:mt-8">
+        <BackArrow to="/ajuda">Voltar para Ajuda</BackArrow>
+      </div>
+      <div className="mb-8 text-center pt-12 px-2 sm:px-4 lg:px-8">
         <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-200 mb-4">
           Suporte
         </h1>
-        <p className="text-gray-200 text-lg">
+        <p className="text-gray-200 text-lg w-full max-w-xl mx-auto">
           Entre em contato com nossa equipe de suporte para resolver suas dúvidas ou problemas.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full px-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 w-full max-w-full mx-auto px-2 sm:px-4 lg:px-8">
         <Card
           className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 w-full"
         >
-          <CardHeader className="p-6">
+          <CardHeader className="p-2 sm:p-6">
             <CardTitle className="text-2xl font-bold text-white">
               Enviar uma Mensagem
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 space-y-6">
+          <CardContent className="p-2 sm:p-6 space-y-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-200">
@@ -180,7 +184,7 @@ const Support = () => {
                 className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-3 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300 flex items-center justify-center"
                 disabled={isSubmitting || !supportUserId}
               >
-                {isSubmitting ? 'Enviando...' : 'Enviar Mensagem'} <ArrowRight className="ml-2 h-4 w-4" />
+                {isSubmitting ? 'Enviando...' : 'Enviar Mensagem'} <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200 group-hover:translate-x-1" />
               </Button>
             </form>
           </CardContent>
@@ -189,12 +193,12 @@ const Support = () => {
         <Card
           className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 w-full"
         >
-          <CardHeader className="p-6">
+          <CardHeader className="p-2 sm:p-6">
             <CardTitle className="text-2xl font-bold text-white">
               Outras Opções
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 space-y-6">
+          <CardContent className="p-2 sm:p-6 space-y-6">
             <div className="flex items-center gap-4">
               <MessageCircle className="h-6 w-6 text-orange-400" />
               <div>
@@ -206,9 +210,9 @@ const Support = () => {
                 </p>
                 <Link
                   to="/support-forum"
-                  className="text-orange-400 hover:text-orange-500 inline-flex items-center mt-2 font-medium transition-colors duration-300"
+                  className="group text-orange-400 hover:text-orange-500 inline-flex items-center mt-2 font-medium transition-colors duration-300"
                 >
-                  Ir para o Fórum <ArrowRight className="ml-1 h-4 w-4" />
+                  Ir para o Fórum <ArrowRight className="ml-1 h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200 group-hover:translate-x-1" />
                 </Link>
               </div>
             </div>
@@ -223,9 +227,9 @@ const Support = () => {
                 </p>
                 <Link
                   to="/ajuda"
-                  className="text-orange-400 hover:text-orange-500 inline-flex items-center mt-2 font-medium transition-colors duration-300"
+                  className="group text-orange-400 hover:text-orange-500 inline-flex items-center mt-2 font-medium transition-colors duration-300"
                 >
-                  Ver Centro de Ajuda <ArrowRight className="ml-1 h-4 w-4" />
+                  Ver Centro de Ajuda <ArrowRight className="ml-1 h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200 group-hover:translate-x-1" />
                 </Link>
               </div>
             </div>

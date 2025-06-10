@@ -4,13 +4,10 @@
 
 @layer base {
   :root {
-    /* Variáveis do tema claro (conforme Passo 4) */
-    --background: #ffffff; /* branco */
-    --text: #333333; /* cinza escuro */
-    --primary: #f59e0b; /* coopquest-yellow */
-    --secondary: #1f2937; /* gray-800 */
-
-    /* Variáveis existentes mantidas para compatibilidade */
+    --background: #181f2a; /* cor azul escuro */
+    --text: #fff;
+    --primary: #f59e0b;
+    --secondary: #1f2937;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
@@ -28,23 +25,13 @@
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    /* Variáveis do tema escuro (conforme Passo 4) */
-    --background: #1f2937; /* gray-800 */
-    --text: #ffffff; /* branco */
-    --primary: #f59e0b; /* coopquest-yellow */
-    --secondary: #374151; /* gray-700 */
-
-    /* Variáveis existentes para tema escuro */
+    --background: #1f2937;
+    --text: #ffffff;
+    --primary: #f59e0b;
+    --secondary: #374151;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
@@ -61,21 +48,13 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
     --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .high-contrast {
-    /* Variáveis do tema de alto contraste (conforme Passo 4) */
-    --background: #000000; /* preto */
-    --text: #ffffff; /* branco */
-    --primary: #ffff00; /* amarelo brilhante */
-    --secondary: #ffffff; /* branco */
+    --background: #000000;
+    --text: #ffffff;
+    --primary: #ffff00;
+    --secondary: #ffffff;
   }
 }
 
@@ -85,72 +64,351 @@
   }
 
   body {
-    background-color: var(--background); /* Usa variável do tema */
-    color: var(--text); /* Usa variável do tema */
-    font-size: 16px; /* Tamanho base, ajustado pelo contexto */
+    background-color: var(--background);
+    color: var(--text);
+    font-size: 16px;
     min-height: 100vh;
   }
 }
 
-/* Estilos para componentes (mapeados para variáveis) */
 .bg-coopquest-yellow {
   background-color: var(--primary);
 }
-
 .text-coopquest-yellow {
   color: var(--primary);
 }
-
 .bg-gray-800 {
   background-color: var(--secondary);
 }
-
 .text-gray-300 {
   color: var(--text);
 }
 
-/* Estilos existentes mantidos */
 .forum-panel {
-  @apply bg-gray-800 rounded-md p-4 text-white mb-4; /* Usa --secondary */
+  @apply bg-gray-800 rounded-md p-4 text-white mb-4;
 }
-
 .forum-header {
   @apply text-xl font-bold mb-4;
 }
-
 .forum-button {
-  @apply bg-coopquest-yellow hover:bg-yellow-400 text-black font-bold py-2 px-4 rounded; /* Usa --primary */
+  @apply bg-coopquest-yellow hover:bg-yellow-400 text-black font-bold py-2 px-4 rounded;
 }
-
 .input-field {
   @apply bg-gray-700 border border-gray-600 px-4 py-2 rounded text-white w-full;
 }
-
 .nav-link {
   @apply text-white flex items-center px-4 py-2 rounded-md hover:bg-opacity-20 hover:bg-white;
 }
-
 .nav-link.active {
   @apply bg-white bg-opacity-20;
 }
-/* Bloco de código destacado, elegante e integrado ao card */
 .wmde-markdown pre, .wmde-markdown code {
-  background: #23272f !important; /* Cinza escuro, levemente mais claro que o card */
-  color: #f8fafc !important;      /* Quase branco */
+  background: #23272f !important;
+  color: #f8fafc !important;
   border-radius: 8px;
-  border: 1px solid #31363f;      /* Borda sutil para destacar */
+  border: 1px solid #31363f;
   font-size: 1rem;
   font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
   box-shadow: 0 2px 8px 0 rgba(0,0,0,0.07);
 }
-
 .wmde-markdown pre {
   padding: 1em 1.2em;
   margin: 1em 0;
   overflow-x: auto;
 }
-
-/* Mantém o fundo do markdown transparente */
 .wmde-markdown {
   background: transparent !important;
+}
+
+/* Ajuste para o container de cada resposta */
+.resposta-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0.75rem;
+  gap: 0.25rem;
+  background: rgba(31, 41, 55, 0.9);
+  border-radius: 0.75rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+/* Ajuste para avatar */
+.resposta-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f59e0b55;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-right: 0.25rem;
+}
+
+/* Ajuste para header (nome, data, botão) */
+.resposta-header {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.15rem;
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+  flex: 1;
+  justify-content: flex-start;
+  min-width: 0;
+  display: flex;
+}
+
+/* Ajuste para conteúdo */
+.resposta-content {
+  font-size: 0.75rem;
+  line-height: 1.2;
+  margin-top: 0.25rem;
+  padding-left: 0.5rem;
+  color: #d1d5db;
+  max-width: 85%;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+}
+
+/* Style the "Conversar" button */
+.resposta-header Button {
+  padding: 0.2rem 0.4rem;
+  font-size: 0.65rem;
+  margin-left: 0.15rem;
+  height: 20px;
+  line-height: 1;
+  background-color: #f59e0b;
+  color: #000;
+  border: none;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+}
+
+/* Style the like button */
+.resposta-header .like-button {
+  padding: 0.1rem;
+  font-size: 0.65rem;
+  margin-left: auto;
+  color: #d1d5db;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.resposta-header .like-button svg {
+  margin-right: 0.1rem;
+}
+
+/* Adjustments for desktop (min-width: 1024px) */
+@media (min-width: 1024px) {
+  .resposta-container {
+    padding: 1rem; /* Increased padding for larger cards */
+  }
+
+  .resposta-avatar {
+    width: 60px; /* Increased avatar size */
+    height: 60px; /* Increased avatar size */
+    margin-right: 0.5rem; /* Adjusted margin for larger avatar */
+  }
+
+  .resposta-header {
+    font-size: 1rem; /* Increased font size for header */
+    gap: 0.25rem; /* Slightly larger gap */
+  }
+
+  .resposta-content {
+    font-size: 1rem; /* Increased font size for content */
+    line-height: 1.5; /* Improved readability with larger line height */
+    max-width: 90%; /* Adjusted width for better balance */
+  }
+
+  .resposta-header Button {
+    padding: 0.3rem 0.6rem; /* Increased button padding */
+    font-size: 0.8rem; /* Increased button font size */
+    height: 28px; /* Increased button height */
+  }
+
+  .resposta-header .like-button {
+    font-size: 0.8rem; /* Increased like button font size */
+  }
+
+  .resposta-header .like-button svg {
+    width: 20px; /* Increased icon size */
+    height: 20px; /* Increased icon size */
+  }
+}
+
+/* Adjustments for very small screens (e.g., iPhone SE, 320px) */
+@media (max-width: 320px) {
+  .resposta-header {
+    gap: 0.1rem;
+    font-size: 0.7rem;
+  }
+
+  .resposta-header Button {
+    padding: 0.15rem 0.3rem;
+    font-size: 0.6rem;
+  }
+
+  .resposta-content {
+    font-size: 0.7rem;
+    max-width: 80%;
+  }
+}
+
+/* Telas muito grandes (monitores ultrawide, TVs) */
+@media (min-width: 1600px) {
+  #root {
+    max-width: 1600px;
+    padding: 3rem !important;
+  }
+}
+
+/* Notebooks e desktops padrão */
+@media (max-width: 1440px) {
+  #root {
+    max-width: 100vw;
+    padding: 2rem !important;
+  }
+}
+
+/* Tablets grandes, notebooks pequenos */
+@media (max-width: 1024px) {
+  body {
+    font-size: 15px;
+    padding: 0 8px;
+  }
+  #root {
+    padding: 1rem !important;
+    max-width: 100vw !important;
+  }
+}
+
+/* Tablets médios e grandes (ex: iPad, Galaxy Tab, Surface, etc) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  body {
+    font-size: 14.5px;
+    padding: 0 8px;
+  }
+  #root {
+    padding: 0.8rem !important;
+    max-width: 100vw !important;
+  }
+  .w-full.max-w-7xl.mx-auto.grid.grid-cols-1.sm\:grid-cols-2.md\:grid-cols-2 {
+    grid-template-columns: 1fr !important;
+    gap: 1.2rem !important;
+  }
+  .game-canvas-container {
+    width: 95vw !important;
+    max-width: 500px !important;
+    aspect-ratio: 1 / 1 !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: #fff;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .game-canvas-container canvas {
+    width: 95vw !important;
+    max-width: 500px !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+    background: #000;
+    border-radius: 12px;
+    display: block;
+  }
+  textarea {
+    height: 30vh !important;
+  }
+}
+/* Tablets pequenos e celulares grandes (ex: iPhone Plus, Galaxy S Ultra) */
+@media (max-width: 768px) {
+  body {
+    font-size: 13.5px;
+    padding: 0 4px;
+  }
+  #root {
+    padding: 0.5rem !important;
+    max-width: 100vw !important;
+  }
+  .card, .forum-panel {
+    padding: 0.7rem !important;
+  }
+  .game-canvas-container {
+    aspect-ratio: 1 / 1 !important;
+    width: 90vw !important;
+    max-width: 90vw !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    background: #fff;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .game-canvas-container canvas {
+    width: 90vw !important;
+    height: 90vw !important;
+    max-width: 90vw !important;
+    max-height: 90vw !important;
+    aspect-ratio: 1 / 1 !important;
+    display: block;
+    background: #000;
+    border-radius: 12px;
+  }
+}
+
+/* Celulares médios (ex: iPhone XR, Galaxy S8+) */
+@media (max-width: 600px) {
+  body {
+    font-size: 13px;
+  }
+  #root {
+    padding: 0.35rem !important;
+  }
+  .card, .forum-panel {
+    padding: 0.6rem !important;
+  }
+}
+
+/* Celulares pequenos (ex: iPhone SE, Galaxy A51) */
+@media (max-width: 480px) {
+  body {
+    font-size: 12.5px;
+    padding: 0 2px;
+  }
+  #root {
+    padding: 0.15rem !important;
+  }
+  .card, .forum-panel {
+    padding: 0.5rem !important;
+  }
+  img, video {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
+
+/* Celulares muito pequenos ou dobráveis fechados */
+@media (max-width: 375px) {
+  body {
+    font-size: 12px;
+  }
+  #root {
+    padding: 0.05rem !important;
+  }
+}
+
+/* Garante que imagens e vídeos nunca ultrapassem o container */
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }

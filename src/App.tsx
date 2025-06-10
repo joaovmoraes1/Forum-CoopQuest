@@ -32,7 +32,6 @@ const Videos = lazy(() => import('./pages/Videos'));
 const Lobby = lazy(() => import('./pages/jogos/Lobby'));
 const GameRoom = lazy(() => import('./pages/jogos/GameRoom'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
-// Importe ResetPassword corretamente:
 const ResetPassword = lazy(() => import('./pages/ResetPassword')); 
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -69,7 +68,6 @@ const App = () => {
             <Layout>
               <Suspense fallback={<LoadingSpinner />}>
                 <Routes>
-                  {/* Rotas Públicas */}
                   <Route path="/" element={<Index />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
@@ -80,9 +78,7 @@ const App = () => {
                   <Route path="/suporte" element={<Support />} />
                   <Route path="/videos" element={<Videos />} />
                   <Route path="/esqueci-senha" element={<ForgotPassword />} />
-                  <Route path="/redefinir-senha" element={<ResetPassword />} /> {/* <-- Adicionada a rota */}
-
-                  {/* Rotas Protegidas */}
+                  <Route path="/redefinir-senha" element={<ResetPassword />} />
                   <Route path="/jogos" element={<ProtectedRoute><Jogos /></ProtectedRoute>} />
                   <Route path="/comunidade" element={<ProtectedRoute><Comunidade /></ProtectedRoute>} />
                   <Route path="/support-forum" element={<ProtectedRoute><SupportForum /></ProtectedRoute>} />
@@ -95,8 +91,6 @@ const App = () => {
                   <Route path="/daily-challenge" element={<ProtectedRoute><DailyChallengeDisplay /></ProtectedRoute>} />
                   <Route path="/lobby" element={<Lobby />} />
                   <Route path="/game/:roomCode" element={<GameRoom />} />
-
-                  {/* Rota 404 */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>

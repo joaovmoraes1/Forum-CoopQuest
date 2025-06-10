@@ -21,12 +21,12 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 px-4">
-      <div className="w-full max-w-md">
-        <div className="bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 p-8">
+    <div className="min-h-screen flex items-center justify-center bg-transparent px-2 sm:px-4 lg:px-8">
+      <div className="w-full max-w-sm sm:max-w-md">
+        <div className="bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 p-2 sm:p-6">
           <div className="flex flex-col items-center mb-6">
             <div className="bg-gradient-to-r from-orange-500 to-yellow-400 rounded-full p-3 mb-2 shadow-lg">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <svg className="h-20 w-20 sm:h-24 sm:w-24 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 11c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zm0 0v2m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" />
               </svg>
             </div>

@@ -2,15 +2,14 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAccessibility } from '@/components/Layout';
 import { Tutorial } from '@/services/topics';
+import BackArrow from '@/components/BackArrow';
 
-// Define valid slug types
 type ValidSlug = 'primeiros-passos' | 'eventos' | 'desafios' | 'topicos-eficientes' | 'privacidade' | 'guia-de-inicio-rapido';
 
-// Content map with typed slugs
 const contentMap: Record<ValidSlug, JSX.Element> = {
   'primeiros-passos': (
     <>
@@ -128,7 +127,6 @@ const contentMap: Record<ValidSlug, JSX.Element> = {
   ),
 };
 
-// Fetch tutorial data with typed slug parameter
 const fetchTutorial = async (slug: string | undefined): Promise<Tutorial> => {
   if (!slug) {
     throw new Error('Slug não fornecido');
@@ -158,47 +156,41 @@ const TutorialPage: React.FC = () => {
     toast.error(error.message || 'Erro ao carregar tutorial');
   }
 
-  // Check if slug is a valid key in contentMap
   const isValidSlug = (slug: string | undefined): slug is ValidSlug => {
     return !!slug && slug in contentMap;
   };
 
   return (
     <main
-      className="flex-grow bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen py-16"
+      className="flex-grow bg-transparent min-h-screen py-12 px-2 sm:px-4 lg:px-8"
       style={{ fontSize: `${fontSize}px` }}
     >
-      <div className="mb-8 mx-4 pt-12">
-        <Link
-          to="/tutoriais"
-          className="text-orange-400 hover:text-orange-500 inline-flex items-center mb-4 font-medium transition-colors duration-300"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Tutoriais
-        </Link>
+      <div className="mb-4 mt-4 sm:mt-8 w-full max-w-full mx-auto">
+        <BackArrow to="/tutoriais">Voltar para Tutoriais</BackArrow>
         {isLoading ? (
-          <div className="text-center py-8">
+          <div className="text-center p-2 sm:p-6">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500 mx-auto"></div>
             <p className="text-gray-200 mt-4">Carregando tutorial...</p>
           </div>
         ) : error ? (
           <Card
-            className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 mx-4"
+            className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 w-full"
           >
-            <CardContent className="p-8 text-center">
+            <CardContent className="p-2 sm:p-6 text-center">
               <p className="text-gray-200 mb-4">Erro ao carregar tutorial: {error.message}</p>
               <Link
                 to="/tutoriais"
-                className="text-orange-400 hover:text-orange-500 font-medium transition-colors duration-300"
+                className="group text-orange-400 hover:text-orange-500 font-medium transition-colors duration-300"
               >
-                Voltar para a lista de tutoriais
+                Voltar para a lista de tutoriais <ArrowRight className="ml-1 h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200 group-hover:translate-x-1" />
               </Link>
             </CardContent>
           </Card>
         ) : tutorial ? (
           <Card
-            className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 mx-4"
+            className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 w-full"
           >
-            <CardHeader className="p-6">
+            <CardHeader className="p-2 sm:p-6">
               <div className="flex items-center gap-4">
                 {tutorial.icon === 'HelpCircle' ? (
                   <svg
@@ -251,7 +243,7 @@ const TutorialPage: React.FC = () => {
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="p-6 space-y-4">
+            <CardContent className="p-2 sm:p-6 space-y-4">
               <p className="text-gray-200">{tutorial.description}</p>
               {slug && isValidSlug(slug) ? (
                 contentMap[slug]
@@ -262,15 +254,15 @@ const TutorialPage: React.FC = () => {
           </Card>
         ) : (
           <Card
-            className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 mx-4"
+            className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 w-full"
           >
-            <CardContent className="p-8 text-center">
+            <CardContent className="p-2 sm:p-6 text-center">
               <p className="text-gray-200 mb-4">Tutorial não encontrado.</p>
               <Link
                 to="/tutoriais"
-                className="text-orange-400 hover:text-orange-500 font-medium transition-colors duration-300"
+                className="group text-orange-400 hover:text-orange-500 font-medium transition-colors duration-300"
               >
-                Voltar para a lista de tutoriais
+                Voltar para a lista de tutoriais <ArrowRight className="ml-1 h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200 group-hover:translate-x-1" />
               </Link>
             </CardContent>
           </Card>
@@ -278,20 +270,20 @@ const TutorialPage: React.FC = () => {
       </div>
 
       <Card
-        className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 mx-4"
+        className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 w-full max-w-full mx-auto"
       >
-        <CardContent className="p-8 text-center space-y-6">
+        <CardContent className="p-2 sm:p-6 text-center space-y-6">
           <h2 className="text-2xl font-bold text-white">
             Precisa de mais ajuda?
           </h2>
-          <p className="text-gray-200 max-w-2xl mx-auto">
+          <p className="text-gray-200 w-full max-w-2xl mx-auto">
             Se este tutorial não resolveu sua dúvida, entre em contato com nossa equipe de suporte.
           </p>
           <Link
             to="/suporte"
-            className="inline-flex items-center bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300"
+            className="group inline-flex items-center bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300"
           >
-            Contatar Suporte <ArrowRight className="ml-2 h-4 w-4" />
+            Contatar Suporte <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
         </CardContent>
       </Card>

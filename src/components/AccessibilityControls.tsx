@@ -11,7 +11,7 @@ const AccessibilityControls: React.FC = () => {
 
   return (
     <TooltipProvider>
-      <div className="fixed bottom-16 right-4 z-[9999]">
+      <div className="fixed bottom-16 right-9.5 z-[9999]">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -23,16 +23,16 @@ const AccessibilityControls: React.FC = () => {
               aria-label={theme === 'light' ? 'Mudar para tema escuro' : 'Mudar para tema claro'}
               data-theme={theme}
               data-high-contrast={highContrast}
-              className={`bg-[var(--primary)] fallback:bg-yellow-500 hover:bg-[color:hsl(var(--primary-hsl)/0.8)] p-3 rounded-full shadow-2xl transform transition-all hover:scale-105 duration-200 focus:ring-2 focus:ring-primary/50 focus:outline-none ${highContrast ? 'border-4 border-black animate-pulse' : ''}`}
+              className={`bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 p-3 rounded-full shadow-2xl transform transition-all hover:scale-105 duration-200 focus:ring-2 focus:ring-orange-500/50 focus:outline-none ${highContrast ? 'border-4 border-black animate-pulse' : ''} w-12 h-12 flex items-center justify-center`}
             >
               {theme === 'light' ? (
-                <Moon className={`h-6 w-6 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-[var(--text)]'}`} />
+                <Moon className={`h-6 w-6 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]'}`} />
               ) : (
-                <Sun className={`h-6 w-6 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-[var(--text)]'}`} />
+                <Sun className={`h-6 w-6 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]'}`} />
               )}
             </Button>
           </TooltipTrigger>
-          <TooltipContent className="bg-secondary text-text rounded-lg p-2 shadow-lg">
+          <TooltipContent className="bg-gray-800 text-white rounded-lg p-2 shadow-lg">
             <p>{theme === 'light' ? 'Mudar para tema escuro' : 'Mudar para tema claro'}</p>
           </TooltipContent>
         </Tooltip>

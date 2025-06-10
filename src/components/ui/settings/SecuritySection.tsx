@@ -40,8 +40,8 @@ const SecuritySection: React.FC = () => {
   };
 
   return (
-    <section className="bg-slate-800 rounded-lg p-6">
-      <h2 className="text-xl font-bold text-white mb-4">Segurança</h2>
+    <section className="bg-slate-800 rounded-lg p-5 sm:p-6">
+      <h2 className="text-xl font-bold text-white mb-5 sm:mb-6">Segurança</h2>
       <Button 
         variant="outline" 
         onClick={() => setIsOpen(true)}
@@ -73,7 +73,7 @@ const SecuritySection: React.FC = () => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-5 sm:gap-6">
               <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>
                 Cancelar
               </Button>

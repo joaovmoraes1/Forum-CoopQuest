@@ -241,7 +241,7 @@ const DailyChallengeDisplay: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-900">
+      <div className="flex justify-center items-center min-h-screen bg-transparent">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
       </div>
     );
@@ -249,9 +249,9 @@ const DailyChallengeDisplay: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4 bg-gray-900">
-        <Card className="max-w-lg w-full bg-gray-800 rounded-lg shadow-lg border border-gray-700">
-          <CardContent className="p-8 text-center">
+      <div className="min-h-screen flex items-center justify-center px-2 sm:px-4 lg:px-8 bg-transparent">
+        <Card className="w-full max-w-lg bg-gray-800 rounded-lg shadow-lg border border-gray-700">
+          <CardContent className="p-2 sm:p-6 text-center">
             <p className="text-gray-300 text-lg mb-4">{error}</p>
             <Button
               onClick={() => window.location.reload()}
@@ -267,9 +267,9 @@ const DailyChallengeDisplay: React.FC = () => {
 
   if (!challenge) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4 bg-gray-900">
-        <Card className="max-w-lg w-full bg-gray-800 rounded-lg shadow-lg border border-gray-700">
-          <CardContent className="p-8 text-center">
+      <div className="min-h-screen flex items-center justify-center px-2 sm:px-4 lg:px-8 bg-transparent">
+        <Card className="w-full max-w-lg bg-gray-800 rounded-lg shadow-lg border border-gray-700">
+          <CardContent className="p-2 sm:p-6 text-center">
             <h2 className="text-2xl font-semibold text-gray-300 mb-2">
               Nenhum Desafio Disponível
             </h2>
@@ -281,9 +281,9 @@ const DailyChallengeDisplay: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 bg-gray-900">
-      <Card className="max-w-2xl w-full bg-gray-800 rounded-xl shadow-xl border border-gray-700">
-        <CardHeader className="bg-blue-600 p-6 rounded-t-xl flex justify-between items-center">
+    <div className="min-h-screen flex items-center justify-center py-12 px-2 sm:px-4 lg:px-8 bg-transparent">
+      <Card className="w-full max-w-lg sm:max-w-2xl bg-gray-800 rounded-xl shadow-xl border border-gray-700">
+        <CardHeader className="bg-blue-600 p-2 sm:p-6 rounded-t-xl flex justify-between items-center">
           <div className="flex items-center gap-3">
             <Trophy className="text-white" size={28} />
             <CardTitle className="text-2xl font-semibold text-white">
@@ -291,7 +291,7 @@ const DailyChallengeDisplay: React.FC = () => {
             </CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="p-8 space-y-8">
+        <CardContent className="p-2 sm:p-6 space-y-8">
           <div className="flex justify-center mb-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -311,7 +311,7 @@ const DailyChallengeDisplay: React.FC = () => {
             </svg>
           </div>
 
-          <div className="bg-gray-700 p-6 rounded-lg border border-gray-600 shadow-sm">
+          <div className="bg-gray-700 p-2 sm:p-6 rounded-lg border border-gray-600 shadow-sm">
             <div className="flex items-center gap-2 mb-3">
               <Info className="text-blue-600" size={18} />
               <h4 className="text-sm font-semibold text-gray-300">Descrição do Desafio</h4>
@@ -322,7 +322,7 @@ const DailyChallengeDisplay: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-gray-700 p-6 rounded-lg border border-gray-600 shadow-sm">
+          <div className="bg-gray-700 p-2 sm:p-6 rounded-lg border border-gray-600 shadow-sm">
             <div className="flex items-center gap-2 mb-3">
               <Info className="text-blue-600" size={18} />
               <h4 className="text-sm font-semibold text-gray-300">Dicas para Resolução</h4>
@@ -338,7 +338,7 @@ const DailyChallengeDisplay: React.FC = () => {
             </ul>
           </div>
 
-          <div className="bg-gray-700 p-6 rounded-lg border border-gray-600 shadow-md">
+          <div className="bg-gray-700 p-2 sm:p-6 rounded-lg border border-gray-600 shadow-md">
             <div className="flex items-center gap-3 mb-4">
               <Code className="text-blue-600" size={20} />
               <h4 className="text-base font-semibold text-gray-300">Envie Sua Solução</h4>
@@ -361,7 +361,7 @@ const DailyChallengeDisplay: React.FC = () => {
                 />
               </div>
               {codeMessage.trim() && (
-                <div className="mt-4 bg-gray-900 rounded-lg p-4 border border-gray-700">
+                <div className="mt-4 bg-gray-900 rounded-lg p-2 sm:p-6 border border-gray-700">
                   {renderCodePreview(codeMessage)}
                 </div>
               )}
@@ -387,7 +387,7 @@ const DailyChallengeDisplay: React.FC = () => {
           )}
 
           {isParticipating && (
-            <div className="bg-green-700/30 border border-green-600 p-4 rounded-lg flex items-center gap-3 shadow-sm">
+            <div className="bg-green-700/30 border border-green-600 p-2 sm:p-6 rounded-lg flex items-center gap-3 shadow-sm">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -413,7 +413,7 @@ const DailyChallengeDisplay: React.FC = () => {
           <div className="flex justify-end">
             <Button
               onClick={() => navigate("/")}
-              className="bg-gray-600 text-gray-300 hover:bg-gray-500 rounded-lg py-2 px-4 text-sm font-medium transition-colors duration-300"
+              className="bg-gray-600 text-gray-300 hover:bg-gray-500 rounded-lg py-2 px-2 sm:px-4 lg:px-8 text-sm font-medium transition-colors duration-300"
               aria-label="Voltar para a página inicial"
             >
               <ArrowLeft className="mr-2 h-4 w-4" /> Voltar

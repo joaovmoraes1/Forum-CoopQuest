@@ -298,36 +298,36 @@ const AccessibilityMenu: React.FC = () => {
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
-            className={`bg-blue-500 hover:bg-blue-600 p-3 rounded-full shadow-2xl transform transition-all hover:scale-105 duration-200 focus:outline-none`}
+            className={`w-full max-w-[60px] mx-auto bg-blue-500 hover:bg-blue-600 p-2 sm:p-3 rounded-full shadow-2xl transform transition-all hover:scale-105 duration-200 focus:outline-none`}
             aria-label="Abrir menu de acessibilidade"
             data-high-contrast={highContrast}
             data-accessibility-menu
           >
-            <Accessibility className={`h-6 w-6 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-white'}`} />
+            <Accessibility className={`h-6 w-6 sm:h-8 sm:w-8 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-white'}`} />
             <span className="sr-only">Menu de Acessibilidade</span>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className={`w-80 z-[9999] ${highContrast ? 'bg-black text-white border-4 border-yellow-300 shadow-2xl' : 'bg-gray-800 text-gray-200 border-gray-700'} rounded-xl`} data-accessibility-menu>
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold">Acessibilidade</h3>
+        <PopoverContent className={`w-full max-w-md mx-auto z-[9999] ${highContrast ? 'bg-black text-white border-4 border-yellow-300 shadow-2xl' : 'bg-gray-800 text-gray-200 border-gray-700'} rounded-xl p-2 sm:p-4`} data-accessibility-menu>
+          <div className="grid grid-cols-1 gap-2 sm:gap-4">
+            <h3 className="text-lg sm:text-xl font-bold">Acessibilidade</h3>
 
             {/* Alternar Alto Contraste */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full justify-start gap-3 bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:outline-none"
+                  className="w-full max-w-md mx-auto justify-start gap-3 bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:outline-none"
                   onClick={toggleHighContrast}
                   role="switch"
                   aria-checked={highContrast}
                   aria-label={highContrast ? 'Desativar alto contraste' : 'Ativar alto contraste'}
                   data-accessibility-menu
                 >
-                  <Eye className={`h-5 w-5 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
+                  <Eye className={`h-5 w-5 sm:h-6 sm:w-6 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
                   <span>Alto Contraste: {highContrast ? 'Ativado' : 'Desativado'}</span>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className="bg-gray-800 text-gray-200 rounded-lg p-2 shadow-lg">
+              <TooltipContent className="bg-gray-800 text-gray-200 rounded-lg p-2 sm:p-3 shadow-lg">
                 <p>{highContrast ? 'Desativar Alto Contraste' : 'Ativar Alto Contraste'}</p>
               </TooltipContent>
             </Tooltip>
@@ -337,44 +337,44 @@ const AccessibilityMenu: React.FC = () => {
               <TooltipTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full justify-start gap-3 bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:outline-none"
+                  className="w-full max-w-md mx-auto justify-start gap-3 bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:outline-none"
                   onClick={toggleTts}
                   role="switch"
                   aria-checked={ttsEnabled}
                   aria-label={ttsEnabled ? 'Desativar leitura de tela' : 'Ativar leitura de tela'}
                   data-accessibility-menu
                 >
-                  <Volume2 className={`h-5 w-5 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
+                  <Volume2 className={`h-5 w-5 sm:h-6 sm:w-6 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
                   <span>Leitura de Tela: {ttsEnabled ? 'Ativado' : 'Desativado'}</span>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className="bg-gray-800 text-gray-200 rounded-lg p-2 shadow-lg">
+              <TooltipContent className="bg-gray-800 text-gray-200 rounded-lg p-2 sm:p-3 shadow-lg">
                 <p>{ttsEnabled ? 'Desativar Leitura de Tela' : 'Ativar Leitura de Tela'}</p>
               </TooltipContent>
             </Tooltip>
 
             {/* Controles de TTS */}
             {ttsEnabled && (
-              <div className="space-y-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                 <div className="flex gap-2">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
                         variant="outline"
-                        className="flex-1 bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:ring-2"
+                        className="w-full max-w-md mx-auto bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:ring-2"
                         onClick={isPaused ? resumeSpeech : pauseSpeech}
                         aria-label={isPaused ? 'Retomar leitura' : 'Pausar leitura'}
                         data-accessibility-menu
                       >
                         {isPaused ? (
-                          <Play className={`h-5 w-5 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
+                          <Play className={`h-5 w-5 sm:h-6 sm:w-6 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
                         ) : (
-                          <Pause className={`h-5 w-5 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
+                          <Pause className={`h-5 w-5 sm:h-6 sm:w-6 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
                         )}
                         <span className="sr-only">{isPaused ? 'Retomar leitura' : 'Pausar leitura'}</span>
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent className="bg-gray-800 text-gray-200 rounded-lg p-2 shadow-lg">
+                    <TooltipContent className="bg-gray-800 text-gray-200 rounded-lg p-2 sm:p-3 shadow-lg">
                       <p>{isPaused ? 'Retomar Leitura' : 'Pausar Leitura'}</p>
                     </TooltipContent>
                   </Tooltip>
@@ -382,16 +382,16 @@ const AccessibilityMenu: React.FC = () => {
                     <TooltipTrigger asChild>
                       <Button
                         variant="outline"
-                        className="flex-1 bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:ring-2"
+                        className="w-full max-w-md mx-auto bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:ring-2"
                         onClick={stopSpeech}
                         aria-label="Parar e reiniciar leitura"
                         data-accessibility-menu
                       >
-                        <StopCircle className={`h-5 w-5 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
+                        <StopCircle className={`h-5 w-5 sm:h-6 sm:w-6 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
                         <span className="sr-only">Parar e reiniciar leitura</span>
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent className="bg-gray-800 text-gray-200 rounded-lg p-2 shadow-lg">
+                    <TooltipContent className="bg-gray-800 text-gray-200 rounded-lg p-2 sm:p-3 shadow-lg">
                       <p>Parar e Reiniciar Leitura</p>
                     </TooltipContent>
                   </Tooltip>
@@ -399,17 +399,17 @@ const AccessibilityMenu: React.FC = () => {
                 <div className="flex gap-2 items-center">
                   <Button
                     variant="outline"
-                    className="bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:ring-2 w-1/3"
+                    className="w-full max-w-[60px] mx-auto bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:ring-2"
                     onClick={() => adjustSpeechRate(-0.1)}
                     aria-label="Diminuir velocidade da voz"
                     data-accessibility-menu
                   >
                     <span>-</span>
                   </Button>
-                  <span className="text-sm text-gray-200">Velocidade: {speechRate.toFixed(1)}x</span>
+                  <span className="text-xs sm:text-sm text-gray-200">Velocidade: {speechRate.toFixed(1)}x</span>
                   <Button
                     variant="outline"
-                    className="bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:ring-2 w-1/3"
+                    className="w-full max-w-[60px] mx-auto bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:ring-2"
                     onClick={() => adjustSpeechRate(0.1)}
                     aria-label="Aumentar velocidade da voz"
                     data-accessibility-menu
@@ -421,22 +421,22 @@ const AccessibilityMenu: React.FC = () => {
             )}
 
             {/* Controles de Tamanho da Fonte */}
-            <div className="flex gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant="outline"
-                    className="flex-1 bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:ring-2"
+                    className="w-full max-w-md mx-auto bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:ring-2"
                     onClick={increaseFontSize}
                     aria-label="Aumentar tamanho da fonte"
                     disabled={fontSize >= 20}
                     data-accessibility-menu
                   >
-                    <ZoomIn className={`h-5 w-5 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
+                    <ZoomIn className={`h-5 w-5 sm:h-6 sm:w-6 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
                     <span className="sr-only">Aumentar tamanho da fonte</span>
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="bg-gray-800 text-gray-200 rounded-lg p-2 shadow-lg">
+                <TooltipContent className="bg-gray-800 text-gray-200 rounded-lg p-2 sm:p-3 shadow-lg">
                   <p>Aumentar Tamanho da Fonte</p>
                 </TooltipContent>
               </Tooltip>
@@ -444,17 +444,17 @@ const AccessibilityMenu: React.FC = () => {
                 <TooltipTrigger asChild>
                   <Button
                     variant="outline"
-                    className="flex-1 bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:ring-2"
+                    className="w-full max-w-md mx-auto bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:ring-2"
                     onClick={decreaseFontSize}
                     aria-label="Diminuir tamanho da fonte"
                     disabled={fontSize <= 14}
                     data-accessibility-menu
                   >
-                    <ZoomOut className={`h-5 w-5 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
+                    <ZoomOut className={`h-5 w-5 sm:h-6 sm:w-6 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
                     <span className="sr-only">Diminuir tamanho da fonte</span>
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="bg-gray-800 text-gray-200 rounded-lg p-2 shadow-lg">
+                <TooltipContent className="bg-gray-800 text-gray-200 rounded-lg p-2 sm:p-3 shadow-lg">
                   <p>Diminuir Tamanho da Fonte</p>
                 </TooltipContent>
               </Tooltip>
@@ -462,22 +462,22 @@ const AccessibilityMenu: React.FC = () => {
                 <TooltipTrigger asChild>
                   <Button
                     variant="outline"
-                    className="flex-1 bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:ring-2"
+                    className="w-full max-w-md mx-auto bg-gray-700/50 text-gray-200 hover:bg-gray-600 rounded-lg transform transition-all hover:scale-105 duration-300 focus:ring-2"
                     onClick={resetFontSize}
                     aria-label="Restaurar tamanho da fonte"
                     disabled={fontSize === 16}
                     data-accessibility-menu
                   >
-                    <RotateCcw className={`h-5 w-5 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
+                    <RotateCcw className={`h-5 w-5 sm:h-6 sm:w-6 ${highContrast ? 'text-black filter drop-shadow-[0_1px_1px_rgba(255,255,255,0.5)]' : 'text-gray-200'}`} />
                     <span className="sr-only">Restaurar tamanho da fonte</span>
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="bg-gray-800 text-gray-200 rounded-lg p-2 shadow-lg">
+                <TooltipContent className="bg-gray-800 text-gray-200 rounded-lg p-2 sm:p-3 shadow-lg">
                   <p>Restaurar Tamanho da Fonte</p>
                 </TooltipContent>
               </Tooltip>
             </div>
-            <p className="text-sm">Tamanho da fonte: {fontSize}px</p>
+            <p className="text-xs sm:text-sm">Tamanho da fonte: {fontSize}px</p>
           </div>
         </PopoverContent>
       </Popover>

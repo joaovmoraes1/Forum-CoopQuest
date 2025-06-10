@@ -1,4 +1,3 @@
-// src/components/DeleteAccountModal.tsx
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { deleteAccount } from '@/services/authService';
@@ -51,20 +50,20 @@ const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ isOpen, onClose
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-slate-900 text-white border-orange-500">
-        <DialogHeader className="space-y-4">
-          <div className="bg-red-500 p-3 rounded-full w-12 h-12 mx-auto flex items-center justify-center">
-            <AlertTriangle className="h-6 w-6 text-white" />
+      <DialogContent className="w-full max-w-md mx-auto bg-slate-900 text-white border-orange-500 p-2 sm:p-6">
+        <DialogHeader className="grid grid-cols-1 gap-2 sm:gap-4">
+          <div className="bg-red-500 p-2 sm:p-3 rounded-full w-10 h-10 sm:w-12 sm:h-12 mx-auto flex items-center justify-center">
+            <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
           </div>
-          <DialogTitle className="text-xl font-bold text-center text-red-500">
+          <DialogTitle className="text-lg sm:text-xl font-bold text-center text-red-500">
             Excluir Conta
           </DialogTitle>
-          <DialogDescription className="text-slate-300">
-            <p className="mb-4">
+          <DialogDescription className="text-slate-300 text-sm sm:text-base">
+            <p className="mb-2 sm:mb-4">
               Esta ação <span className="font-bold text-red-400">não pode ser desfeita</span>. Você perderá
               permanentemente:
             </p>
-            <ul className="list-disc pl-5 space-y-1 mb-4">
+            <ul className="list-disc pl-5 space-y-1 mb-2 sm:mb-4">
               <li>Seu perfil e informações pessoais</li>
               <li>Todo seu progresso nos jogos</li>
               <li>Participações em fóruns e comunidades</li>
@@ -75,22 +74,22 @@ const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ isOpen, onClose
           </DialogDescription>
         </DialogHeader>
 
-        <div className="pt-2">
+        <div className="pt-2 sm:pt-4">
           <input
             type="text"
             value={confirmation}
             onChange={(e) => setConfirmation(e.target.value)}
-            className="w-full p-2 border border-slate-700 bg-slate-800 rounded text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            className="w-full p-2 sm:p-3 border border-slate-700 bg-slate-800 rounded text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             placeholder="Digite EXCLUIR"
           />
         </div>
 
-        <DialogFooter className="gap-2 sm:gap-0 pt-4">
+        <DialogFooter className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 pt-2 sm:pt-4">
           <Button
             variant="outline"
             onClick={onClose}
             disabled={isDeleting}
-            className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white"
+            className="w-full border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white p-2 sm:p-3"
           >
             Cancelar
           </Button>
@@ -98,14 +97,14 @@ const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ isOpen, onClose
             variant="destructive"
             onClick={handleDelete}
             disabled={isDeleting || confirmation !== 'EXCLUIR'}
-            className={`bg-red-600 hover:bg-red-700 text-white ${
+            className={`w-full bg-red-600 hover:bg-red-700 text-white p-2 sm:p-3 ${
               confirmation !== 'EXCLUIR' ? 'opacity-50 cursor-not-allowed' : ''
             }`}
           >
             {isDeleting ? (
               <span className="flex items-center gap-2">
                 <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 sm:h-5 sm:w-5 text-white"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"

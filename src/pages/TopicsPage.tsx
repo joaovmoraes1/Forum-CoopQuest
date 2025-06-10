@@ -55,24 +55,24 @@ const TopicsPage = () => {
 
   return (
     <main
-      className="flex-grow bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen py-16"
+      className="flex-grow bg-transparent min-h-screen py-12 px-2 sm:px-4 lg:px-8"
       style={{ fontSize: `${fontSize}px` }}
     >
       <div
-        className="mb-8 bg-gradient-to-r from-orange-500 to-yellow-500 p-6 rounded-2xl shadow-2xl text-center border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 mx-4 pt-12"
+        className="mb-8 bg-gradient-to-r from-orange-500 to-yellow-500 p-2 sm:p-6 rounded-2xl shadow-2xl text-center border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 w-full max-w-full mx-auto"
       >
         <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-200 mb-2">
           Todos os Tópicos
         </h1>
-        <p className="text-lg text-gray-200">
+        <p className="text-lg text-gray-200 w-full max-w-xl mx-auto">
           Explore os tópicos mais recentes da comunidade CoopQuest
         </p>
       </div>
 
       <Card
-        className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 mx-4"
+        className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 w-full max-w-full mx-auto"
       >
-        <CardHeader className="border-b border-gray-600/50 p-6">
+        <CardHeader className="border-b border-gray-600/50 p-2 sm:p-6">
           <CardTitle className="text-2xl font-bold text-white flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -96,7 +96,7 @@ const TopicsPage = () => {
             Lista de Tópicos
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-2 sm:p-6">
           <TopicsList
             topics={topics}
             isLoading={isLoadingTopics}

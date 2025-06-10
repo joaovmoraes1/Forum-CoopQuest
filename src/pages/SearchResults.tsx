@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { searchForum } from '@/services/topics'; // Removido SearchResult da importação
+import { searchForum } from '@/services/topics';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { useAccessibility } from '@/components/Layout';
 
-// Definindo a interface SearchResult localmente
 interface SearchResult {
   id: number;
   type: 'topic' | 'reply' | 'faq' | 'tutorial' | 'event' | 'message' | 'user';
@@ -192,11 +191,11 @@ const SearchResults = () => {
 
   return (
     <main
-      className="flex-grow container mx-auto py-12 px-4 bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen"
+      className="flex-grow w-full max-w-full mx-auto py-12 px-2 sm:px-4 lg:px-8 bg-transparent min-h-screen"
       style={{ fontSize: `${fontSize}px` }}
     >
       <Card className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500">
-        <CardHeader className="border-b border-gray-600/50 p-6">
+        <CardHeader className="border-b border-gray-600/50 p-2 sm:p-6">
           <CardTitle className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-200">
             Resultados da busca: "{searchQuery}"
           </CardTitle>
@@ -204,9 +203,9 @@ const SearchResults = () => {
             Encontramos {totalResults} resultado(s) para sua pesquisa.
           </p>
         </CardHeader>
-        <CardContent className="p-8 space-y-6">
+        <CardContent className="p-2 sm:p-6 space-y-6">
           {isLoading && results.length === 0 ? (
-            <div className="text-center py-8">
+            <div className="text-center p-2 sm:p-6">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500 mx-auto"></div>
               <p className="text-gray-200 mt-4">Carregando resultados...</p>
             </div>
@@ -226,7 +225,7 @@ const SearchResults = () => {
               )}
             </>
           ) : (
-            <div className="text-center py-8 bg-gray-700/50 rounded-xl border border-gray-600/50">
+            <div className="text-center p-2 sm:p-6 bg-gray-700/50 rounded-xl border border-gray-600/50">
               <p className="text-gray-200 text-lg">
                 Nenhum resultado encontrado para "{searchQuery}".
               </p>

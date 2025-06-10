@@ -8,11 +8,14 @@ import { toast } from "sonner";
 const ratImage = new Image();
 ratImage.src = "/rat.png";
 
+const arrowImage = new Image();
+arrowImage.src = "/seta.png";
+
 export default function GameRoom() {
   const { roomCode } = useParams<{ roomCode: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-
+  
   const [players, setPlayers] = useState<any[]>([]);
   const [code1, setCode1] = useState("programa {\n\n}");
   const [code2, setCode2] = useState("programa {\n\n}");
@@ -21,6 +24,7 @@ export default function GameRoom() {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const executandoRef = useRef(false);
 
   const gridSize = 5;
   const tileSize = 100;
@@ -108,51 +112,87 @@ export default function GameRoom() {
     const canvas = canvasRef.current;
     const container = containerRef.current;
     if (!canvas || !container) return;
-
+  
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
+  
     const dpr = window.devicePixelRatio || 1;
-    const width = container.offsetWidth - 32;
-    const height = container.offsetWidth - 32;
-
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
-
-    const cellWidth = width / gridSize;
-    const cellHeight = height / gridSize;
-
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    const size = Math.min(width, height); // canvas quadrado
+  
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    canvas.style.width = `${size}px`;
+    canvas.style.height = `${size}px`;
+  
+    const cellSize = size / gridSize;
+  
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(dpr, dpr);
-    ctx.clearRect(0, 0, width, height);
-
+    ctx.clearRect(0, 0, size, size);
+  
+    // desenhar grade
     for (let x = 0; x < gridSize; x++) {
       for (let y = 0; y < gridSize; y++) {
         ctx.strokeStyle = "gray";
-        ctx.strokeRect(x * cellWidth, y * cellHeight, cellWidth, cellHeight);
+        ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
       }
     }
-
+  
+    // ponto de chegada
     ctx.fillStyle = "white";
     ctx.font = "bold 14px Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("🏁 Chegada", width / 2, height / 2);
-
-    const default1 = { x: 0, y: 0 };
-    const default2 = { x: gridSize - 1, y: gridSize - 1 };
+    ctx.fillText("🏁 Chegada", size / 2, size / 2);
+  
+    // posições iniciais
+    const default1 = { x: 0, y: 0, dir: 1 };
+    const default2 = { x: gridSize - 1, y: gridSize - 1, dir: 3 };
     const pos1 = p1 || default1;
     const pos2 = p2 || default2;
-
-    ctx.drawImage(ratImage, pos1.x * cellWidth + cellWidth / 2 - 12, pos1.y * cellHeight + cellHeight / 2 - 12, 24, 24);
-    ctx.fillText("Player 1", pos1.x * cellWidth + cellWidth / 2, pos1.y * cellHeight + cellHeight / 2 + 18);
-
-    ctx.drawImage(ratImage, pos2.x * cellWidth + cellWidth / 2 - 12, pos2.y * cellHeight + cellHeight / 2 - 12, 24, 24);
-    ctx.fillText("Player 2", pos2.x * cellWidth + cellWidth / 2, pos2.y * cellHeight + cellHeight / 2 + 18);
+  
+    // jogador 1
+    ctx.drawImage(
+      ratImage,
+      pos1.x * cellSize + cellSize / 2 - 12,
+      pos1.y * cellSize + cellSize / 2 - 12,
+      24,
+      24
+    );
+    ctx.fillText("Player 1", pos1.x * cellSize + cellSize / 2, pos1.y * cellSize + cellSize / 2 + 18);
+  
+    // jogador 2
+    ctx.drawImage(
+      ratImage,
+      pos2.x * cellSize + cellSize / 2 - 12,
+      pos2.y * cellSize + cellSize / 2 - 12,
+      24,
+      24
+    );
+    ctx.fillText("Player 2", pos2.x * cellSize + cellSize / 2, pos2.y * cellSize + cellSize / 2 + 18);
+  
+    // desenha setas apenas quando não está executando
+    if (!executandoRef.current && !p1 && !p2 && arrowImage.complete) {
+      const drawArrow = (player: any) => {
+        const dir = player.dir;
+        const cx = player.x * cellSize + cellSize / 2;
+        const cy = player.y * cellSize + cellSize / 2;
+        const size = 45; // seta mais robusta e visível
+        const offset = 7; // distância ideal para estar na frente, mas dentro da célula
+      
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate((Math.PI / 2) * (dir - 1));
+        ctx.translate(65, -offset); // empurra suavemente à frente
+        ctx.drawImage(arrowImage, -size / 2, -size / 2, size, size);
+        ctx.restore();
+      };  
+      drawArrow(pos1);
+      drawArrow(pos2);
+    }
   };
-
 
   const handleRun = (codigo1: string = code1, codigo2: string = code2) => {
     if (!ratImage.complete) {
@@ -276,10 +316,10 @@ export default function GameRoom() {
   }, [roomCode, hasJoined]);
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-b from-slate-900 to-slate-800 text-white">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+   <div className="min-h-screen p-2 sm:p-4 lg:p-8 bg-transparent text-white w-full max-w-full mx-auto">
+    <div className="w-full max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 sm:gap-6 items-start">
         <div>
-          <div className="bg-slate-700 p-4 rounded-lg mb-6">
+          <div className="bg-slate-700 p-2 sm:p-4 rounded-lg mb-4 sm:mb-6">
             <h2 className="text-lg font-semibold mb-2">Como jogar</h2>
             <pre className="text-sm whitespace-pre-wrap text-green-200">
   {`
@@ -292,19 +332,21 @@ export default function GameRoom() {
     repita N vezes {
       mover_frente();
     }
+
+  Substitua "N" para o total de vezes que achar necessário
   
   Objetivo: Programe os dois para chegarem juntos ao destino!
   `}
             </pre>
           </div>
   
-          <div className="bg-slate-700 p-4 rounded-lg">
+          <div className="bg-slate-700 p-2 sm:p-4 rounded-lg">
             <h2 className="text-lg font-semibold mb-2">Sala: <span className="text-blue-400">{roomCode}</span></h2>
-            <p className="text-sm mb-4">
+            <p className="text-sm mb-2 sm:mb-4">
               Você está logado como: <strong>{user?.name}</strong> ({isHost ? "player1" : "player2"})
             </p>
   
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
               <div>
                 <h3 className="text-sm font-bold mb-1">Jogador 1: {player1?.name}</h3>
                 <textarea
@@ -333,7 +375,7 @@ export default function GameRoom() {
             </div>
   
             {isHost && (
-              <div className="mt-4">
+              <div className="mt-2 sm:mt-4">
                 <Button onClick={handleExecute} className="bg-green-600 hover:bg-green-500">
                   Executar Código
                 </Button>
@@ -342,12 +384,13 @@ export default function GameRoom() {
           </div>
         </div>
   
-        {/* Canvas adaptável com largura total do container */}
-        <div ref={containerRef} className="bg-white rounded-lg overflow-hidden p-4 w-full h-full flex items-center justify-center">
-          <canvas ref={canvasRef} className="bg-black rounded-lg w-full h-auto block" />
+        <div
+          ref={containerRef}
+          className="game-canvas-container bg-white rounded-lg overflow-hidden p-0 w-full aspect-square flex items-center justify-center"
+        >
+          <canvas ref={canvasRef} className="bg-black rounded-lg w-full h-full block" />
         </div>
       </div>
     </div>
   );
-  
 }

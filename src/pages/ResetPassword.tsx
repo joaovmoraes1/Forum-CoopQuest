@@ -26,9 +26,9 @@ const ResetPassword = () => {
 
   if (!token) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh] bg-[#1a2233]">
-        <div className="bg-[#232c3d] rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
-          <img src="/coopquest-logo.png" alt="Logo" className="w-16 h-16 mx-auto mb-2" />
+      <div className="flex items-center justify-center min-h-[60vh] bg-transparent px-2 sm:px-4 lg:px-8">
+        <div className="bg-[#232c3d] rounded-2xl shadow-2xl p-2 sm:p-6 max-w-sm sm:max-w-md w-full text-center">
+          <img src="/coopquest-logo.png" alt="Logo" className="h-20 w-23 sm:h-24 sm:w-24 mx-auto mb-2" />
           <h2 className="text-2xl font-bold text-orange-500 mb-4">Token inválido</h2>
           <p className="text-gray-300">O link de redefinição de senha é inválido ou expirou.</p>
         </div>
@@ -37,14 +37,14 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh] bg-[#1a2233]">
-      <div className="bg-[#232c3d] rounded-2xl shadow-2xl p-0 max-w-md w-full">
+    <div className="flex items-center justify-center min-h-[80vh] bg-transparent px-2 sm:px-4 lg:px-8">
+      <div className="bg-[#232c3d] rounded-2xl shadow-2xl p-0 max-w-sm sm:max-w-md w-full">
         {/* Topo do card */}
-        <div className="rounded-t-2xl bg-[#232c3d] py-6 flex flex-col items-center">
-          <img src="/coopquest-logo.png" alt="Logo" className="w-16 h-16 mb-2" />
+        <div className="rounded-t-2xl bg-[#232c3d] py-2 sm:py-6 flex flex-col items-center">
+          <img src="/coopquest-logo.png" alt="Logo" className="h-20 w-20 sm:h-24 sm:w-24 mb-2" />
           <h1 className="text-3xl font-extrabold text-orange-500 mb-1 drop-shadow">Redefinir Senha</h1>
         </div>
-        <div className="px-10 py-8">
+        <div className="px-2 sm:px-10 py-2 sm:py-8">
           <p className="text-gray-300 text-base text-center mb-6">
             Crie uma nova senha forte para sua conta.
           </p>

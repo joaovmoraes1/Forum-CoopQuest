@@ -41,6 +41,7 @@ interface Message {
   date: string;
   isRead: boolean;
 }
+
 const MembrosTab = ({ members, onViewProfile, onSendMessage }: { 
   members: User[], 
   onViewProfile: (member: User) => void, 
@@ -55,24 +56,24 @@ const MembrosTab = ({ members, onViewProfile, onSendMessage }: {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-text">Membros em Destaque</h2>
-        <div className="px-4 py-1 bg-green-900/50 text-green-400 border border-green-800/50 rounded-full text-sm shadow-sm">
+        <div className="px-2 sm:px-4 lg:px-8 py-1 bg-green-900/50 text-green-400 border border-green-800/50 rounded-full text-sm shadow-sm">
           Online: {filteredMembers.length}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {filteredMembers.map((member) => (
           <div key={member.id} className="bg-secondary rounded-2xl shadow-2xl border border-border transform transition-all hover:shadow-3xl duration-500 overflow-hidden">
-            <div className="p-6 flex items-center space-x-4">
+            <div className="p-2 sm:p-6 flex items-center space-x-4">
               <div className="relative">
-                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-coopquest-yellow/50 shadow-sm">
+                <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full overflow-hidden border-2 border-coopquest-yellow/50 shadow-sm">
                   <img
                     src={member.avatar || '/default-avatar.png'}
                     alt={member.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-auto"
                   />
                 </div>
-                <span className="absolute bottom-0 right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-secondary"></span>
+                <span className="absolute bottom-0 right-1 h-6 w-6 bg-green-500 rounded-full border-2 border-secondary"></span>
               </div>
 
               <div>
@@ -83,13 +84,12 @@ const MembrosTab = ({ members, onViewProfile, onSendMessage }: {
                 <p className="text-sm text-text/80 font-light">
                   Membro desde: {new Date(member.createdAt).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })}
                 </p>
-            
               </div>
             </div>
 
             <div className="flex border-t border-border">
               <button
-                className="flex-1 p-4 text-coopquest-yellow hover:bg-secondary/70 transition-colors text-sm font-medium"
+                className="flex-1 p-2 sm:p-6 text-coopquest-yellow hover:bg-secondary/70 transition-colors text-sm font-medium"
                 onClick={() => {
                   onViewProfile(member);
                 }}
@@ -98,7 +98,7 @@ const MembrosTab = ({ members, onViewProfile, onSendMessage }: {
               </button>
               {user?.id !== member.id && (
                 <button
-                  className="flex-1 p-4 text-blue-400 hover:bg-secondary/70 transition-colors text-sm font-medium"
+                  className="flex-1 p-2 sm:p-6 text-blue-400 hover:bg-secondary/70 transition-colors text-sm font-medium"
                   onClick={() => {
                     onSendMessage(member);
                   }}
@@ -163,7 +163,7 @@ const EventosTab = ({ events }: { events: Event[] }) => {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-text">Próximos Eventos</h2>
-        <div className="px-4 py-1 bg-blue-900/50 text-blue-400 border border-blue-800/50 rounded-full text-sm shadow-sm">
+        <div className="px-2 sm:px-4 lg:px-8 py-1 bg-blue-900/50 text-blue-400 border border-blue-800/50 rounded-full text-sm shadow-sm">
           {events.length} Eventos Agendados
         </div>
       </div>
@@ -173,7 +173,7 @@ const EventosTab = ({ events }: { events: Event[] }) => {
           <div key={event.id} className="bg-secondary rounded-2xl shadow-2xl border border-border transform transition-all hover:shadow-3xl duration-500 overflow-hidden">
             <div className={`h-1 ${event.type === 'Competição' ? 'bg-coopquest-yellow' : 'bg-blue-500'}`}></div>
 
-            <div className="p-6">
+            <div className="p-2 sm:p-6">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-3">
                   {event.type === 'Competição' ? (
@@ -184,7 +184,7 @@ const EventosTab = ({ events }: { events: Event[] }) => {
                   <h3 className="text-2xl font-bold text-text">{event.title}</h3>
                 </div>
                 <span
-                  className={`px-4 py-1 rounded-md text-white text-sm font-medium ${
+                  className={`px-2 sm:px-4 lg:px-8 py-1 rounded-md text-white text-sm font-medium ${
                     event.type === 'Competição' ? 'bg-coopquest-yellow' : 'bg-blue-500'
                   } shadow-sm`}
                 >
@@ -208,15 +208,15 @@ const EventosTab = ({ events }: { events: Event[] }) => {
               </div>
             </div>
 
-            <div className="flex justify-end gap-4 p-4 border-t border-border">
+            <div className="flex justify-end gap-4 p-2 sm:p-6 border-t border-border">
               <button
-                className="px-4 py-2 text-text/80 hover:text-text hover:bg-secondary/70 rounded-xl transition-colors font-medium"
+                className="px-2 sm:px-4 lg:px-8 py-2 text-text/80 hover:text-text hover:bg-secondary/70 rounded-xl transition-colors font-medium"
                 onClick={() => handleMoreInfo(event)}
               >
                 Mais Informações
               </button>
               <button
-                className={`px-4 py-2 text-white rounded-xl font-medium ${
+                className={`px-2 sm:px-4 lg:px-8 py-2 text-white rounded-xl font-medium ${
                   event.type === 'Competição'
                     ? 'bg-coopquest-yellow hover:bg-yellow-400'
                     : 'bg-blue-500 hover:bg-blue-600'
@@ -234,7 +234,6 @@ const EventosTab = ({ events }: { events: Event[] }) => {
   );
 };
 
-
 const Comunidade = () => {
   const { isAuthenticated, isLoading: authLoading, user } = useAuth();
   const [members, setMembers] = useState<User[]>([]);
@@ -247,42 +246,39 @@ const Comunidade = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [prevUnreadCount, setPrevUnreadCount] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [showUpdateToast, setShowUpdateToast] = useState(false); // Controle único do toast
+  const [showUpdateToast, setShowUpdateToast] = useState(false);
   const navigate = useNavigate();
 
-  // Fetch unread messages count com controle de toast
   const fetchUnreadCount = useCallback(async () => {
-  setIsRefreshing(true);
-  try {
-    const response = await api.get('/messages/received');
-    const messages: Message[] = response.data.messages || [];
-    const newUnreadCount = messages.filter((msg) => !msg.isRead).length;
-    setUnreadCount(newUnreadCount);
+    setIsRefreshing(true);
+    try {
+      const response = await api.get('/messages/received');
+      const messages: Message[] = response.data.messages || [];
+      const newUnreadCount = messages.filter((msg) => !msg.isRead).length;
+      setUnreadCount(newUnreadCount);
 
-    if (showUpdateToast) {
-      toast.success(`Mensagens atualizadas! Você tem ${newUnreadCount} mensagem(s) não lida(s).`);
-      setShowUpdateToast(false);
+      if (showUpdateToast) {
+        toast.success(`Mensagens atualizadas! Você tem ${newUnreadCount} mensagem(s) não lida(s).`);
+        setShowUpdateToast(false);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar contagem de mensagens não lidas:', error);
+      toast.error('Erro ao atualizar mensagens. Tente novamente.');
+    } finally {
+      setIsRefreshing(false);
     }
-  } catch (error) {
-    console.error('Erro ao buscar contagem de mensagens não lidas:', error);
-    toast.error('Erro ao atualizar mensagens. Tente novamente.');
-  } finally {
-    setIsRefreshing(false);
-  }
-}, [showUpdateToast]);
+  }, [showUpdateToast]);
 
-  // Fetch unread messages initially and every 10 seconds (sem toast automático)
   useEffect(() => {
     if (isAuthenticated && user) {
       fetchUnreadCount();
       const interval = setInterval(() => {
-        fetchUnreadCount(); // Atualização automática sem toast
+        fetchUnreadCount();
       }, 10000);
       return () => clearInterval(interval);
     }
   }, [isAuthenticated, user, fetchUnreadCount]);
 
-  // Toast notification for new messages
   useEffect(() => {
     if (unreadCount > prevUnreadCount && unreadCount > 0) {
       toast.info(`Você tem ${unreadCount} nova(s) mensagem(ns)!`, {
@@ -299,7 +295,6 @@ const Comunidade = () => {
     setPrevUnreadCount(unreadCount);
   }, [unreadCount, user, prevUnreadCount]);
 
-  // Fetch community data
   const fetchData = async () => {
     try {
       setIsLoading(true);
@@ -351,24 +346,23 @@ const Comunidade = () => {
     }
   }, [isAuthenticated, authLoading, navigate, user]);
 
-  // Disparar toast ao abrir o modal de mensagens ou clicar em Atualizar
-const handleOpenMessages = async () => {
-  if (user) {
-    setShowUpdateToast(true);
-    try {
-      await api.post('/messages/mark-read');
-      await fetchUnreadCount(); // Atualiza a contagem após marcar como lido
-      setShowProfileModal(user);
-    } catch (error) {
-      console.error('Erro ao marcar mensagens como lidas:', error);
-      toast.error('Erro ao atualizar status das mensagens.');
+  const handleOpenMessages = async () => {
+    if (user) {
+      setShowUpdateToast(true);
+      try {
+        await api.post('/messages/mark-read');
+        await fetchUnreadCount();
+        setShowProfileModal(user);
+      } catch (error) {
+        console.error('Erro ao marcar mensagens como lidas:', error);
+        toast.error('Erro ao atualizar status das mensagens.');
+      }
     }
-  }
-};
+  };
 
   const handleUpdateClick = () => {
-    setShowUpdateToast(true); // Ativar toast para a próxima chamada de fetchUnreadCount
-    fetchUnreadCount(); // Atualizar ao clicar
+    setShowUpdateToast(true);
+    fetchUnreadCount();
   };
 
   if (authLoading || isLoading) {
@@ -383,72 +377,71 @@ const handleOpenMessages = async () => {
   }
 
   return (
-    <main className="flex-grow py-12 min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
-      <div className="bg-coopquest-yellow text-white py-6 px-4 sm:px-6 lg:px-8">
-        <div className="container mx-auto">
+   <main className="flex-grow py-12 min-h-screen" style={{ backgroundColor: 'transparent' }}>
+      <div className="bg-coopquest-yellow text-white py-6 px-2 sm:px-4 lg:px-8">
+        <div className="w-full max-w-xl mx-auto">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-200 mb-2 tracking-tight">
             Comunidade CoopQuest
           </h1>
-          <p className="text-base sm:text-lg text-gray-100 max-w-2xl font-light">
+          <p className="text-base sm:text-lg text-gray-100 w-full max-w-xl mx-auto font-light">
             Conheça outros membros da comunidade e participe das discussões.
           </p>
         </div>
       </div>
 
-      <div className="mb-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          <div className="flex bg-secondary/50 rounded-xl overflow-hidden shadow-lg">
-            <button
-              className={`px-6 py-3 flex items-center gap-2 text-text font-medium ${
-                activeTab === 'membros' ? 'bg-secondary/80' : 'hover:bg-secondary/70'
-              } transition-colors duration-300`}
-              onClick={() => setActiveTab('membros')}
-            >
-              <UsersIcon size={20} className="text-coopquest-yellow" />
-              <span>Membros</span>
-            </button>
-            <button
-              className={`px-6 py-3 flex items-center gap-2 text-text font-medium ${
-                activeTab === 'eventos' ? 'bg-secondary/80' : 'hover:bg-secondary/70'
-              } transition-colors duration-300`}
-              onClick={() => setActiveTab('eventos')}
-            >
-              <CalendarIcon size={20} className="text-coopquest-yellow" />
-              <span>Eventos</span>
-            </button>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleOpenMessages}
-              className="relative flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-            >
-              <MessageSquare className="w-5 h-5" />
-              <span>Minhas Mensagens</span>
-              {unreadCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center">
-                  {unreadCount}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={handleUpdateClick}
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors flex items-center gap-2 disabled:opacity-50"
-              disabled={isRefreshing}
-            >
-              {isRefreshing ? (
-                <>
-                  <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-r-transparent"></div>
-                  Atualizando...
-                </>
-              ) : (
-                'Atualizar'
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="px-4 sm:px-6 lg:px-8">
+  <div className="mb-8 px-2 sm:px-4 lg:px-8">
+  <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
+    <div className="flex bg-secondary/50 rounded-xl overflow-hidden shadow-lg">
+      <button
+        className={`px-2 py-1 sm:px-3 sm:py-2 flex items-center gap-1 sm:gap-2 text-text font-medium ${
+          activeTab === 'membros' ? 'bg-secondary/80' : 'hover:bg-secondary/70'
+        } transition-colors duration-300`}
+        onClick={() => setActiveTab('membros')}
+      >
+        <UsersIcon size={16} className="text-coopquest-yellow" />
+        <span className="text-xs sm:text-sm">Membros</span>
+      </button>
+      <button
+        className={`px-2 py-1 sm:px-3 sm:py-2 flex items-center gap-1 sm:gap-2 text-text font-medium ${
+          activeTab === 'eventos' ? 'bg-secondary/80' : 'hover:bg-secondary/70'
+        } transition-colors duration-300`}
+        onClick={() => setActiveTab('eventos')}
+      >
+        <CalendarIcon size={16} className="text-coopquest-yellow" />
+        <span className="text-xs sm:text-sm">Eventos</span>
+      </button>
+    </div>
+    <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+      <button
+        onClick={handleOpenMessages}
+        className="relative flex items-center gap-1 px-3 py-2 sm:px-4 sm:py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors w-full sm:w-auto"
+      >
+        <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
+        <span className="text-xs sm:text-sm">Minhas Mensagens</span>
+        {unreadCount > 0 && (
+          <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+            {unreadCount}
+          </span>
+        )}
+      </button>
+      <button
+        onClick={handleUpdateClick}
+        className="px-3 py-2 sm:px-4 sm:py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors flex items-center gap-1 sm:gap-2 disabled:opacity-50 w-full sm:w-auto"
+        disabled={isRefreshing}
+      >
+        {isRefreshing ? (
+          <>
+            <div className="inline-block h-3 w-3 sm:h-4 sm:w-4 animate-spin rounded-full border-2 border-white border-r-transparent"></div>
+            <span className="text-xs sm:text-sm">Atualizando...</span>
+          </>
+        ) : (
+          <span className="text-xs sm:text-sm">Atualizar</span>
+        )}
+      </button>
+    </div>
+  </div>
+</div>
+      <div className="px-2 sm:px-4 lg:px-8">
         {activeTab === 'membros' && (
           <MembrosTab 
             members={members} 
@@ -457,30 +450,29 @@ const handleOpenMessages = async () => {
           />
         )}
         {activeTab === 'eventos' && <EventosTab events={events} />}
-     
       </div>
 
-  {showMessageModal && user && (
-<ChatModal
-  userId={user.id}
-  userAvatar={user.avatar} 
-  recipient={{
-    id: showMessageModal.id,
-    name: showMessageModal.name,
-    avatar: showMessageModal.avatar,
-  }}
-  onClose={() => setShowMessageModal(null)}
-/>
-)}
-  {showProfileModal && (
-    <ProfileModal
-      user={showProfileModal}
-      onClose={() => setShowProfileModal(null)}
-      initialTab={showProfileModal.id === user?.id ? 'received' : 'info'}
-      isOwnProfile={showProfileModal.id === user?.id}
-      onOpenChat={(member) => setShowMessageModal(member)} 
-    />
-  )}
+      {showMessageModal && user && (
+        <ChatModal
+          userId={user.id}
+          userAvatar={user.avatar} 
+          recipient={{
+            id: showMessageModal.id,
+            name: showMessageModal.name,
+            avatar: showMessageModal.avatar,
+          }}
+          onClose={() => setShowMessageModal(null)}
+        />
+      )}
+      {showProfileModal && (
+        <ProfileModal
+          user={showProfileModal}
+          onClose={() => setShowProfileModal(null)}
+          initialTab={showProfileModal.id === user?.id ? 'received' : 'info'}
+          isOwnProfile={showProfileModal.id === user?.id}
+          onOpenChat={(member) => setShowMessageModal(member)} 
+        />
+      )}
     </main>
   );
 };

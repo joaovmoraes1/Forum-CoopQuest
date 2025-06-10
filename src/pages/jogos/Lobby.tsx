@@ -72,24 +72,22 @@ export default function Lobby() {
 
     const toastId = toast.loading("Entrando na sala...");
 
-    // Espera meio segundo antes de tentar entrar na sala
     setTimeout(() => {
       socket.emit("join_game", {
         code: roomCode,
         player: { id: socket.id, name: user.name },
       });
 
-      // A resposta é tratada no useEffect
       toast.dismiss(toastId);
     }, 500);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-8 min-h-screen text-white text-xl">
-      <h1 className="text-4xl font-bold mb-6">Lobby de Missão Cooperativa</h1>
+    <div className="flex flex-col items-center justify-center p-2 sm:p-4 lg:p-8 min-h-screen text-white text-xl w-full max-w-full mx-auto">
+      <h1 className="text-4xl font-bold mb-4 sm:mb-6">Lobby de Missão Cooperativa</h1>
   
       <Button
-        className="mb-6 bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 text-lg font-semibold rounded-lg"
+        className="mb-4 sm:mb-6 bg-amber-500 hover:bg-amber-600 text-white px-4 sm:px-6 py-2 sm:py-3 text-lg font-semibold rounded-lg"
         onClick={createRoom}
       >
         Criar Sala
@@ -100,11 +98,11 @@ export default function Lobby() {
           placeholder="Código da Sala"
           value={roomCode}
           onChange={(e) => setRoomCode(e.target.value)}
-          className="w-full px-4 py-3 text-lg bg-slate-800 text-white border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+          className="w-full px-4 py-2 sm:py-3 text-lg bg-slate-800 text-white border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
         />
         <Button
           onClick={joinRoom}
-          className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 text-lg font-semibold rounded-lg"
+          className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white px-4 sm:px-6 py-2 sm:py-3 text-lg font-semibold rounded-lg"
         >
           Entrar na Sala
         </Button>

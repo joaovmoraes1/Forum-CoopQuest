@@ -18,20 +18,20 @@ const SearchBar = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative w-full"
+      className="relative w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto"
       style={{ fontSize: `${fontSize}px` }}
     >
       <input
         type="text"
-        placeholder="Buscar no fórum..."
-        className="w-full rounded-xl bg-gray-700 px-4 py-3 text-white placeholder-gray-300 border border-gray-600/50 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300"
+        className="w-full px-3 sm:px-4 lg:px-8 py-2 rounded-full bg-gray-600/50 border border-gray-200 focus:border-gray-400 transition-colors text-white"
+        placeholder="Search the forum..."
         value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+        onChange={e => setSearchQuery(e.target.value)}
       />
       <button
         type="submit"
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-200 hover:text-orange-400 transition-all duration-300"
-        aria-label="Buscar"
+        className="absolute top-1/2 -translate-y-1/2 right-3 sm:right-4 text-gray-400 hover:text-gray-600"
+        aria-label="Search"
       >
         <Search size={20} />
       </button>

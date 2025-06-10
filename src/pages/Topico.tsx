@@ -9,7 +9,7 @@ import { Eye, Heart, Share2, Flag, MessageSquare, Clock } from 'lucide-react';
 import ReportModal from '../components/ReportModal';
 import { useAccessibility } from '@/components/Layout';
 import ChatModal from '../components/ChatModal';
-import TopicContent from '@/components/TopicContent'; // Importação do componente de Markdown
+import TopicContent from '@/components/TopicContent';
 
 interface AuthorUser {
   name: string;
@@ -67,8 +67,10 @@ const Topico: React.FC = () => {
 
       try {
         const response = await api.get(`/topics/${id}`);
+        console.log('API Response:', response.data); // Debug log
         setTopic(response.data);
       } catch (error: any) {
+        console.error('API Error:', error.response?.data || error.message); // Debug log
         let errorMessage = 'Erro ao carregar o tópico.';
         if (error.response) {
           if (error.response.status === 404) {
@@ -99,7 +101,7 @@ const Topico: React.FC = () => {
     }
 
     if (!newReply.trim()) {
-      toast.error('A resposta não pode estar vazia.');
+      toast.error('Você precisa digitar uma resposta.');
       return;
     }
 
@@ -227,7 +229,7 @@ const Topico: React.FC = () => {
   if (!topic) {
     return (
       <div
-        className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800"
+        className="flex items-center justify-center min-h-screen bg-transparent px-2 sm:px-4 lg:px-8"
         style={{ fontSize: `${fontSize}px` }}
       >
         <div className="text-center text-white">
@@ -246,11 +248,11 @@ const Topico: React.FC = () => {
 
   return (
     <div
-      className="py-16 bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen"
+      className="py-12 px-2 sm:px-4 lg:px-8 bg-transparent min-h-screen w-full max-w-full mx-auto"
       style={{ fontSize: `${fontSize}px` }}
     >
-      <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl mb-10 p-8 border border-gray-600/50 mx-4">
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-200 mb-6 leading-tight tracking-tight pt-12">
+      <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl mb-10 p-2 sm:p-6 border border-gray-600/50 w-full">
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-200 mb-6 leading-tight tracking-tight">
           {topic.title}
         </h1>
         <div className="flex items-center gap-4 mb-6">
@@ -258,7 +260,7 @@ const Topico: React.FC = () => {
             <img
               src={authorAvatarUrl}
               alt={topic.authorUser.name}
-              className="w-12 h-12 rounded-full object-cover border-2 border-orange-400/50 shadow-sm hover:scale-105 transition"
+              className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover border-2 border-orange-400/50 shadow-sm hover:scale-105 transition"
               onError={(e) => {
                 e.currentTarget.src = 'https://via.placeholder.com/150';
               }}
@@ -313,7 +315,7 @@ const Topico: React.FC = () => {
             </span>
           ))}
         </div>
-        <div className="flex flex-wrap gap-6 text-gray-200 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:flex md:flex-row md:gap-6 text-gray-200 text-sm">
           <div className="flex items-center gap-2">
             <Eye size={20} className="text-orange-400" />
             <span className="font-medium">{topic.views} Visualizações</span>
@@ -329,15 +331,14 @@ const Topico: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl p-8 mb-10 border border-gray-600/50 mx-4">
+      <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl p-2 sm:p-6 mb-10 border border-gray-600/50 w-full">
         <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
           <span className="text-orange-400">Conteúdo do Tópico</span>
         </h2>
-        {/* Aqui está a alteração: renderização do conteúdo em Markdown */}
         <TopicContent content={topic.content} />
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-10 mx-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10 w-full">
         <Button
           onClick={handleLikeTopic}
           className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg flex items-center gap-2 transform transition-all hover:scale-105 duration-300"
@@ -365,7 +366,7 @@ const Topico: React.FC = () => {
         contentType="topic"
       />
 
-      <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl p-8 mb-10 border border-gray-600/50 mx-4">
+      <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl p-2 sm:p-6 mb-10 border border-gray-600/50 w-full">
         <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
           <MessageSquare size={24} className="text-orange-400" /> Respostas ({topic.repliesCount})
         </h2>
@@ -379,77 +380,70 @@ const Topico: React.FC = () => {
                 : 'http://localhost:3000/default-avatar.png';
 
               return (
-                <div
-                  key={reply.id}
-                  className="bg-gray-700/50 rounded-xl p-6 shadow-md hover:bg-gray-600/50 transition-all duration-300 border border-gray-600/30 mx-4"
-                >
-                  <div className="flex items-start gap-4">
-                    <Link to={`/perfil/${reply.authorId}`}>
-                      <img
-                        src={replyAvatarUrl}
-                        alt={reply.authorUser.name}
-                        className="w-12 h-12 rounded-full object-cover border-2 border-orange-400/50 shadow-sm hover:scale-105 transition"
-                        onError={(e) => {
-                          e.currentTarget.src = 'https://via.placeholder.com/150';
-                        }}
-                      />
-                    </Link>
-                    <div className="flex-1">
-                      <div className="flex justify-between items-center mb-3">
-                        <div className="flex items-center gap-3">
-                          <Link
-                            to={`/perfil/${reply.authorId}`}
-                            className="text-orange-400 font-semibold hover:underline transition-colors duration-300"
-                          >
-                            {reply.authorUser.name}
-                          </Link>
-                          {user?.id !== reply.authorId && (
-                            <Button
-                              size="sm"
-                              className="ml-2 bg-coopquest-yellow hover:bg-yellow-400 text-black font-semibold py-1 px-3 rounded-xl shadow"
-                              onClick={() =>
-                                setShowMessageModal({
-                                  id: reply.authorId,
-                                  name: reply.authorUser.name,
-                                  avatar: reply.authorUser.avatar,
-                                })
-                              }
-                            >
-                              Conversar
-                            </Button>
-                          )}
-                          <span className="text-gray-200 text-sm">
-                            {new Date(reply.date).toLocaleDateString('pt-BR', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric',
-                            })}
-                          </span>
-                        </div>
+                <div key={reply.id} className="resposta-container">
+                  <Link to={`/perfil/${reply.authorId}`}>
+                    <img
+                      src={replyAvatarUrl}
+                      alt={reply.authorUser.name}
+                      className="resposta-avatar"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://via.placeholder.com/150';
+                      }}
+                    />
+                  </Link>
+                  <div className="flex-1">
+                    <div className="resposta-header">
+                      <Link
+                        to={`/perfil/${reply.authorId}`}
+                        className="text-orange-400 font-semibold hover:underline transition-colors duration-300"
+                      >
+                        {reply.authorUser.name}
+                      </Link>
+                      {user?.id !== reply.authorId && (
                         <Button
-                          onClick={() => handleLikeReply(reply.id)}
-                          variant="ghost"
-                          className="text-gray-200 hover:text-orange-400 flex items-center gap-2 transition-colors duration-300"
+                          size="sm"
+                          className="ml-2 bg-coopquest-yellow hover:bg-yellow-400 text-black font-semibold py-1 px-3 rounded-xl shadow"
+                          onClick={() =>
+                            setShowMessageModal({
+                              id: reply.authorId,
+                              name: reply.authorUser.name,
+                              avatar: reply.authorUser.avatar,
+                            })
+                          }
                         >
-                          <Heart size={18} /> {reply.likes}
+                          Conversar
                         </Button>
-                      </div>
-                      <p className="text-gray-200 leading-relaxed font-light">{reply.content}</p>
+                      )}
+                      <span className="text-gray-200 text-sm">
+                        {new Date(reply.date).toLocaleDateString('pt-BR', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </span>
+                      <Button
+                        onClick={() => handleLikeReply(reply.id)}
+                        variant="ghost"
+                        className="like-button text-gray-200 hover:text-orange-400 flex items-center gap-2 transition-colors duration-300"
+                      >
+                        <Heart size={18} /> {reply.likes}
+                      </Button>
                     </div>
+                    <p className="resposta-content">{reply.content}</p>
                   </div>
                 </div>
               );
             })}
           </div>
         ) : (
-          <div className="bg-gray-700/50 rounded-xl p-6 text-center text-gray-200 shadow-md border border-gray-600/30 mx-4">
+          <div className="bg-gray-700/50 rounded-xl p-2 sm:p-6 text-center text-gray-200 shadow-md border border-gray-600/30 w-full">
             Nenhuma resposta ainda. Seja o primeiro a responder!
           </div>
         )}
       </div>
 
       {isAuthenticated && (
-        <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl p-8 border border-gray-600/50 mx-4">
+        <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl p-2 sm:p-6 border border-gray-600/50 w-full">
           <h2 className="text-2xl font-bold text-white mb-6">Adicionar uma Resposta</h2>
           <form onSubmit={handleReplySubmit} className="space-y-6">
             <Textarea
@@ -476,7 +470,6 @@ const Topico: React.FC = () => {
         </div>
       )}
 
-      {/* Chat Modal para autor do tópico ou resposta */}
       {showMessageModal && user && (
         <ChatModal
           userId={user.id}

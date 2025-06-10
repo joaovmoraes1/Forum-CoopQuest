@@ -40,25 +40,25 @@ const EventsSection: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-      <h2 className="text-xl font-semibold text-white mb-4">Eventos Próximos</h2>
+    <div className="w-full max-w-4xl mx-auto bg-gray-800 p-2 sm:p-6 rounded-lg shadow-lg">
+      <h2 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-4">Eventos Próximos</h2>
       {events.length > 0 ? (
-        <ul className="space-y-4">
+        <ul className="grid grid-cols-1 gap-2 sm:gap-4">
           {events.map(event => (
-            <li key={event.id} className="bg-gray-700 p-4 rounded-lg">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="text-lg font-semibold text-orange-400">{event.title}</h3>
-                  <p className="text-gray-300">{event.description}</p>
-                  <p className="text-gray-400">
+            <li key={event.id} className="bg-gray-700 p-2 sm:p-4 rounded-lg">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 items-center">
+                <div className="col-span-1 sm:col-span-2">
+                  <h3 className="text-base sm:text-lg font-semibold text-orange-400">{event.title}</h3>
+                  <p className="text-sm sm:text-base text-gray-300">{event.description}</p>
+                  <p className="text-xs sm:text-sm text-gray-400">
                     Data: {event.date} às {event.time}
                   </p>
-                  <p className="text-gray-400">Tipo: {event.type}</p>
-                  <p className="text-gray-400">Participantes: {event.participants}</p>
+                  <p className="text-xs sm:text-sm text-gray-400">Tipo: {event.type}</p>
+                  <p className="text-xs sm:text-sm text-gray-400">Participantes: {event.participants}</p>
                 </div>
                 <button
                   onClick={() => handleParticipate(event.id)}
-                  className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+                  className="w-full sm:w-auto px-2 sm:px-4 py-1 sm:py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 text-sm sm:text-base"
                 >
                   Participar
                 </button>
@@ -67,7 +67,7 @@ const EventsSection: React.FC = () => {
           ))}
         </ul>
       ) : (
-        <p className="text-gray-400">Nenhum evento disponível no momento.</p>
+        <p className="text-sm sm:text-base text-gray-400">Nenhum evento disponível no momento.</p>
       )}
     </div>
   );

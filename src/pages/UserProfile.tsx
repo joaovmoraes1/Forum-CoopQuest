@@ -85,13 +85,11 @@ const UserProfile = () => {
     if (!url) return null;
     try {
       const parsedUrl = new URL(url.startsWith('http') ? url : `https://${url}`);
-      const pathSegments = parsedUrl.pathname.split('/').filter(segment => segment); // Remove segmentos vazios
-      // Para LinkedIn, o nome de usuário vem depois de "/in/"
+      const pathSegments = parsedUrl.pathname.split('/').filter(segment => segment);
       if (parsedUrl.hostname.includes('linkedin.com')) {
         const inIndex = pathSegments.indexOf('in');
         return inIndex !== -1 && inIndex + 1 < pathSegments.length ? pathSegments[inIndex + 1] : null;
       }
-      // Para Instagram e GitHub, pegamos o primeiro segmento após a barra
       return pathSegments[0] || null;
     } catch {
       return null;
@@ -100,7 +98,7 @@ const UserProfile = () => {
 
   if (authLoading || isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+      <div className="flex justify-center items-center min-h-screen bg-transparent px-2 sm:px-4 lg:px-8">
         <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500" />
       </div>
     );
@@ -108,8 +106,8 @@ const UserProfile = () => {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
-        <Card className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 p-8">
+      <div className="flex justify-center items-center min-h-screen bg-transparent px-2 sm:px-4 lg:px-8">
+        <Card className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 p-2 sm:p-6">
           <h2 className="text-2xl font-bold text-white mb-4">Erro</h2>
           <p className="text-gray-200 mb-6">{error}</p>
           <Button
@@ -125,7 +123,7 @@ const UserProfile = () => {
 
   if (!user) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+      <div className="flex justify-center items-center min-h-screen bg-transparent px-2 sm:px-4 lg:px-8">
         <p className="text-gray-200">Usuário não encontrado.</p>
       </div>
     );
@@ -137,15 +135,15 @@ const UserProfile = () => {
   const githubUsername = extractUsername(user.githubUrl);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-12 px-4">
-      <div className="container mx-auto max-w-4xl">
+    <div className="min-h-screen bg-transparent py-12 px-2 sm:px-4 lg:px-8">
+      <div className="w-full max-w-4xl mx-auto">
         <Card className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50">
-          <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-8 rounded-t-2xl">
+          <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-2 sm:p-6 rounded-t-2xl">
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
               <img
                 src={avatarUrl}
                 alt={user.name}
-                className="h-24 w-24 rounded-full object-cover border-4 border-white shadow-lg"
+                className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover border-4 border-white shadow-lg"
               />
               <div className="text-center sm:text-left">
                 <h1 className="text-3xl font-extrabold text-white">{user.name}</h1>
@@ -154,84 +152,84 @@ const UserProfile = () => {
               </div>
             </div>
           </div>
-          <div className="p-8 space-y-6">
-         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-  {user.title && (
-    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
-      <Briefcase className="text-orange-400" size={24} />
-      <div>
-        <p className="text-sm text-gray-400">Título</p>
-        <p className="text-gray-200">{user.title}</p>
-      </div>
-    </div>
-  )}
-  {user.location && (
-    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
-      <MapPin className="text-orange-400" size={24} />
-      <div>
-        <p className="text-sm text-gray-400">Localização</p>
-        <p className="text-gray-200">{user.location}</p>
-      </div>
-    </div>
-  )}
-  {instagramUsername && (
-    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
-      <Instagram className="text-orange-400" size={24} />
-      <div>
-        <p className="text-sm text-gray-400">Instagram</p>
-        <a
-          href={user.instagramUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-400 hover:underline"
-        >
-          @{instagramUsername}
-        </a>
-      </div>
-    </div>
-  )}
- {linkedinUsername && (
-  <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50 transition-colors duration-300">
-    <Linkedin className="text-orange-400" size={24} />
-    <div>
-      <p className="text-sm text-gray-400">LinkedIn</p>
-      <a
-        href={user.linkedinUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-400 hover:underline"
-      >
-        @{linkedinUsername}
-      </a>
-    </div>
-  </div>
-)}
-  {user.githubUrl && (
-    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
-      <Github className="text-orange-400" size={24} />
-      <div>
-        <p className="text-sm text-gray-400">GitHub</p>
-        <a
-          href={user.githubUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-400 hover:underline"
-        >
-          @{extractUsername(user.githubUrl) || 'Usuário não especificado'}
-        </a>
-      </div>
-    </div>
-  )}
-  {user.skills && (
-    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
-      <Star className="text-orange-400" size={24} />
-      <div>
-        <p className="text-sm text-gray-400">Habilidades</p>
-        <p className="text-gray-200">{user.skills}</p>
-      </div>
-    </div>
-  )}
-</div>
+          <div className="p-2 sm:p-6 space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {user.title && (
+                <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
+                  <Briefcase className="text-orange-400" size={24} />
+                  <div>
+                    <p className="text-sm text-gray-400">Título</p>
+                    <p className="text-gray-200">{user.title}</p>
+                  </div>
+                </div>
+              )}
+              {user.location && (
+                <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
+                  <MapPin className="text-orange-400" size={24} />
+                  <div>
+                    <p className="text-sm text-gray-400">Localização</p>
+                    <p className="text-gray-200">{user.location}</p>
+                  </div>
+                </div>
+              )}
+              {instagramUsername && (
+                <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
+                  <Instagram className="text-orange-400" size={24} />
+                  <div>
+                    <p className="text-sm text-gray-400">Instagram</p>
+                    <a
+                      href={user.instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:underline"
+                    >
+                      @{instagramUsername}
+                    </a>
+                  </div>
+                </div>
+              )}
+              {linkedinUsername && (
+                  <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50 transition-colors duration-300">
+                    <Linkedin className="text-orange-400" size={24} />
+                    <div>
+                      <p className="text-sm text-gray-400">LinkedIn</p>
+                      <a
+                        href={user.linkedinUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-400 hover:underline"
+                      >
+                        @{linkedinUsername}
+                      </a>
+                    </div>
+                  </div>
+                )}
+              {user.githubUrl && (
+                <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
+                  <Github className="text-orange-400" size={24} />
+                  <div>
+                    <p className="text-sm text-gray-400">GitHub</p>
+                    <a
+                      href={user.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:underline"
+                    >
+                      @{extractUsername(user.githubUrl) || 'Usuário não especificado'}
+                    </a>
+                  </div>
+                </div>
+              )}
+              {user.skills && (
+                <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
+                  <Star className="text-orange-400" size={24} />
+                  <div>
+                    <p className="text-sm text-gray-400">Habilidades</p>
+                    <p className="text-gray-200">{user.skills}</p>
+                  </div>
+                </div>
+              )}
+            </div>
             {user.bio && (
               <div className="mt-6 p-4 rounded-lg bg-gray-600/30">
                 <h3 className="text-white text-xl font-bold mb-2">Sobre</h3>
@@ -239,7 +237,7 @@ const UserProfile = () => {
               </div>
             )}
           </div>
-          <div className="border-t border-gray-600/50 p-8 flex justify-end">
+          <div className="border-t border-gray-600/50 p-2 sm:p-6 flex justify-end">
             <Button
               onClick={() => navigate('/comunidade')}
               className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-3 px-6 rounded-xl"

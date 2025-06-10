@@ -14,6 +14,10 @@ async function main() {
   await prisma.report.deleteMany();
   await prisma.topicReply.deleteMany();
   await prisma.topic.deleteMany();
+  // Adicione esta linha para evitar erro de constraint:
+  if (prisma.passwordResetToken) {
+    await prisma.passwordResetToken.deleteMany();
+  }
   await prisma.user.deleteMany();
   await prisma.faq.deleteMany();
   await prisma.tutorial.deleteMany();
@@ -199,13 +203,13 @@ async function main() {
     ],
   });
 
-  // Seed Events
+  // Seed Events (datas atualizadas para o final do ano)
   await prisma.event.createMany({
     data: [
       {
         title: "Introdução à Lógica de Programação",
         description: "Aprenda os conceitos básicos de lógica de programação.",
-        date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // Daqui a 2 dias
+        date: new Date(new Date().getFullYear(), 10, 15, 18, 0, 0), // 15 de novembro, 18:00
         time: "18:00",
         participants: 0,
         type: "Workshop",
@@ -213,7 +217,7 @@ async function main() {
       {
         title: "Desafios de Lógica para Iniciantes",
         description: "Resolva problemas práticos de lógica de programação.",
-        date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // Daqui a 5 dias
+        date: new Date(new Date().getFullYear(), 11, 5, 19, 0, 0), // 5 de dezembro, 19:00
         time: "19:00",
         participants: 0,
         type: "Competicao",
@@ -221,14 +225,13 @@ async function main() {
       {
         title: "Lógica de Programação Avançada",
         description: "Aprofunde seus conhecimentos em lógica.",
-        date: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // Daqui a 10 dias
+        date: new Date(new Date().getFullYear(), 11, 20, 20, 0, 0), // 20 de dezembro, 20:00
         time: "20:00",
         participants: 0,
         type: "Meetup",
       },
     ],
   });
-
   // Fetch all created events
   const events = await prisma.event.findMany();
 

@@ -139,48 +139,48 @@ const Index = () => {
 
   return (
     <main className="flex-grow py-12 min-h-screen" style={{ backgroundColor: 'var(--background)', color: 'var(--text)' }}>
-      {/* Header Section */}
-      <div className="bg-coopquest-yellow text-white py-6 px-4 sm:px-6 lg:px-8">
-        <div className="container mx-auto">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-200 mb-2 tracking-tight">
-            Bem-vindo ao Fórum CoopQuest
-          </h1>
-          <p className="text-base sm:text-lg text-gray-100 max-w-2xl font-light">
-            Plataforma educacional para o ensino de lógica de programação através de jogos cooperativos
-          </p>
-        </div>
-      </div>
-
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-4 sm:px-6 lg:px-8 mt-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-2 sm:px-4 lg:px-8 mt-12">
+        {/* Header Section - bloco amarelo ocupa toda a largura */}
+        <div className="col-span-full">
+          <div className="bg-coopquest-yellow text-white py-6 px-2 sm:px-4 lg:px-8 w-full">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-2 tracking-tight text-white text-left">
+              Bem-vindo ao Fórum CoopQuest
+            </h1>
+            <p className="text-base sm:text-lg text-white/90 font-light text-left">
+              Plataforma educacional para o ensino de lógica de programação através de jogos cooperativos
+            </p>
+          </div>
+        </div>
+
         {/* Left Column: Topics and New Topic Form */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="md:col-span-2 space-y-8">
           {/* Recent Topics */}
           <Card className="bg-secondary rounded-2xl shadow-2xl border border-border transform transition-all hover:shadow-3xl duration-500">
-            <CardHeader className="border-b border-border pb-4">
+            <CardHeader className="border-b border-border p-2 sm:p-6">
               <CardTitle className="text-3xl font-bold text-text flex items-center gap-2">
                 <span className="text-coopquest-yellow">Tópicos Recentes</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent className="p-2 sm:p-6">
               <TopicsList topics={topics} isLoading={isLoadingTopics} />
-           <Button
-  className="mt-6 w-full bg-coopquest-yellow hover:bg-yellow-400 text-black font-semibold py-3 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300"
-  onClick={() => navigate('/topics')} // Redireciona para a página de tópicos
->
-  Ver Todos os Tópicos
-</Button>
+              <Button
+                className="mt-6 w-full bg-coopquest-yellow hover:bg-yellow-400 text-black font-semibold py-3 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300"
+                onClick={() => navigate('/topics')}
+              >
+                Ver Todos os Tópicos
+              </Button>
             </CardContent>
           </Card>
 
           {/* New Topic Form */}
           <Card className="bg-secondary rounded-2xl shadow-2xl border border-border transform transition-all hover:shadow-3xl duration-500">
-            <CardHeader className="border-b border-border pb-4">
+            <CardHeader className="border-b border-border p-2 sm:p-6">
               <CardTitle className="text-3xl font-bold text-text">
                 Criar Novo Tópico
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent className="p-2 sm:p-6">
               <NewTopicForm onTopicCreated={handleTopicCreated} />
             </CardContent>
           </Card>
@@ -190,28 +190,28 @@ const Index = () => {
         <div className="space-y-8">
           {/* Forum Stats */}
           <Card className="bg-secondary rounded-2xl shadow-2xl border border-border transform transition-all hover:shadow-3xl duration-500">
-            <CardHeader className="border-b border-border pb-4">
+            <CardHeader className="border-b border-border p-2 sm:p-6">
               <CardTitle className="text-2xl font-bold text-text">
                 Estatísticas do Fórum
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent className="p-2 sm:p-6">
               <div className="grid grid-cols-1 gap-4">
-                <div className="flex items-center p-4 bg-secondary/50 rounded-xl">
+                <div className="flex items-center p-2 sm:p-6 bg-secondary/50 rounded-xl">
                   <BookOpen className="mr-4 text-coopquest-yellow" size={28} />
                   <div>
                     <p className="font-bold text-3xl text-text">{stats.topics}</p>
                     <p className="text-sm text-text/80">Tópicos</p>
                   </div>
                 </div>
-                <div className="flex items-center p-4 bg-secondary/50 rounded-xl">
+                <div className="flex items-center p-2 sm:p-6 bg-secondary/50 rounded-xl">
                   <MessageSquare className="mr-4 text-coopquest-yellow" size={28} />
                   <div>
                     <p className="font-bold text-3xl text-text">{stats.replies}</p>
                     <p className="text-sm text-text/80">Respostas</p>
                   </div>
                 </div>
-                <div className="flex items-center p-4 bg-secondary/50 rounded-xl">
+                <div className="flex items-center p-2 sm:p-6 bg-secondary/50 rounded-xl">
                   <Users className="mr-4 text-coopquest-yellow" size={28} />
                   <div>
                     <p className="font-bold text-3xl text-text">{stats.members}</p>
@@ -224,12 +224,12 @@ const Index = () => {
 
           {/* Online Members */}
           <Card className="bg-secondary rounded-2xl shadow-2xl border border-border transform transition-all hover:shadow-3xl duration-500">
-            <CardHeader className="border-b border-border pb-4">
+            <CardHeader className="border-b border-border p-2 sm:p-6">
               <CardTitle className="text-2xl font-bold text-text flex items-center gap-2">
                 <Users size={24} className="text-coopquest-yellow" /> Membros Online
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent className="p-2 sm:p-6">
               {onlineMembers.length > 0 ? (
                 <ul className="space-y-4">
                   {onlineMembers.map((member) => (
@@ -241,25 +241,25 @@ const Index = () => {
                             "/fc1350ed-e4a8-43e7-8e1e-6a85832f72d6.png"
                           }
                           alt={member.name}
-                          className="w-12 h-12 rounded-full object-cover border-2 border-coopquest-yellow/50 shadow-sm"
+                          className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover border-2 border-coopquest-yellow"
                         />
-                        <span className="absolute bottom-0 right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-secondary"></span>
+                        <span className="absolute bottom-0 right-1 h-5 w-5 bg-green-500 rounded-full border-2 border-secondary"></span>
                       </div>
                       <span className="text-text font-medium">{member.name}</span>
-                            {user?.id !== member.id && (
-            <Button
-              size="sm"
-              className="ml-2 bg-coopquest-yellow hover:bg-yellow-400 text-black font-semibold py-1 px-3 rounded-xl shadow"
-              onClick={() => setShowMessageModal(member)}
-            >
-              Conversar
-            </Button>
-          )}
+                      {user?.id !== member.id && (
+                        <Button
+                          size="sm"
+                          className="ml-2 bg-coopquest-yellow hover:bg-yellow-400 text-black font-semibold py-1 px-2 sm:px-4 lg:px-8 rounded-xl shadow"
+                          onClick={() => setShowMessageModal(member)}
+                        >
+                          Conversar
+                        </Button>
+                      )}
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-center py-4 text-text/80">
+                <p className="text-center p-2 sm:p-6 text-text/80">
                   Nenhum membro online no momento
                 </p>
               )}
@@ -268,22 +268,22 @@ const Index = () => {
 
           {/* Daily Challenge */}
           <Card className="bg-secondary rounded-2xl shadow-2xl border border-border transform transition-all hover:shadow-3xl duration-500">
-            <CardHeader className="border-b border-border pb-4 bg-coopquest-yellow rounded-t-2xl">
+            <CardHeader className="border-b border-border p-2 sm:p-6 bg-coopquest-yellow rounded-t-2xl">
               <CardTitle className="text-2xl font-bold text-white flex items-center gap-2">
                 <Award size={24} className="text-white" /> Desafio do Dia
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent className="p-2 sm:p-6">
               {dailyChallenge ? (
-               <DailyChallenge
-               id={dailyChallenge.id}
-               title={dailyChallenge.title}
-               description={dailyChallenge.description}
-               tips={dailyChallenge.tips}
-               redirectAfterParticipation={true}
-             />
+                <DailyChallenge
+                  id={dailyChallenge.id}
+                  title={dailyChallenge.title}
+                  description={dailyChallenge.description}
+                  tips={dailyChallenge.tips}
+                  redirectAfterParticipation={true}
+                />
               ) : (
-                <p className="text-center py-4 text-text/80">
+                <p className="text-center p-2 sm:p-6 text-text/80">
                   Nenhum desafio disponível no momento.
                 </p>
               )}

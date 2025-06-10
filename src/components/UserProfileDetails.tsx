@@ -47,54 +47,54 @@ const UserProfileDetails: React.FC<Props> = ({ userId }) => {
     }
   };
 
-  if (!user) return <div className="text-white p-8">Carregando...</div>;
+  if (!user) return <div className="text-white p-2 sm:p-8 text-xs sm:text-sm">Carregando...</div>;
 
   return (
-    <Card className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50">
-      <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-8 rounded-t-2xl">
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+    <Card className="w-full max-w-2xl mx-auto bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50">
+      <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-4 sm:p-8 rounded-t-2xl">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
           <img
             src={user.avatar || '/default-avatar.png'}
             alt={user.name}
-            className="h-24 w-24 rounded-full object-cover border-4 border-white shadow-lg"
+            className="h-16 w-16 sm:h-24 sm:w-24 rounded-full object-cover border-4 border-white shadow-lg"
           />
           <div className="text-center sm:text-left">
-            <h1 className="text-3xl font-extrabold text-white">{user.name}</h1>
-            <p className="text-gray-200 text-lg">{user.email}</p>
-            <p className="text-sm text-gray-300">Membro desde {formatDate(user.createdAt)}</p>
+            <h1 className="text-xl sm:text-3xl font-extrabold text-white">{user.name}</h1>
+            <p className="text-sm sm:text-lg text-gray-200">{user.email}</p>
+            <p className="text-xs sm:text-sm text-gray-300">Membro desde {formatDate(user.createdAt)}</p>
           </div>
         </div>
       </div>
-      <div className="p-8 space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="p-4 sm:p-8 grid grid-cols-1 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
           {user.title && (
-            <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
-              <Briefcase className="text-orange-400" size={24} />
+            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg hover:bg-gray-600/50">
+              <Briefcase className="text-orange-400 w-4 h-4 sm:w-6 sm:h-6" />
               <div>
-                <p className="text-sm text-gray-400">Título</p>
-                <p className="text-gray-200">{user.title}</p>
+                <p className="text-xs sm:text-sm text-gray-400">Título</p>
+                <p className="text-sm sm:text-base text-gray-200">{user.title}</p>
               </div>
             </div>
           )}
           {user.location && (
-            <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
-              <MapPin className="text-orange-400" size={24} />
+            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg hover:bg-gray-600/50">
+              <MapPin className="text-orange-400 w-4 h-4 sm:w-6 sm:h-6" />
               <div>
-                <p className="text-sm text-gray-400">Localização</p>
-                <p className="text-gray-200">{user.location}</p>
+                <p className="text-xs sm:text-sm text-gray-400">Localização</p>
+                <p className="text-sm sm:text-base text-gray-200">{user.location}</p>
               </div>
             </div>
           )}
           {user.instagramUrl && (
-            <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
-              <Instagram className="text-orange-400" size={24} />
+            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg hover:bg-gray-600/50">
+              <Instagram className="text-orange-400 w-4 h-4 sm:w-6 sm:h-6" />
               <div>
-                <p className="text-sm text-gray-400">Instagram</p>
+                <p className="text-xs sm:text-sm text-gray-400">Instagram</p>
                 <a
                   href={user.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-400 hover:underline"
+                  className="text-blue-400 hover:underline text-sm sm:text-base"
                 >
                   @{extractUsername(user.instagramUrl)}
                 </a>
@@ -102,15 +102,15 @@ const UserProfileDetails: React.FC<Props> = ({ userId }) => {
             </div>
           )}
           {user.linkedinUrl && (
-            <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
-              <Linkedin className="text-orange-400" size={24} />
+            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg hover:bg-gray-600/50">
+              <Linkedin className="text-orange-400 w-4 h-4 sm:w-6 sm:h-6" />
               <div>
-                <p className="text-sm text-gray-400">LinkedIn</p>
+                <p className="text-xs sm:text-sm text-gray-400">LinkedIn</p>
                 <a
                   href={user.linkedinUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-400 hover:underline"
+                  className="text-blue-400 hover:underline text-sm sm:text-base"
                 >
                   @{extractUsername(user.linkedinUrl)}
                 </a>
@@ -118,15 +118,15 @@ const UserProfileDetails: React.FC<Props> = ({ userId }) => {
             </div>
           )}
           {user.githubUrl && (
-            <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
-              <Github className="text-orange-400" size={24} />
+            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg hover:bg-gray-600/50">
+              <Github className="text-orange-400 w-4 h-4 sm:w-6 sm:h-6" />
               <div>
-                <p className="text-sm text-gray-400">GitHub</p>
+                <p className="text-xs sm:text-sm text-gray-400">GitHub</p>
                 <a
                   href={user.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-400 hover:underline"
+                  className="text-blue-400 hover:underline text-sm sm:text-base"
                 >
                   @{extractUsername(user.githubUrl)}
                 </a>
@@ -134,19 +134,19 @@ const UserProfileDetails: React.FC<Props> = ({ userId }) => {
             </div>
           )}
           {user.skills && (
-            <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-600/50">
-              <Star className="text-orange-400" size={24} />
+            <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg hover:bg-gray-600/50">
+              <Star className="text-orange-400 w-4 h-4 sm:w-6 sm:h-6" />
               <div>
-                <p className="text-sm text-gray-400">Habilidades</p>
-                <p className="text-gray-200">{user.skills}</p>
+                <p className="text-xs sm:text-sm text-gray-400">Habilidades</p>
+                <p className="text-sm sm:text-base text-gray-200">{user.skills}</p>
               </div>
             </div>
           )}
         </div>
         {user.bio && (
-          <div className="mt-6 p-4 rounded-lg bg-gray-600/30">
-            <h3 className="text-white text-xl font-bold mb-2">Sobre</h3>
-            <p className="text-gray-200">{user.bio}</p>
+          <div className="mt-4 sm:mt-6 p-3 sm:p-4 rounded-lg bg-gray-600/30">
+            <h3 className="text-base sm:text-xl font-bold text-white mb-1 sm:mb-2">Sobre</h3>
+            <p className="text-sm sm:text-base text-gray-200">{user.bio}</p>
           </div>
         )}
       </div>

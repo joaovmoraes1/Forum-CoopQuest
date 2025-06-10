@@ -36,7 +36,6 @@ const SendMessageModal: React.FC<SendMessageModalProps> = ({
   const [messageHistory, setMessageHistory] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Função para buscar o histórico de mensagens
   const fetchHistory = async () => {
     try {
       const response = await api.get(`/messages/history/${recipientId}`);
@@ -48,12 +47,10 @@ const SendMessageModal: React.FC<SendMessageModalProps> = ({
     }
   };
 
-  // Buscar histórico ao abrir o modal
   useEffect(() => {
     fetchHistory();
   }, [recipientId]);
 
-  // Configurar WebSocket para mensagens em tempo real
   useEffect(() => {
     socket.emit("register", userId);
 
@@ -62,7 +59,7 @@ const SendMessageModal: React.FC<SendMessageModalProps> = ({
         (newMessage.senderId === recipientId && newMessage.recipientId === userId) ||
         (newMessage.senderId === userId && newMessage.recipientId === recipientId)
       ) {
-        fetchHistory(); // Sempre recarrega do backend
+        fetchHistory();
       }
     });
 
@@ -71,12 +68,10 @@ const SendMessageModal: React.FC<SendMessageModalProps> = ({
     };
   }, [userId, recipientId]);
 
-  // Ordenar mensagens antes de renderizar
   const sortedMessages = [...messageHistory].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
-  // Rolar para a última mensagem
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messageHistory]);
@@ -102,7 +97,7 @@ const SendMessageModal: React.FC<SendMessageModalProps> = ({
       });
       toast.success(`Mensagem enviada para ${recipientName}!`);
       setMessage("");
-      await fetchHistory(); // Atualiza o histórico direto do backend
+      await fetchHistory();
     } catch (error: any) {
       console.error("Erro ao enviar mensagem:", error);
       toast.error(
@@ -115,22 +110,21 @@ const SendMessageModal: React.FC<SendMessageModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-gray-800 p-6 rounded-lg shadow-2xl border border-gray-700 w-full max-w-md transform transition-all duration-300">
-        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <span className="text-orange-500">✉️</span> Chat com {recipientName}
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-gray-800 p-2 sm:p-6 rounded-lg shadow-2xl border border-gray-700 w-full max-w-sm sm:max-w-md transform transition-all duration-300">
+        <h3 className="text-base sm:text-lg font-semibold text-white mb-2 sm:mb-4 flex items-center gap-2">
+          <span className="text-orange-500 text-sm sm:text-base">✉️</span> Chat com {recipientName}
           <button
             onClick={onClose}
-            className="ml-auto text-gray-400 hover:text-white"
+            className="ml-auto text-gray-400 hover:text-white text-sm sm:text-base p-1 sm:p-2 rounded-full hover:bg-gray-600"
           >
             ✕
           </button>
         </h3>
 
-        {/* Área do histórico de mensagens */}
-        <div className="max-h-64 overflow-y-auto mb-4 p-2 bg-gray-700 rounded-lg">
+        <div className="max-h-48 sm:max-h-64 overflow-y-auto mb-2 sm:mb-4 p-2 bg-gray-700 rounded-lg">
           {sortedMessages.length === 0 ? (
-            <p className="text-gray-400 text-center">
+            <p className="text-gray-400 text-center text-xs sm:text-sm">
               Nenhuma mensagem encontrada.
             </p>
           ) : (
@@ -148,9 +142,9 @@ const SendMessageModal: React.FC<SendMessageModalProps> = ({
                   })}
                 </span>
                 <div
-                  className={`p-2 rounded-lg max-w-[70%] ${
+                  className={`p-2 rounded-lg max-w-[80%] sm:max-w-[70%] ${
                     msg.senderId === userId ? "bg-orange-500" : "bg-gray-600"
-                  } text-white`}
+                  } text-white text-xs sm:text-sm`}
                 >
                   {msg.content}
                 </div>
@@ -160,10 +154,9 @@ const SendMessageModal: React.FC<SendMessageModalProps> = ({
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Formulário de envio de mensagem */}
         <form onSubmit={handleSendMessage}>
           <textarea
-            className="w-full p-3 bg-gray-700 text-white rounded-lg mb-4 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors"
+            className="w-full p-2 sm:p-3 bg-gray-700 text-white rounded-lg mb-2 sm:mb-4 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors text-xs sm:text-sm"
             rows={2}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
@@ -174,14 +167,14 @@ const SendMessageModal: React.FC<SendMessageModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors disabled:opacity-50"
+              className="px-2 sm:px-4 py-1 sm:py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors disabled:opacity-50 text-xs sm:text-sm"
               disabled={isSubmitting}
             >
               Fechar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50"
+              className="px-2 sm:px-4 py-1 sm:py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 text-xs sm:text-sm"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Enviando..." : "Enviar"}

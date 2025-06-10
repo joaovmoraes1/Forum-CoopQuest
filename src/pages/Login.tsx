@@ -23,19 +23,19 @@ const Login = () => {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 px-4"
-      style={{ fontSize: `${fontSize}px` }}
-    >
+<div
+  className="min-h-screen w-full flex items-center justify-center bg-transparent px-2 sm:px-4 lg:px-8"
+  style={{ fontSize: `${fontSize}px` }}
+>
       <Card
-        className="max-w-md w-full bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500"
+        className="w-full max-w-sm sm:max-w-md bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500"
       >
-        <CardHeader className="bg-gradient-to-r from-orange-500 to-yellow-500 p-6 rounded-t-2xl">
+        <CardHeader className="bg-gradient-to-r from-orange-500 to-yellow-500 p-2 sm:p-6 rounded-t-2xl">
           <CardTitle className="text-3xl font-extrabold text-white text-center">
             Login
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-8">
+        <CardContent className="p-2 sm:p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-200">
@@ -74,7 +74,7 @@ const Login = () => {
             <div className="text-center mt-2">
               <Link
                 to="/esqueci-senha"
-               className="text-orange-400 hover:text-orange-500 font-medium"
+                className="text-orange-400 hover:text-orange-500 font-medium"
               >
                 Esqueci minha senha
               </Link>

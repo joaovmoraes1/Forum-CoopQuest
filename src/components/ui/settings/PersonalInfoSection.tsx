@@ -7,8 +7,8 @@ interface PersonalInfoSectionProps {
 
 const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ user }) => {
   return (
-    <section className="bg-slate-800 rounded-lg p-6">
-      <h2 className="text-xl font-bold text-white mb-4">Informações Pessoais</h2>
+    <section className="bg-slate-800 rounded-lg p-5 sm:p-6">
+      <h2 className="text-xl font-bold text-white mb-5 sm:mb-6">Informações Pessoais</h2>
       <div className="space-y-4">
         <div>
           <label className="text-sm text-gray-400">Nome</label>

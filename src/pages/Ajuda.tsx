@@ -126,19 +126,19 @@ const Ajuda = () => {
   );
 
   return (
-    <main className="flex-grow py-12 bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen">
-      <div className="text-center px-4 sm:px-6 lg:px-8">
+   <main className="flex-grow py-12 min-h-screen" style={{ backgroundColor: 'transparent' }}>
+      <div className="text-center px-2 sm:px-4 lg:px-8">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-500 mb-4 tracking-tight">
           Centro de Ajuda
         </h1>
-        <p className="text-lg text-gray-200 font-light max-w-2xl mx-auto">
+        <p className="text-lg text-gray-200 font-light w-full max-w-xl mx-auto">
           Encontre respostas para suas dúvidas e aprenda a utilizar o CoopQuest de forma eficiente.
         </p>
       </div>
 
       {/* Search Bar */}
-      <div className="my-12 px-4 sm:px-6 lg:px-8">
-        <div className="relative max-w-2xl mx-auto">
+      <div className="my-12 px-2 sm:px-4 lg:px-8">
+        <div className="relative w-full max-w-xl mx-auto">
           <Input
             type="text"
             placeholder="Pesquisar no centro de ajuda..."
@@ -152,8 +152,8 @@ const Ajuda = () => {
 
       {/* Cards Section */}
       {(!searchQuery || filteredTutorialItems.length > 0 || Object.keys(filteredFaqItems).length > 0) && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16 px-4 sm:px-6 lg:px-8">
-          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-16 px-2 sm:px-4 lg:px-8">
+          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 sm:p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300">
             <div className="flex items-center mb-4">
               <div className="bg-gray-700/50 p-3 rounded-full shadow-sm">
                 <BookOpen className="h-6 w-6 text-orange-400" />
@@ -165,7 +165,7 @@ const Ajuda = () => {
               Ver tutoriais <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Card>
-          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300">
+          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 sm:p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300">
             <div className="flex items-center mb-4">
               <div className="bg-gray-700/50 p-3 rounded-full shadow-sm">
                 <HelpCircle className="h-6 w-6 text-orange-400" />
@@ -177,7 +177,7 @@ const Ajuda = () => {
               Ver perguntas <ArrowRight className="ml-2 h-4 w-4" />
             </a>
           </Card>
-          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300">
+          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 sm:p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300">
             <div className="flex items-center mb-4">
               <div className="bg-gray-700/50 p-3 rounded-full shadow-sm">
                 <VideoIcon className="h-6 w-6 text-orange-400" />
@@ -189,7 +189,7 @@ const Ajuda = () => {
               Ver vídeos <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Card>
-          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300">
+          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 sm:p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300">
             <div className="flex items-center mb-4">
               <div className="bg-gray-700/50 p-3 rounded-full shadow-sm">
                 <HelpCircle className="h-6 w-6 text-orange-400" />
@@ -206,18 +206,18 @@ const Ajuda = () => {
 
       {/* Popular Tutorials Section */}
       {(!searchQuery || filteredTutorialItems.length > 0) && (
-        <div className="mb-16 px-4 sm:px-6 lg:px-8">
+        <div className="mb-16 px-2 sm:px-4 lg:px-8">
           <h2 className="text-3xl font-bold mb-6 text-white">Tutoriais Populares</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {(searchQuery ? filteredTutorialItems : tutorialItems).map((item, index) => (
-              <Card key={index} className="bg-gradient-to-r from-gray-800 to-gray-700 p-5 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300">
+              <Card key={index} className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 sm:p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300">
                 <div className="flex items-center mb-3">
                   {item.icon}
                   <h3 className="font-bold text-lg ml-3 text-white">{item.title}</h3>
                 </div>
                 <p className="text-gray-200 text-sm mb-3 font-light">{item.description}</p>
-                <Link to={item.link} className="text-orange-400 text-sm hover:text-orange-300 inline-flex items-center font-medium">
-                  Ler tutorial <ArrowRight className="ml-2 h-3 w-3" />
+                <Link to={item.link} className="group text-orange-400 text-sm hover:text-orange-300 inline-flex items-center font-medium">
+                  Ler tutorial <ArrowRight className="ml-4 h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200 group-hover:translate-x-1" />
                 </Link>
               </Card>
             ))}
@@ -226,7 +226,7 @@ const Ajuda = () => {
       )}
 
       {/* FAQ Section */}
-      <div id="faq" className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl border border-gray-600/50 p-6 mb-12 shadow-2xl mx-4 sm:mx-6 lg:mx-8 transform transition-all hover:shadow-3xl duration-300">
+      <div id="faq" className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl border border-gray-600/50 p-2 sm:p-6 mb-12 shadow-2xl mx-2 sm:mx-4 lg:mx-8 transform transition-all hover:shadow-3xl duration-300">
         <h2 className="text-3xl font-bold mb-6 text-white">Perguntas Frequentes</h2>
         {searchQuery && Object.keys(filteredFaqItems).length === 0 && filteredTutorialItems.length === 0 ? (
           <p className="text-gray-200 text-center font-light">Nenhum resultado encontrado para "{searchQuery}".</p>

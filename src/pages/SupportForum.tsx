@@ -10,8 +10,8 @@ import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import api from '@/services/api';
 import { useAccessibility } from '@/components/Layout';
+import BackArrow from '@/components/BackArrow';
 
-// Define interface for topic data
 interface SupportTopic {
   id: number;
   title: string;
@@ -20,7 +20,6 @@ interface SupportTopic {
   date: string;
 }
 
-// Define interface for new topic input
 interface NewTopicInput {
   title: string;
   content: string;
@@ -95,14 +94,17 @@ const SupportForum: React.FC = () => {
 
   return (
     <main
-      className="flex-grow bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen w-full"
+      className="flex-grow bg-transparent min-h-screen w-full px-2 sm:px-4 lg:px-8"
       style={{ fontSize: `${fontSize}px` }}
     >
+      <div className="mb-4 mt-4 sm:mt-8">
+        <BackArrow to="/ajuda">Voltar para Ajuda</BackArrow>
+      </div>
       <div className="mb-8 text-center pt-12">
         <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-200 mb-4">
           Fórum de Suporte
         </h1>
-        <p className="text-gray-200 text-lg">
+        <p className="text-gray-200 text-lg w-full max-w-xl mx-auto">
           Encontre ajuda para seus problemas ou dúvidas. Crie um tópico e nossa comunidade ou equipe de suporte irá ajudá-lo.
         </p>
       </div>
@@ -112,20 +114,20 @@ const SupportForum: React.FC = () => {
           onClick={() => setShowCreateForm(!showCreateForm)}
           className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300 flex items-center"
         >
-          <Plus className="mr-2 h-4 w-4" /> Novo Tópico de Suporte
+          <Plus className="mr-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200 group-hover:translate-x-1" /> Novo Tópico de Suporte
         </Button>
       </div>
 
       {showCreateForm && (
         <Card
-          className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 mb-8 w-full mx-4"
+          className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 mb-8 w-full max-w-full mx-auto"
         >
-          <CardHeader className="p-6">
+          <CardHeader className="p-2 sm:p-6">
             <CardTitle className="text-2xl font-bold text-white">
               Criar Novo Tópico de Suporte
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 space-y-6">
+          <CardContent className="p-2 sm:p-6 space-y-6">
             <form onSubmit={handleCreateTopic} className="space-y-6">
               <div>
                 <label htmlFor="title" className="block text-sm font-medium text-gray-200">
@@ -162,7 +164,7 @@ const SupportForum: React.FC = () => {
                 className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-3 rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300 flex items-center justify-center"
                 disabled={mutation.isPending}
               >
-                {mutation.isPending ? 'Criando...' : 'Criar Tópico'} <ArrowRight className="ml-2 h-4 w-4" />
+                {mutation.isPending ? 'Criando...' : 'Criar Tópico'} <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200 group-hover:translate-x-1" />
               </Button>
             </form>
           </CardContent>
@@ -170,18 +172,18 @@ const SupportForum: React.FC = () => {
       )}
 
       {isLoading ? (
-        <div className="text-center py-8">
+        <div className="text-center p-2 sm:p-6">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500 mx-auto"></div>
           <p className="text-gray-200 mt-4">Carregando tópicos de suporte...</p>
         </div>
       ) : topics && topics.length > 0 ? (
-        <div className="space-y-6 w-full px-4">
+        <div className="space-y-6 w-full max-w-full mx-auto px-2 sm:px-4 lg:px-8">
           {topics.map((topic) => (
             <Card
               key={topic.id}
               className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 w-full"
             >
-              <CardContent className="p-6">
+              <CardContent className="p-2 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-2">
                     <h3 className="text-xl font-bold text-white">{topic.title}</h3>
@@ -193,9 +195,9 @@ const SupportForum: React.FC = () => {
                   </div>
                   <Link
                     to={`/topico/${topic.id}`}
-                    className="text-orange-400 hover:text-orange-500 inline-flex items-center font-medium transition-colors duration-300"
+                    className="group text-orange-400 hover:text-orange-500 inline-flex items-center font-medium transition-colors duration-300"
                   >
-                    Ver Tópico <ArrowRight className="ml-1 h-4 w-4" />
+                    Ver Tópico <ArrowRight className="ml-1 h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200 group-hover:translate-x-1" />
                   </Link>
                 </div>
               </CardContent>
@@ -204,9 +206,9 @@ const SupportForum: React.FC = () => {
         </div>
       ) : (
         <Card
-          className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 w-full mx-4"
+          className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl shadow-2xl border border-gray-600/50 transform transition-all hover:shadow-3xl duration-500 w-full max-w-full mx-auto"
         >
-          <CardContent className="p-8 text-center">
+          <CardContent className="p-2 sm:p-6 text-center">
             <p className="text-gray-200 text-lg">
               Nenhum tópico de suporte encontrado. Crie um novo tópico para obter ajuda!
             </p>

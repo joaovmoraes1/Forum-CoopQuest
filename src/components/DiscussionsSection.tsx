@@ -38,26 +38,28 @@ const DiscussionsSection: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-      <h2 className="text-xl font-semibold text-white mb-4">Discussões Recentes</h2>
+    <div className="w-full max-w-4xl mx-auto bg-gray-800 p-2 sm:p-6 rounded-lg shadow-lg">
+      <h2 className="text-lg sm:text-xl font-semibold text-white mb-2 sm:mb-4">Discussões Recentes</h2>
       {topics.length > 0 ? (
-        <ul className="space-y-4">
+        <ul className="grid grid-cols-1 gap-2 sm:gap-4">
           {topics.map(topic => (
-            <li key={topic.id} className="bg-gray-700 p-4 rounded-lg">
+            <li key={topic.id} className="bg-gray-700 p-2 sm:p-4 rounded-lg">
               <Link to={`/topico/${topic.id}`} className="hover:underline">
-                <h3 className="text-lg font-semibold text-orange-400">{topic.title}</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-orange-400">{topic.title}</h3>
               </Link>
-              <p className="text-gray-300 line-clamp-2">{topic.content}</p>
-              <div className="flex items-center space-x-2 mt-2">
-                <img
-                  src={topic.authorUser.avatar || '/default-avatar.png'}
-                  alt={topic.authorUser.name}
-                  className="w-6 h-6 rounded-full object-cover"
-                />
-                <span className="text-gray-400">Por {topic.authorUser.name}</span>
-                <span className="text-gray-400">• {new Date(topic.date).toLocaleDateString('pt-BR')}</span>
+              <p className="text-sm sm:text-base text-gray-300 line-clamp-2">{topic.content}</p>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 mt-1 sm:mt-2">
+                <div className="flex items-center space-x-2">
+                  <img
+                    src={topic.authorUser.avatar || '/default-avatar.png'}
+                    alt={topic.authorUser.name}
+                    className="w-5 h-5 sm:w-6 sm:h-6 rounded-full object-cover"
+                  />
+                  <span className="text-xs sm:text-sm text-gray-400">Por {topic.authorUser.name}</span>
+                </div>
+                <span className="text-xs sm:text-sm text-gray-400">• {new Date(topic.date).toLocaleDateString('pt-BR')}</span>
               </div>
-              <div className="flex space-x-4 mt-2 text-gray-400">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-1 sm:mt-2 text-gray-400 text-xs sm:text-sm">
                 <span>Respostas: {topic.repliesCount}</span>
                 <span>Visualizações: {topic.views}</span>
                 <span>Curtidas: {topic.likes}</span>
@@ -66,7 +68,7 @@ const DiscussionsSection: React.FC = () => {
           ))}
         </ul>
       ) : (
-        <p className="text-gray-400">Nenhuma discussão recente para exibir.</p>
+        <p className="text-sm sm:text-base text-gray-400">Nenhuma discussão recente para exibir.</p>
       )}
     </div>
   );
