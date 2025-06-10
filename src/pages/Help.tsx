@@ -232,19 +232,19 @@ const Ajuda = () => {
           <p className="text-gray-200 text-center font-light">Nenhum resultado encontrado para "{searchQuery}".</p>
         ) : (
           <Tabs defaultValue="geral" className="w-full">
-           <TabsList className="faq-tabs-list mb-6 bg-gray-700/50 p-1 rounded-xl shadow-lg">
-              {faqCategories
-                .filter((category: { id: string; title: string }) => !searchQuery || filteredFaqItems[category.id])
-                .map(category => (
-                  <TabsTrigger 
-                    key={category.id} 
-                    value={category.id}
-                    className="px-4 py-2 text-gray-200 font-medium data-[state=active]:bg-gray-600/80 data-[state=active]:text-white rounded-lg transition-colors duration-300"
-                  >
-                    {category.title}
-                  </TabsTrigger>
-                ))}
-            </TabsList>
+          <TabsList className="faq-tabs-list mb-6 bg-gray-700/50 rounded-xl shadow-lg">
+            {faqCategories
+              .filter((category: { id: string; title: string }) => !searchQuery || filteredFaqItems[category.id])
+              .map(category => (
+                <TabsTrigger 
+                  key={category.id} 
+                  value={category.id}
+                  className="px-4 py-2 text-gray-200 font-medium data-[state=active]:bg-gray-600/80 data-[state=active]:text-white rounded-lg transition-colors duration-300"
+                >
+                  {category.title}
+                </TabsTrigger>
+              ))}
+          </TabsList>
 
             {Object.keys(searchQuery ? filteredFaqItems : faqItems).map(categoryId => (
               <TabsContent key={categoryId} value={categoryId}>
