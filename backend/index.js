@@ -9,6 +9,19 @@ const http = require('http');
 const { Server } = require('socket.io');
 const DOMPurify = require('isomorphic-dompurify'); // ADICIONADO PARA SANITIZAÇÃO
 const crypto = require('crypto');
+const multer = require('multer');
+const path = require('path');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/uploads/');
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `avatar_${req.userId}_${Date.now()}${ext}`);
+  }
+});
+const upload = multer({ storage });
 const app = express();
 const prisma = new PrismaClient();
 const server = http.createServer(app);
@@ -169,6 +182,22 @@ app.get('/api/users/:id', authMiddleware, async (req, res) => {
     console.error('Erro ao buscar usuário:', error.message);
     res.status(500).json({ error: 'Erro ao buscar usuário', details: error.message });
   }
+});
+// Upload de avatar do usuário
+app.post('/api/users/:id/avatar', authMiddleware, upload.single('avatar'), async (req, res) => {
+  const userId = Number(req.params.id);
+  if (isNaN(userId) || userId !== req.userId) {
+    return res.status(403).json({ error: 'Não autorizado' });
+  }
+  if (!req.file) {
+    return res.status(400).json({ error: 'Arquivo não enviado' });
+  }
+  const avatarPath = `/uploads/${req.file.filename}`;
+  await prisma.user.update({
+    where: { id: userId },
+    data: { avatar: avatarPath }
+  });
+  res.json({ avatar: avatarPath });
 });
 
 // Rota temporária para listar usuários (depuração)
@@ -481,7 +510,10 @@ app.post('/api/auth/change-password', authMiddleware, async (req, res) => {
 app.put('/api/users/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { name, email, bio, avatar, title, location, instagramUrl, linkedinUrl, githubUrl, skills } = req.body;
-
+  
+  if (avatar && avatar.startsWith('data:image')) {
+    return res.status(400).json({ error: 'Avatar deve ser um caminho de arquivo, não base64.' });
+  }
   console.log('Recebendo dados para atualizar perfil:', {
     id,
     name,
