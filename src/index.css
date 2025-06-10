@@ -366,14 +366,22 @@
     border-radius: 12px;
   }
     .faq-tabs-list {
+    overflow-x: auto !important;
+    width: 100% !important;
+    flex-wrap: nowrap !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
+    -webkit-overflow-scrolling: touch;
   }
   .faq-tabs-list > *:first-child {
-    margin-left: 8px !important;
+    margin-left: 12px !important;
   }
   .faq-tabs-list > *:last-child {
-    margin-right: 8px !important;
+    margin-right: 12px !important;
+  }
+  .faq-tabs-list > * {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
   }
 }
 
