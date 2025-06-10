@@ -153,7 +153,7 @@ const Ajuda = () => {
       {/* Cards Section */}
       {(!searchQuery || filteredTutorialItems.length > 0 || Object.keys(filteredFaqItems).length > 0) && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-16 px-2 sm:px-4 lg:px-8">
-          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 sm:p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300">
+          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 sm:p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300 break-words overflow-hidden w-full min-w-0">
             <div className="flex items-center mb-4">
               <div className="bg-gray-700/50 p-3 rounded-full shadow-sm">
                 <BookOpen className="h-6 w-6 text-orange-400" />
@@ -165,7 +165,7 @@ const Ajuda = () => {
               Ver tutoriais <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Card>
-          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 sm:p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300">
+          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 sm:p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300 break-words overflow-hidden w-full min-w-0">
             <div className="flex items-center mb-4">
               <div className="bg-gray-700/50 p-3 rounded-full shadow-sm">
                 <HelpCircle className="h-6 w-6 text-orange-400" />
@@ -177,7 +177,7 @@ const Ajuda = () => {
               Ver perguntas <ArrowRight className="ml-2 h-4 w-4" />
             </a>
           </Card>
-          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 sm:p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300">
+          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 sm:p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300 break-words overflow-hidden w-full min-w-0">
             <div className="flex items-center mb-4">
               <div className="bg-gray-700/50 p-3 rounded-full shadow-sm">
                 <VideoIcon className="h-6 w-6 text-orange-400" />
@@ -189,7 +189,7 @@ const Ajuda = () => {
               Ver vídeos <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Card>
-          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 sm:p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300">
+          <Card className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 sm:p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300 break-words overflow-hidden w-full min-w-0">
             <div className="flex items-center mb-4">
               <div className="bg-gray-700/50 p-3 rounded-full shadow-sm">
                 <HelpCircle className="h-6 w-6 text-orange-400" />
@@ -210,7 +210,7 @@ const Ajuda = () => {
           <h2 className="text-3xl font-bold mb-6 text-white">Tutoriais Populares</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {(searchQuery ? filteredTutorialItems : tutorialItems).map((item, index) => (
-              <Card key={index} className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 sm:p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300">
+              <Card key={index} className="bg-gradient-to-r from-gray-800 to-gray-700 p-2 sm:p-6 rounded-2xl border border-gray-600/50 shadow-2xl transform transition-all hover:shadow-3xl hover:border-orange-400/50 duration-300 break-words overflow-hidden w-full min-w-0">
                 <div className="flex items-center mb-3">
                   {item.icon}
                   <h3 className="font-bold text-lg ml-3 text-white">{item.title}</h3>
@@ -232,19 +232,19 @@ const Ajuda = () => {
           <p className="text-gray-200 text-center font-light">Nenhum resultado encontrado para "{searchQuery}".</p>
         ) : (
           <Tabs defaultValue="geral" className="w-full">
-          <TabsList className="faq-tabs-list mb-6 bg-gray-700/50 rounded-xl shadow-lg">
-            {faqCategories
-              .filter((category: { id: string; title: string }) => !searchQuery || filteredFaqItems[category.id])
-              .map(category => (
-                <TabsTrigger 
-                  key={category.id} 
-                  value={category.id}
-                  className="px-4 py-2 text-gray-200 font-medium data-[state=active]:bg-gray-600/80 data-[state=active]:text-white rounded-lg transition-colors duration-300"
-                >
-                  {category.title}
-                </TabsTrigger>
-              ))}
-          </TabsList>
+        <TabsList className="faq-tabs-list mb-6 bg-gray-700/50 rounded-xl shadow-lg">
+          {faqCategories
+            .filter((category: { id: string; title: string }) => !searchQuery || filteredFaqItems[category.id])
+            .map(category => (
+              <TabsTrigger 
+                key={category.id} 
+                value={category.id}
+                className="px-4 py-2 text-gray-200 font-medium data-[state=active]:bg-gray-600/80 data-[state=active]:text-white rounded-lg transition-colors duration-300"
+              >
+                {category.title}
+              </TabsTrigger>
+            ))}
+        </TabsList>
 
             {Object.keys(searchQuery ? filteredFaqItems : faqItems).map(categoryId => (
               <TabsContent key={categoryId} value={categoryId}>
