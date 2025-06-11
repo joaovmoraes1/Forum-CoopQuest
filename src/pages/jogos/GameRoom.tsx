@@ -27,7 +27,6 @@ export default function GameRoom() {
   const executandoRef = useRef(false);
 
   const gridSize = 5;
-  const tileSize = 100;
 
   const player1 = players[0];
   const player2 = players[1];
@@ -108,6 +107,7 @@ export default function GameRoom() {
     };
   }, [user, roomCode, navigate]);
 
+  // --- ALTERADO: drawBoard usa variáveis CSS para cores ---
   const drawBoard = (p1?: any, p2?: any) => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -115,7 +115,13 @@ export default function GameRoom() {
   
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-  
+
+    // Pegando as variáveis CSS do tema atual
+    const styles = getComputedStyle(document.documentElement);
+    const bg = styles.getPropertyValue('--canvas-bg')?.trim() || '#fff';
+    const text = styles.getPropertyValue('--panel-text')?.trim() || '#222';
+    const grid = styles.getPropertyValue('--grid-color')?.trim() || '#bbb';
+
     const dpr = window.devicePixelRatio || 1;
     const width = container.clientWidth;
     const height = container.clientHeight;
@@ -131,21 +137,30 @@ export default function GameRoom() {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, size, size);
+
+    // Fundo do canvas
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, size, size);
   
     // desenhar grade
+    ctx.strokeStyle = grid;
+    ctx.lineWidth = 1;
     for (let x = 0; x < gridSize; x++) {
       for (let y = 0; y < gridSize; y++) {
-        ctx.strokeStyle = "gray";
         ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
       }
     }
   
     // ponto de chegada
-    ctx.fillStyle = "white";
-    ctx.font = "bold 14px Arial";
+    ctx.fillStyle = text;
+    ctx.font = "bold 16px Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
+    ctx.save();
+    ctx.shadowColor = bg === "#fff" ? "#fff" : "#000";
+    ctx.shadowBlur = 4;
     ctx.fillText("🏁 Chegada", size / 2, size / 2);
+    ctx.restore();
   
     // posições iniciais
     const default1 = { x: 0, y: 0, dir: 1 };
@@ -161,7 +176,9 @@ export default function GameRoom() {
       24,
       24
     );
-    ctx.fillText("Player 1", pos1.x * cellSize + cellSize / 2, pos1.y * cellSize + cellSize / 2 + 18);
+    ctx.font = "bold 16px Arial";
+    ctx.fillStyle = text;
+    ctx.fillText("Player 1", pos1.x * cellSize + cellSize / 2, pos1.y * cellSize + cellSize / 2 + 22);
   
     // jogador 2
     ctx.drawImage(
@@ -171,7 +188,9 @@ export default function GameRoom() {
       24,
       24
     );
-    ctx.fillText("Player 2", pos2.x * cellSize + cellSize / 2, pos2.y * cellSize + cellSize / 2 + 18);
+    ctx.font = "bold 16px Arial";
+    ctx.fillStyle = text;
+    ctx.fillText("Player 2", pos2.x * cellSize + cellSize / 2, pos2.y * cellSize + cellSize / 2 + 22);
   
     // desenha setas apenas quando não está executando
     if (!executandoRef.current && !p1 && !p2 && arrowImage.complete) {
@@ -179,13 +198,13 @@ export default function GameRoom() {
         const dir = player.dir;
         const cx = player.x * cellSize + cellSize / 2;
         const cy = player.y * cellSize + cellSize / 2;
-        const size = 45; // seta mais robusta e visível
-        const offset = 7; // distância ideal para estar na frente, mas dentro da célula
+        const size = 45;
+        const offset = 7;
       
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate((Math.PI / 2) * (dir - 1));
-        ctx.translate(65, -offset); // empurra suavemente à frente
+        ctx.translate(65, -offset);
         ctx.drawImage(arrowImage, -size / 2, -size / 2, size, size);
         ctx.restore();
       };  
@@ -193,6 +212,8 @@ export default function GameRoom() {
       drawArrow(pos2);
     }
   };
+
+  // ...restante do código igual...
 
   const handleRun = (codigo1: string = code1, codigo2: string = code2) => {
     if (!ratImage.complete) {
@@ -315,13 +336,13 @@ export default function GameRoom() {
     };
   }, [roomCode, hasJoined]);
 
-  return (
-   <div className="min-h-screen p-2 sm:p-4 lg:p-8 bg-transparent text-white w-full max-w-full mx-auto">
+   return (
+   <div className="min-h-screen p-2 sm:p-4 lg:p-8 bg-[var(--background)] text-[var(--text)] w-full max-w-full mx-auto transition-colors duration-300">
     <div className="w-full max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 sm:gap-6 items-start">
         <div>
-          <div className="bg-slate-700 p-2 sm:p-4 rounded-lg mb-4 sm:mb-6">
+          <div className="p-2 sm:p-4 rounded-lg mb-4 sm:mb-6 bg-[var(--panel-bg)] text-[var(--panel-text)] transition-colors duration-300">
             <h2 className="text-lg font-semibold mb-2">Como jogar</h2>
-            <pre className="text-sm whitespace-pre-wrap text-green-200">
+            <pre className="text-sm whitespace-pre-wrap" style={{ color: "var(--code)" }}>
   {`
   Sequência:
     mover_frente();
@@ -340,7 +361,7 @@ export default function GameRoom() {
             </pre>
           </div>
   
-          <div className="bg-slate-700 p-2 sm:p-4 rounded-lg">
+          <div className="p-2 sm:p-4 rounded-lg bg-[var(--panel-bg)] text-[var(--panel-text)] transition-colors duration-300">
             <h2 className="text-lg font-semibold mb-2">Sala: <span className="text-blue-400">{roomCode}</span></h2>
             <p className="text-sm mb-2 sm:mb-4">
               Você está logado como: <strong>{user?.name}</strong> ({isHost ? "player1" : "player2"})
@@ -353,7 +374,7 @@ export default function GameRoom() {
                   value={code1}
                   onChange={(e) => handleCodeChange(e, true)}
                   disabled={!isPlayer1}
-                  className="w-full h-40 p-2 rounded bg-black text-green-400 font-mono resize-none"
+                  className="w-full h-40 p-2 rounded font-mono resize-none bg-[var(--textarea-bg)] text-[var(--code)] border border-[var(--textarea-border)] transition-colors duration-300"
                 />
               </div>
               <div>
@@ -369,14 +390,14 @@ export default function GameRoom() {
                   value={code2}
                   onChange={(e) => handleCodeChange(e, false)}
                   disabled={!isPlayer2}
-                  className="w-full h-40 p-2 rounded bg-black text-green-400 font-mono resize-none"
+                  className="w-full h-40 p-2 rounded font-mono resize-none bg-[var(--textarea-bg)] text-[var(--code)] border border-[var(--textarea-border)] transition-colors duration-300"
                 />
               </div>
             </div>
   
             {isHost && (
               <div className="mt-2 sm:mt-4">
-                <Button onClick={handleExecute} className="bg-green-600 hover:bg-green-500">
+                <Button onClick={handleExecute} className="bg-green-600 hover:bg-green-500 text-white">
                   Executar Código
                 </Button>
               </div>
@@ -386,11 +407,47 @@ export default function GameRoom() {
   
         <div
           ref={containerRef}
-          className="game-canvas-container bg-white rounded-lg overflow-hidden p-0 w-full aspect-square flex items-center justify-center"
+          className="game-canvas-container rounded-lg overflow-hidden p-0 w-full aspect-square flex items-center justify-center bg-[var(--canvas-bg)] transition-colors duration-300"
+          style={{ background: "var(--canvas-bg)" }}
         >
-          <canvas ref={canvasRef} className="bg-black rounded-lg w-full h-full block" />
+          <canvas ref={canvasRef} className="rounded-lg w-full h-full block" />
         </div>
       </div>
+      {/* Variáveis CSS para temas e alto contraste */}
+      <style>
+        {`
+          :root {
+            --panel-bg: #1e293b;
+            --panel-text: #fff;
+            --code: #4ade80;
+            --textarea-bg: #18181b;
+            --textarea-border: #334155;
+            --canvas-bg: #000;
+            --grid-color: #888;
+          }
+          .light :root, .light {
+            --panel-bg: #f3f4f6;
+            --panel-text: #222;
+            --code: #059669;
+            --textarea-bg: #fff;
+            --textarea-border: #a3a3a3;
+            --canvas-bg: #fff;
+            --grid-color: #bbb;
+          }
+          .high-contrast :root, .high-contrast {
+            --panel-bg: #000 !important;
+            --panel-text: #fff !important;
+            --code: #fff700 !important;
+            --textarea-bg: #000 !important;
+            --textarea-border: #fff !important;
+            --canvas-bg: #000 !important;
+            --grid-color: #fff !important;
+          }
+          .high-contrast textarea, .high-contrast pre, .high-contrast .game-canvas-container {
+            filter: none !important;
+          }
+        `}
+      </style>
     </div>
   );
 }

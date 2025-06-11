@@ -38,7 +38,7 @@ const NavBar = () => {
       aria-label="Main navigation"
     >
       {/* Logo */}
-      <div className="flex-shrink-0 min-w-0 sm:absolute sm:left-4 z-10">
+     <div className="flex-shrink-0 min-w-0 sm:static sm:ml-4 z-10">
         <Link to="/" className="transform transition-transform hover:scale-105 duration-300 flex items-center">
           <img
             src="/coopquest-logo.png"
