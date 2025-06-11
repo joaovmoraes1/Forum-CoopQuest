@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar, Users, Activity, MapPin, Briefcase, Instagram, Linkedin, Star, Github } from 'lucide-react';
 import { useAccessibility } from '@/components/Layout';
+import { getAvatarUrl } from '@/lib/avatarUrl';
 
 interface User {
   id: number;
@@ -129,7 +130,7 @@ const UserProfile = () => {
     );
   }
 
-  const avatarUrl = user.avatar || '/default-avatar.png';
+  const avatarUrl = getAvatarUrl(user.avatar);
   const instagramUsername = extractUsername(user.instagramUrl);
   const linkedinUsername = extractUsername(user.linkedinUrl);
   const githubUsername = extractUsername(user.githubUrl);

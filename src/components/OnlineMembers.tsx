@@ -1,4 +1,5 @@
 import React from 'react';
+import { getAvatarUrl } from '@/lib/avatarUrl';
 
 type Member = {
   id: number;
@@ -25,12 +26,11 @@ const OnlineMembers: React.FC<OnlineMembersProps> = ({ members }) => {
             <div key={member.id} className="flex items-center p-2 sm:p-3 bg-gray-700 rounded-md mb-2">
               <div className="relative w-16 h-16 rounded-full border-2 border-yellow-400 overflow-hidden bg-gray-900 flex-shrink-0">
                 <img
-                  src={member.avatar}
+                  src={getAvatarUrl(member.avatar)}
                   alt={member.name}
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = '/default-avatar.png';
-                  }}
+                  onError={e => { e.currentTarget.src = '/default-avatar.png'; }}
+
                 />
                 <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full"></span>
               </div>

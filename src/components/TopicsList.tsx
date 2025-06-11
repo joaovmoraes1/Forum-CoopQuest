@@ -3,6 +3,8 @@ import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import { Topic } from '@/services/topics';
 import { MessageSquare, Eye } from 'lucide-react';
+import { getAvatarUrl } from '@/lib/avatarUrl';
+
 
 interface TopicsListProps {
   topics: Topic[];
@@ -30,7 +32,7 @@ const TopicsList: React.FC<TopicsListProps> = ({
             <div key={topic.id} className="bg-gray-700 p-3 sm:p-5 rounded-lg shadow-md hover:bg-gray-600 transition-colors">
               <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
                 <img
-                  src={topic.authorUser.avatar || 'https://via.placeholder.com/40'}
+                  src={getAvatarUrl(topic.authorUser.avatar)}
                   alt={topic.authorUser.name}
                   className="w-8 h-8 sm:w-12 sm:h-12 rounded-full object-cover"
                 />

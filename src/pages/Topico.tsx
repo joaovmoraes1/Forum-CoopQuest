@@ -10,6 +10,8 @@ import ReportModal from '../components/ReportModal';
 import { useAccessibility } from '@/components/Layout';
 import ChatModal from '../components/ChatModal';
 import TopicContent from '@/components/TopicContent';
+import { getAvatarUrl } from '@/lib/avatarUrl';
+
 
 interface AuthorUser {
   name: string;
@@ -258,7 +260,7 @@ const Topico: React.FC = () => {
         <div className="flex items-center gap-4 mb-6">
           <Link to={`/perfil/${topic.authorId}`}>
             <img
-              src={authorAvatarUrl}
+              src={getAvatarUrl(topic.authorUser.avatar)}
               alt={topic.authorUser.name}
               className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover border-2 border-orange-400/50 shadow-sm hover:scale-105 transition"
               onError={(e) => {
@@ -383,7 +385,7 @@ const Topico: React.FC = () => {
                 <div key={reply.id} className="resposta-container">
                   <Link to={`/perfil/${reply.authorId}`}>
                     <img
-                      src={replyAvatarUrl}
+                      src={getAvatarUrl(reply.authorUser.avatar)}
                       alt={reply.authorUser.name}
                       className="resposta-avatar"
                       onError={(e) => {

@@ -4,6 +4,8 @@ import { User, LogOut, Menu } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '../contexts/useAuth';
+import { getAvatarUrl } from '@/lib/avatarUrl';
+
 
 const NavBar = () => {
   const location = useLocation();
@@ -148,7 +150,7 @@ const NavBar = () => {
                 className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-semibold py-1 sm:py-2 px-2 sm:px-4 rounded-xl shadow-lg flex items-center space-x-2 transform transition-all hover:scale-105 duration-300 hover:shadow-xl text-sm sm:text-base"
               >
                 {user?.avatar ? (
-                  <img src={user.avatar} alt="Foto de perfil" className="w-5 h-5 sm:w-6 sm:h-6 rounded-full" />
+                  <img  src={getAvatarUrl(user?.avatar)} alt="Foto de perfil" className="w-8 h-8 sm:w-9 sm:h-9 rounded-full" />
                 ) : (
                   <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 )}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { Card } from '@/components/ui/card';
 import { Briefcase, MapPin, Instagram, Linkedin, Star, Github } from 'lucide-react';
+import { getAvatarUrl } from '@/lib/avatarUrl';
 
 interface User {
   id: number;
@@ -54,7 +55,7 @@ const UserProfileDetails: React.FC<Props> = ({ userId }) => {
       <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-4 sm:p-8 rounded-t-2xl">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
           <img
-            src={user.avatar || '/default-avatar.png'}
+            src={getAvatarUrl(user.avatar)}
             alt={user.name}
             className="h-16 w-16 sm:h-24 sm:w-24 rounded-full object-cover border-4 border-white shadow-lg"
           />

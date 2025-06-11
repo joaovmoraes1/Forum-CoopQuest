@@ -10,6 +10,7 @@ import { updateProfile } from '@/services/authService';
 import { toast } from 'sonner';
 import { useAccessibility } from '@/components/Layout';
 import api from '@/services/api';
+import { getAvatarUrl } from '@/lib/avatarUrl';
 
 
 interface Activity {
@@ -28,6 +29,9 @@ export default function Profile() {
   const [isLoading, setIsLoading] = useState(true);
   const [profileImage, setProfileImage] = useState<string | null>(user?.avatar || null);
   const [isUploading, setIsUploading] = useState(false);
+
+  // Adicione esta linha:
+  const apiUrl = import.meta.env.VITE_API_URL?.replace('/api', '');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -64,50 +68,50 @@ export default function Profile() {
     loadActivities();
   }, []);
 
-const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-  const file = event.target.files?.[0];
-  if (!file || !user) return;
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
 
-  const maxSizeInBytes = 10 * 1024 * 1024; // 10 MB
-  if (file.size > maxSizeInBytes) {
-    toast.error('A imagem deve ter menos de 10 MB.');
-    return;
-  }
-
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-  if (!allowedTypes.includes(file.type)) {
-    toast.error('Apenas imagens JPEG, PNG ou GIF são permitidas.');
-    return;
-  }
-
-  setIsUploading(true);
-
-  try {
-    const formData = new FormData();
-    formData.append('avatar', file);
-
-   const response = await api.post(`/users/${user.id}/avatar`, formData, {
-  headers: {
-    'Content-Type': 'multipart/form-data',
-    Authorization: `Bearer ${localStorage.getItem('token')}`,
-  },
-});
-
-    if (response.data?.avatar) {
-      setUser({ ...user, avatar: response.data.avatar });
-      setProfileImage(response.data.avatar);
-      toast.success('Imagem de perfil atualizada com sucesso!');
-    } else {
-      throw new Error('Resposta inválida do servidor');
+    const maxSizeInBytes = 10 * 1024 * 1024; // 10 MB
+    if (file.size > maxSizeInBytes) {
+      toast.error('A imagem deve ter menos de 10 MB.');
+      return;
     }
-  } catch (error: any) {
-    console.error('Erro ao atualizar imagem de perfil:', error);
-    toast.error(error.response?.data?.error || error.message || 'Erro ao atualizar imagem de perfil. Tente novamente.');
-    setProfileImage(user.avatar || null);
-  } finally {
-    setIsUploading(false);
-  }
-};
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Apenas imagens JPEG, PNG ou GIF são permitidas.');
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('avatar', file);
+
+      const response = await api.post(`/users/${user.id}/avatar`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (response.data?.avatar) {
+        setUser({ ...user, avatar: response.data.avatar });
+        setProfileImage(response.data.avatar);
+        toast.success('Imagem de perfil atualizada com sucesso!');
+      } else {
+        throw new Error('Resposta inválida do servidor');
+      }
+    } catch (error: any) {
+      console.error('Erro ao atualizar imagem de perfil:', error);
+      toast.error(error.response?.data?.error || error.message || 'Erro ao atualizar imagem de perfil. Tente novamente.');
+      setProfileImage(user.avatar || null);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR');
@@ -117,13 +121,11 @@ const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => 
     if (!url) return null;
     try {
       const parsedUrl = new URL(url.startsWith('http') ? url : `https://${url}`);
-      const pathSegments = parsedUrl.pathname.split('/').filter(segment => segment); // Remove segmentos vazios
-      // Para LinkedIn, o nome de usuário vem depois de "/in/"
+      const pathSegments = parsedUrl.pathname.split('/').filter(segment => segment);
       if (parsedUrl.hostname.includes('linkedin.com')) {
         const inIndex = pathSegments.indexOf('in');
         return inIndex !== -1 && inIndex + 1 < pathSegments.length ? pathSegments[inIndex + 1] : null;
       }
-      // Para Instagram e GitHub, pegamos o primeiro segmento após a barra
       return pathSegments[0] || null;
     } catch {
       return null;
@@ -159,8 +161,8 @@ const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => 
           >
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 md:gap-8">
               <div className="relative">
-                <img
-                  src={profileImage || "/default-avatar.png"}
+              <img
+                  src={getAvatarUrl(profileImage ?? undefined)}
                   alt={user.name}
                   className="h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-28 lg:w-28 rounded-full object-cover border-4 border-white shadow-lg transition-transform duration-300 hover:scale-105"
                 />

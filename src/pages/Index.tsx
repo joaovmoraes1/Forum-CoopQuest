@@ -15,6 +15,8 @@ import { MessageSquare, Users, BookOpen, Award } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ChatModal from "../components/ChatModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { getAvatarUrl } from '@/lib/avatarUrl';
+
 
 interface ForumStats {
   topics: number;
@@ -236,10 +238,8 @@ const Index = () => {
                     <li key={member.id} className="flex items-center gap-3">
                       <div className="relative">
                         <img
-                          src={
-                            member.avatar ||
-                            "/fc1350ed-e4a8-43e7-8e1e-6a85832f72d6.png"
-                          }
+                       src={getAvatarUrl(member.avatar)}
+                          
                           alt={member.name}
                           className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover border-2 border-coopquest-yellow"
                         />

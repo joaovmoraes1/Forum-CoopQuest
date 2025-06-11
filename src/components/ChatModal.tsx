@@ -3,6 +3,7 @@ import { io } from 'socket.io-client';
 import api from '@/services/api';
 import { toast } from 'sonner';
 import DOMPurify from 'dompurify';
+import { getAvatarUrl } from '@/lib/avatarUrl';
 
 const socket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001', { autoConnect: false });
 
@@ -130,7 +131,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ userId, userAvatar, recipient, on
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-700 rounded-t-2xl bg-[#2b3140]">
           <div className="flex items-center gap-3">
             <img
-              src={recipient.avatar || '/default-avatar.png'}
+              src={getAvatarUrl(recipient.avatar)}
               alt={recipient.name}
               className="w-12 h-12 rounded-full border-2 border-orange-400 shadow"
             />
@@ -163,7 +164,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ userId, userAvatar, recipient, on
               >
                 {!isMe && (
                   <img
-                    src={recipient.avatar || '/default-avatar.png'}
+                    src={getAvatarUrl(recipient.avatar)}
                     alt={recipient.name}
                     className="w-8 h-8 rounded-full border border-orange-400"
                   />
@@ -189,7 +190,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ userId, userAvatar, recipient, on
                 </div>
                 {isMe && (
                   <img
-                    src={userAvatar || '/default-avatar.png'}
+                    src={getAvatarUrl(userAvatar)}
                     alt="Você"
                     className="w-8 h-8 rounded-full border border-blue-400"
                   />

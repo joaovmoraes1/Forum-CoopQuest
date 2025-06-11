@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import UserProfileDetails from './UserProfileDetails';
+import { getAvatarUrl } from '@/lib/avatarUrl';
 
 interface User {
   id: number;
@@ -183,9 +184,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                     } transition-all duration-200 hover:shadow-lg`}
                   >
                     <img
-                      src={msg.senderAvatar || '/default-avatar.png'}
+                      src={getAvatarUrl(msg.senderAvatar)}
                       alt={msg.senderName}
                       className="w-8 h-8 sm:w-12 sm:h-12 rounded-full border-2 border-orange-400"
+                      onError={e => { e.currentTarget.src = '/default-avatar.png'; }}
                     />
                     <div className="flex-1">
                       <p className="text-xs sm:text-sm text-gray-200">
@@ -242,9 +244,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                     className="p-2 sm:p-4 rounded-lg bg-gray-700 shadow-md flex flex-col sm:flex-row items-start gap-2 sm:gap-4 transition-all duration-200 hover:shadow-lg"
                   >
                     <img
-                      src={msg.receiverAvatar || '/default-avatar.png'}
+                      src={getAvatarUrl(msg.receiverAvatar)}
                       alt={msg.receiverName}
                       className="w-8 h-8 sm:w-12 sm:h-12 rounded-full border-2 border-orange-400"
+                      onError={e => { e.currentTarget.src = '/default-avatar.png'; }}
                     />
                     <div className="flex-1">
                       <p className="text-xs sm:text-sm text-gray-200">

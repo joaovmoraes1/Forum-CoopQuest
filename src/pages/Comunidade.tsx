@@ -9,6 +9,7 @@ import SendMessageModal from '../components/SendMessageModal';
 import ProfileModal from '../components/ProfileModal';
 import api from '../services/api';
 import ChatModal from '../components/ChatModal';
+import { getAvatarUrl } from '@/lib/avatarUrl';
 
 interface Discussion {
   id: string;
@@ -68,7 +69,7 @@ const MembrosTab = ({ members, onViewProfile, onSendMessage }: {
               <div className="relative">
                 <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full overflow-hidden border-2 border-coopquest-yellow/50 shadow-sm">
                   <img
-                    src={member.avatar || '/default-avatar.png'}
+                    src={getAvatarUrl(member.avatar)}
                     alt={member.name}
                     className="w-full h-auto"
                   />
@@ -300,7 +301,6 @@ const Comunidade = () => {
       setIsLoading(true);
 
       const membersData = await api.get('/members/featured');
-      console.log('Membros em destaque carregados:', membersData.data);
       setMembers(membersData.data);
 
       const eventsResponse = await getEvents();
