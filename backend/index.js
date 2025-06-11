@@ -7,14 +7,25 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const http = require('http');
 const { Server } = require('socket.io');
-const DOMPurify = require('isomorphic-dompurify'); // ADICIONADO PARA SANITIZAÇÃO
+const DOMPurify = require('isomorphic-dompurify');
 const crypto = require('crypto');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
+const path = require('path');
+
+const uploadsDir =
+  process.env.NODE_ENV === 'production'
+    ? '/tmp/uploads'
+    : path.join(__dirname, '../public/uploads');
+
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/uploads/');
+    cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
@@ -22,15 +33,20 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage });
-const app = express();
+
+if (process.env.NODE_ENV === 'production') {
+  app.use('/uploads', express.static('/tmp/uploads'));
+} else {
+  app.use(express.static(path.join(__dirname, '../public')));
+}
 const prisma = new PrismaClient();
 const server = http.createServer(app);
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:8080',
   'http://localhost:5173',
-  'https://forum-coop-quest.vercel.app', // vercel
-  'https://forum-coopquest.onrender.com', // Backend em produção
+  'https://forum-coop-quest.vercel.app',
+  'https://forum-coopquest.onrender.com',
 ];
 
 const io = new Server(server, {
@@ -42,7 +58,6 @@ const io = new Server(server, {
 app.set('io', io);
 global.io = io;
 
-app.use(express.static('public'));
 app.use(cors({
   origin: allowedOrigins,
   credentials: true,
@@ -193,11 +208,16 @@ app.post('/api/users/:id/avatar', authMiddleware, upload.single('avatar'), async
     return res.status(400).json({ error: 'Arquivo não enviado' });
   }
   const avatarPath = `/uploads/${req.file.filename}`;
-  await prisma.user.update({
-    where: { id: userId },
-    data: { avatar: avatarPath }
-  });
-  res.json({ avatar: avatarPath });
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { avatar: avatarPath }
+    });
+    res.json({ avatar: avatarPath });
+  } catch (error) {
+    console.error('Erro ao salvar avatar:', error);
+    res.status(500).json({ error: 'Erro ao salvar avatar', details: error.message });
+  }
 });
 
 // Rota temporária para listar usuários (depuração)

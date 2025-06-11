@@ -24,6 +24,7 @@ interface User {
   linkedinUrl?: string;
   githubUrl?: string;
   skills?: string | string[];
+  avatar?: string; // pode existir, mas não deve ser enviado no PUT
 }
 
 interface EditProfileModalProps {
@@ -101,8 +102,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
     setIsSubmitting(true);
     try {
+      // Remova avatar do payload!
+      const { avatar, ...restFormData } = formData;
+
       const payload = {
-        ...formData,
+        ...restFormData,
         instagramUrl: formData.instagramUrl
           ? `https://www.instagram.com/${formData.instagramUrl
               .trim()
