@@ -13,6 +13,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
+// Inicialize o app
+const app = express();
 
 const uploadsDir =
   process.env.NODE_ENV === 'production'
@@ -30,7 +32,7 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
     cb(null, `avatar_${req.userId}_${Date.now()}${ext}`);
-  }
+  },
 });
 const upload = multer({ storage });
 
@@ -39,6 +41,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   app.use(express.static(path.join(__dirname, '../public')));
 }
+
 const prisma = new PrismaClient();
 const server = http.createServer(app);
 const allowedOrigins = [
@@ -70,8 +73,8 @@ app.use(express.json({ limit: '10mb' }));
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'forumcoopquest@gmail.com',
-    pass: 'obbp slmn tfmr lcru',
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
   },
 });
 
