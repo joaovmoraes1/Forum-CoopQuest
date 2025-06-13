@@ -250,6 +250,68 @@ const Comunidade = () => {
   const [showUpdateToast, setShowUpdateToast] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!user) return;
+
+    const setForumOnline = (isOnline: boolean) => {
+      api.post('/forum/online', { isOnline });
+    };
+
+    // Marca como online ao entrar
+    setForumOnline(true);
+
+    // Marca como offline ao sair da aba ou fechar
+    const handleUnload = () => {
+      navigator.sendBeacon('/api/forum/online', JSON.stringify({ isOnline: false }));
+    };
+
+    // Marca como online/offline ao trocar de aba
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        setForumOnline(true);
+      } else {
+        setForumOnline(false);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      setForumOnline(false);
+      window.removeEventListener('beforeunload', handleUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [user]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    // Função para buscar membros online
+    const fetchMembers = async () => {
+      try {
+        const response = await api.get('/members/featured');
+        const uniqueMembers = response.data.filter(
+          (member: User, index: number, self: User[]) =>
+            index === self.findIndex((m) => m.id === member.id)
+        );
+        setMembers(uniqueMembers);
+      } catch (error) {
+        console.error("Erro ao carregar membros:", error);
+        toast.error("Erro ao carregar membros.");
+        setMembers([]);
+      }
+    };
+
+    // Busca inicial
+    fetchMembers();
+
+    // Atualiza a cada 5 segundos
+    interval = setInterval(fetchMembers, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const fetchUnreadCount = useCallback(async () => {
     setIsRefreshing(true);
     try {
@@ -299,9 +361,6 @@ const Comunidade = () => {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-
-      const membersData = await api.get('/members/featured');
-      setMembers(membersData.data);
 
       const eventsResponse = await getEvents();
       if (eventsResponse.data) {
@@ -377,7 +436,7 @@ const Comunidade = () => {
   }
 
   return (
-   <main className="flex-grow py-12 min-h-screen" style={{ backgroundColor: 'transparent' }}>
+    <main className="flex-grow py-12 min-h-screen" style={{ backgroundColor: 'transparent' }}>
       <div className="bg-coopquest-yellow text-white py-6 px-2 sm:px-4 lg:px-8">
         <div className="w-full max-w-xl mx-auto">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-200 mb-2 tracking-tight">
@@ -389,58 +448,58 @@ const Comunidade = () => {
         </div>
       </div>
 
-  <div className="mb-8 px-2 sm:px-4 lg:px-8">
-  <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
-    <div className="flex bg-secondary/50 rounded-xl overflow-hidden shadow-lg">
-      <button
-        className={`px-2 py-1 sm:px-3 sm:py-2 flex items-center gap-1 sm:gap-2 text-text font-medium ${
-          activeTab === 'membros' ? 'bg-secondary/80' : 'hover:bg-secondary/70'
-        } transition-colors duration-300`}
-        onClick={() => setActiveTab('membros')}
-      >
-        <UsersIcon size={16} className="text-coopquest-yellow" />
-        <span className="text-xs sm:text-sm">Membros</span>
-      </button>
-      <button
-        className={`px-2 py-1 sm:px-3 sm:py-2 flex items-center gap-1 sm:gap-2 text-text font-medium ${
-          activeTab === 'eventos' ? 'bg-secondary/80' : 'hover:bg-secondary/70'
-        } transition-colors duration-300`}
-        onClick={() => setActiveTab('eventos')}
-      >
-        <CalendarIcon size={16} className="text-coopquest-yellow" />
-        <span className="text-xs sm:text-sm">Eventos</span>
-      </button>
-    </div>
-    <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
-      <button
-        onClick={handleOpenMessages}
-        className="relative flex items-center gap-1 px-3 py-2 sm:px-4 sm:py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors w-full sm:w-auto"
-      >
-        <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
-        <span className="text-xs sm:text-sm">Minhas Mensagens</span>
-        {unreadCount > 0 && (
-          <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-            {unreadCount}
-          </span>
-        )}
-      </button>
-      <button
-        onClick={handleUpdateClick}
-        className="px-3 py-2 sm:px-4 sm:py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors flex items-center gap-1 sm:gap-2 disabled:opacity-50 w-full sm:w-auto"
-        disabled={isRefreshing}
-      >
-        {isRefreshing ? (
-          <>
-            <div className="inline-block h-3 w-3 sm:h-4 sm:w-4 animate-spin rounded-full border-2 border-white border-r-transparent"></div>
-            <span className="text-xs sm:text-sm">Atualizando...</span>
-          </>
-        ) : (
-          <span className="text-xs sm:text-sm">Atualizar</span>
-        )}
-      </button>
-    </div>
-  </div>
-</div>
+      <div className="mb-8 px-2 sm:px-4 lg:px-8">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
+          <div className="flex bg-secondary/50 rounded-xl overflow-hidden shadow-lg">
+            <button
+              className={`px-2 py-1 sm:px-3 sm:py-2 flex items-center gap-1 sm:gap-2 text-text font-medium ${
+                activeTab === 'membros' ? 'bg-secondary/80' : 'hover:bg-secondary/70'
+              } transition-colors duration-300`}
+              onClick={() => setActiveTab('membros')}
+            >
+              <UsersIcon size={16} className="text-coopquest-yellow" />
+              <span className="text-xs sm:text-sm">Membros</span>
+            </button>
+            <button
+              className={`px-2 py-1 sm:px-3 sm:py-2 flex items-center gap-1 sm:gap-2 text-text font-medium ${
+                activeTab === 'eventos' ? 'bg-secondary/80' : 'hover:bg-secondary/70'
+              } transition-colors duration-300`}
+              onClick={() => setActiveTab('eventos')}
+            >
+              <CalendarIcon size={16} className="text-coopquest-yellow" />
+              <span className="text-xs sm:text-sm">Eventos</span>
+            </button>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+            <button
+              onClick={handleOpenMessages}
+              className="relative flex items-center gap-1 px-3 py-2 sm:px-4 sm:py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors w-full sm:w-auto"
+            >
+              <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-xs sm:text-sm">Minhas Mensagens</span>
+              {unreadCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={handleUpdateClick}
+              className="px-3 py-2 sm:px-4 sm:py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors flex items-center gap-1 sm:gap-2 disabled:opacity-50 w-full sm:w-auto"
+              disabled={isRefreshing}
+            >
+              {isRefreshing ? (
+                <>
+                  <div className="inline-block h-3 w-3 sm:h-4 sm:w-4 animate-spin rounded-full border-2 border-white border-r-transparent"></div>
+                  <span className="text-xs sm:text-sm">Atualizando...</span>
+                </>
+              ) : (
+                <span className="text-xs sm:text-sm">Atualizar</span>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
       <div className="px-2 sm:px-4 lg:px-8">
         {activeTab === 'membros' && (
           <MembrosTab 

@@ -37,8 +37,11 @@ model User {
   topics                  Topic[]                  @relation("TopicAuthor")
   replies                 TopicReply[]             @relation("ReplyAuthor")
   passwordResetTokens     PasswordResetToken[]  
+  topicLikes              TopicLike[]
+  replyLikes              ReplyLike[]
 
   @@index([isOnline])
+  isForumOnline Boolean @default(false)
   @@index([lastActivity])
 }
 
@@ -64,6 +67,7 @@ model Topic {
   tags         String[]     @default([])
   authorUser   User         @relation("TopicAuthor", fields: [authorId], references: [id], onDelete: NoAction)
   replies      TopicReply[] @relation("TopicReplies")
+  topicLikes   TopicLike[]
 }
 
 model TopicReply {
@@ -76,6 +80,29 @@ model TopicReply {
   likes      Int      @default(0)
   authorUser User     @relation("ReplyAuthor", fields: [authorId], references: [id], onDelete: NoAction)
   topic      Topic    @relation("TopicReplies", fields: [topicId], references: [id], onDelete: NoAction)
+  replyLikes ReplyLike[]
+}
+
+model TopicLike {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  topicId   Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  topic     Topic    @relation(fields: [topicId], references: [id])
+
+  @@unique([userId, topicId])
+}
+
+model ReplyLike {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  replyId   Int
+  createdAt DateTime @default(now())
+  user      User       @relation(fields: [userId], references: [id])
+  reply     TopicReply @relation(fields: [replyId], references: [id])
+
+  @@unique([userId, replyId])
 }
 
 model Report {

@@ -33,12 +33,12 @@ const NavBar = () => {
 
   return (
     <nav
-      className="bg-gradient-to-r from-gray-900 to-gray-800 shadow-lg border-b border-gray-600/50 py-2 sm:py-4 px-2 sm:px-4 flex items-center justify-between transition-all duration-300 w-full relative"
+       className="bg-gradient-to-r from-gray-900 to-gray-800 shadow-lg border-b border-gray-600/50 py-2 sm:py-4 px-0 sm:px-0 flex items-center justify-between transition-all duration-300 w-full relative"
       role="navigation"
       aria-label="Main navigation"
     >
       {/* Logo */}
-     <div className="flex-shrink-0 min-w-0 sm:static sm:ml-4 z-10">
+     <div className="flex-shrink-0 min-w-0 sm:static  z-10">
         <Link to="/" className="transform transition-transform hover:scale-105 duration-300 flex items-center">
           <img
             src="/coopquest-logo.png"

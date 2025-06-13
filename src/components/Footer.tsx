@@ -12,9 +12,11 @@ const Footer = () => {
       className="w-full bg-gradient-to-br from-gray-900 to-gray-800 text-white py-8"
       style={{ fontSize: `${fontSize}px` }}
     >
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
+      <div className="w-full  px-0 sm:px-0">
         {/* Conteúdo principal */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+         <div className="grid grid-cols-1 md:grid-cols-4 gap-0 mb-0">
+
+
           {/* Logo e descrição */}
           <div className="flex flex-col">
             <div className="flex items-center gap-3 mb-4">

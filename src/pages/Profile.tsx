@@ -69,49 +69,49 @@ export default function Profile() {
   }, []);
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file || !user) return;
+  const file = event.target.files?.[0];
+  if (!file || !user) return;
 
-    const maxSizeInBytes = 10 * 1024 * 1024; // 10 MB
-    if (file.size > maxSizeInBytes) {
-      toast.error('A imagem deve ter menos de 10 MB.');
-      return;
+  const maxSizeInBytes = 10 * 1024 * 1024; // 10 MB
+  if (file.size > maxSizeInBytes) {
+    toast.error('A imagem deve ter menos de 10 MB.');
+    return;
+  }
+
+  // Aceita qualquer tipo de imagem
+  if (!file.type.startsWith('image/')) {
+    toast.error('Apenas arquivos de imagem são permitidos.');
+    return;
+  }
+
+  setIsUploading(true);
+
+  try {
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    const response = await api.post(`/users/${user.id}/avatar`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+
+    if (response.data?.avatar) {
+      setUser({ ...user, avatar: response.data.avatar });
+      setProfileImage(response.data.avatar);
+      toast.success('Imagem de perfil atualizada com sucesso!');
+    } else {
+      throw new Error('Resposta inválida do servidor');
     }
-
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    if (!allowedTypes.includes(file.type)) {
-      toast.error('Apenas imagens JPEG, PNG ou GIF são permitidas.');
-      return;
-    }
-
-    setIsUploading(true);
-
-    try {
-      const formData = new FormData();
-      formData.append('avatar', file);
-
-      const response = await api.post(`/users/${user.id}/avatar`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-
-      if (response.data?.avatar) {
-        setUser({ ...user, avatar: response.data.avatar });
-        setProfileImage(response.data.avatar);
-        toast.success('Imagem de perfil atualizada com sucesso!');
-      } else {
-        throw new Error('Resposta inválida do servidor');
-      }
-    } catch (error: any) {
-      console.error('Erro ao atualizar imagem de perfil:', error);
-      toast.error(error.response?.data?.error || error.message || 'Erro ao atualizar imagem de perfil. Tente novamente.');
-      setProfileImage(user.avatar || null);
-    } finally {
-      setIsUploading(false);
-    }
-  };
+  } catch (error: any) {
+    console.error('Erro ao atualizar imagem de perfil:', error);
+    toast.error(error.response?.data?.error || error.message || 'Erro ao atualizar imagem de perfil. Tente novamente.');
+    setProfileImage(user.avatar || null);
+  } finally {
+    setIsUploading(false);
+  }
+};
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR');

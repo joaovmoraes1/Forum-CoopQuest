@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
@@ -7,6 +7,7 @@ import { TooltipProvider } from './components/ui/tooltip';
 import { ThemeAccessibilityProvider } from './contexts/ThemeAccessibilityContext';
 import LoadingSpinner from './components/LoadingSpinner';
 import Layout from './components/Layout';
+import api from './services/api';
 
 // Lazy loading para todas as páginas
 const Index = lazy(() => import('./pages/Index'));
@@ -58,6 +59,43 @@ const queryClient = new QueryClient({
   },
 });
 
+const ForumOnlineHandler = () => {
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user) return;
+
+    const setForumOnline = (isOnline: boolean) => {
+      api.post('/forum/online', { isOnline });
+    };
+
+    setForumOnline(true);
+
+    const handleUnload = () => {
+      navigator.sendBeacon('/api/forum/online', JSON.stringify({ isOnline: false }));
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        setForumOnline(true);
+      } else {
+        setForumOnline(false);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      setForumOnline(false);
+      window.removeEventListener('beforeunload', handleUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [user]);
+
+  return null;
+};
+
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
@@ -65,6 +103,7 @@ const App = () => {
         <ThemeAccessibilityProvider>
           <TooltipProvider>
             <Toaster position="top-right" richColors closeButton />
+            <ForumOnlineHandler />
             <Layout>
               <Suspense fallback={<LoadingSpinner />}>
                 <Routes>

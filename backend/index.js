@@ -638,7 +638,7 @@ app.get('/api/support-user', async (req, res) => {
 app.get('/api/members/online', async (req, res) => {
   try {
     const onlineMembers = await prisma.user.findMany({
-      where: { isOnline: true },
+      where: { isForumOnline: true },
       select: {
         id: true,
         name: true,
@@ -669,7 +669,7 @@ app.get('/api/members/featured', async (req, res) => {
   try {
     console.log('Buscando membros em destaque...');
     const featuredMembers = await prisma.user.findMany({
-      where: { isOnline: true },
+      where: { isForumOnline: true },
       select: {
         id: true,
         name: true,
@@ -1239,6 +1239,7 @@ app.post('/api/topics/:topicId/replies', authMiddleware, async (req, res) => {
 // Curtir um tópico
 app.post('/api/topics/:id/like', authMiddleware, async (req, res) => {
   const { id } = req.params;
+  const userId = req.userId;
 
   try {
     const topicId = Number(id);
@@ -1246,14 +1247,20 @@ app.post('/api/topics/:id/like', authMiddleware, async (req, res) => {
       return res.status(400).json({ error: 'ID do tópico deve ser um número' });
     }
 
-    const topic = await prisma.topic.findUnique({
-      where: { id: topicId },
+    // Verifica se já curtiu
+    const alreadyLiked = await prisma.topicLike.findUnique({
+      where: { userId_topicId: { userId, topicId } },
     });
-
-    if (!topic) {
-      return res.status(404).json({ error: 'Tópico não encontrado' });
+    if (alreadyLiked) {
+      return res.status(400).json({ error: 'Você já curtiu este tópico.' });
     }
 
+    // Cria o like
+    await prisma.topicLike.create({
+      data: { userId, topicId },
+    });
+
+    // Incrementa o contador
     const updatedTopic = await prisma.topic.update({
       where: { id: topicId },
       data: { likes: { increment: 1 } },
@@ -1269,9 +1276,9 @@ app.post('/api/topics/:id/like', authMiddleware, async (req, res) => {
   }
 });
 
-// Curtir uma resposta
 app.post('/api/replies/:id/like', authMiddleware, async (req, res) => {
   const { id } = req.params;
+  const userId = req.userId;
 
   try {
     const replyId = Number(id);
@@ -1279,14 +1286,20 @@ app.post('/api/replies/:id/like', authMiddleware, async (req, res) => {
       return res.status(400).json({ error: 'ID da resposta deve ser um número' });
     }
 
-    const reply = await prisma.topicReply.findUnique({
-      where: { id: replyId },
+    // Verifica se já curtiu
+    const alreadyLiked = await prisma.replyLike.findUnique({
+      where: { userId_replyId: { userId, replyId } },
     });
-
-    if (!reply) {
-      return res.status(404).json({ error: 'Resposta não encontrada' });
+    if (alreadyLiked) {
+      return res.status(400).json({ error: 'Você já curtiu esta resposta.' });
     }
 
+    // Cria o like
+    await prisma.replyLike.create({
+      data: { userId, replyId },
+    });
+
+    // Incrementa o contador
     const updatedReply = await prisma.topicReply.update({
       where: { id: replyId },
       data: { likes: { increment: 1 } },
@@ -1301,6 +1314,7 @@ app.post('/api/replies/:id/like', authMiddleware, async (req, res) => {
     });
   }
 });
+
 
 // --- Rotas de Denúncias ---
 
@@ -2772,6 +2786,20 @@ io.on('connection', (socket) => {
     }
   });
 });
+
+app.post('/api/forum/online', authMiddleware, async (req, res) => {
+  const { isOnline } = req.body;
+  try {
+    await prisma.user.update({
+      where: { id: req.userId },
+      data: { isForumOnline: !!isOnline, lastActivity: new Date() },
+    });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao atualizar status do fórum', details: error.message });
+  }
+});
+
 // INDEX.js -> GAMES.js
 require("./games")(io);
 //initializeGameServer(server);

@@ -5,7 +5,6 @@ import DailyChallenge from "../components/DailyChallenge";
 import { getTopics, Topic } from "@/services/topics";
 import {
   getForumStats,
-  getOnlineMembers,
   getDailyChallenge,
 } from "../services/stats";
 import { toast } from "sonner";
@@ -16,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import ChatModal from "../components/ChatModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { getAvatarUrl } from '@/lib/avatarUrl';
-
+import api from '@/services/api';
 
 interface ForumStats {
   topics: number;
@@ -52,6 +51,68 @@ const Index = () => {
   const { user } = useAuth();
 
   useEffect(() => {
+    if (!user) return;
+
+    const setForumOnline = (isOnline: boolean) => {
+      api.post('/forum/online', { isOnline });
+    };
+
+    // Marca como online ao entrar
+    setForumOnline(true);
+
+    // Marca como offline ao sair da aba ou fechar
+    const handleUnload = () => {
+      navigator.sendBeacon('/api/forum/online', JSON.stringify({ isOnline: false }));
+    };
+
+    // Marca como online/offline ao trocar de aba
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        setForumOnline(true);
+      } else {
+        setForumOnline(false);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      setForumOnline(false);
+      window.removeEventListener('beforeunload', handleUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [user]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    // Função para buscar membros online
+    const fetchOnlineMembers = async () => {
+      try {
+        const response = await api.get('/members/online');
+        const uniqueMembers = response.data.filter(
+          (member: OnlineMember, index: number, self: OnlineMember[]) =>
+            index === self.findIndex((m) => m.id === member.id)
+        );
+        setOnlineMembers(uniqueMembers);
+      } catch (error) {
+        console.error("Erro ao carregar membros online:", error);
+        toast.error("Erro ao carregar membros online.");
+        setOnlineMembers([]);
+      }
+    };
+
+    // Busca inicial
+    fetchOnlineMembers();
+
+    // Atualiza a cada 5 segundos
+    interval = setInterval(fetchOnlineMembers, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     fetchInitialData();
   }, []);
 
@@ -60,7 +121,6 @@ const Index = () => {
       await Promise.all([
         fetchTopics(),
         fetchStats(),
-        fetchOnlineMembers(),
         fetchDailyChallenge(),
       ]);
     } catch (error) {
@@ -97,21 +157,6 @@ const Index = () => {
       console.error("Erro ao carregar estatísticas:", error);
       toast.error("Erro ao carregar estatísticas do fórum.");
       setStats({ topics: 0, replies: 0, members: 0 });
-    }
-  };
-
-  const fetchOnlineMembers = async () => {
-    try {
-      const response = await getOnlineMembers();
-      const uniqueMembers = response.filter(
-        (member: OnlineMember, index: number, self: OnlineMember[]) =>
-          index === self.findIndex((m) => m.id === member.id)
-      );
-      setOnlineMembers(uniqueMembers);
-    } catch (error) {
-      console.error("Erro ao carregar membros online:", error);
-      toast.error("Erro ao carregar membros online.");
-      setOnlineMembers([]);
     }
   };
 
@@ -238,8 +283,7 @@ const Index = () => {
                     <li key={member.id} className="flex items-center gap-3">
                       <div className="relative">
                         <img
-                       src={getAvatarUrl(member.avatar)}
-                          
+                          src={getAvatarUrl(member.avatar)}
                           alt={member.name}
                           className="h-20 w-20 sm:h-24 sm:w-24 rounded-full object-cover border-2 border-coopquest-yellow"
                         />
