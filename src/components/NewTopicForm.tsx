@@ -145,6 +145,7 @@ const NewTopicForm: React.FC<NewTopicFormProps> = ({ onTopicCreated }) => {
               setFormData((prev) => ({ ...prev, content: value || '' }))
             }
             height={200}
+            preview="edit" 
             textareaProps={{
               placeholder: "Descreva o conteúdo do tópico (texto e código, não precisa usar blocos ```) ",
               id: "content",
