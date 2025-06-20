@@ -250,67 +250,68 @@ const Comunidade = () => {
   const [showUpdateToast, setShowUpdateToast] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!user) return;
+ useEffect(() => {
+  if (!user) return;
 
-    const setForumOnline = (isOnline: boolean) => {
-      api.post('/forum/online', { isOnline });
-    };
+  const setForumOnline = (isOnline: boolean) => {
+    api.post('/forum/online', { isOnline });
+  };
 
-    // Marca como online ao entrar
-    setForumOnline(true);
+  // Marca como online ao entrar
+  setForumOnline(true);
 
-    // Marca como offline ao sair da aba ou fechar
-    const handleUnload = () => {
-      navigator.sendBeacon('/api/forum/online', JSON.stringify({ isOnline: false }));
-    };
+  // Ping periódico para manter o usuário online
+  const pingInterval = setInterval(() => {
+    setForumOnline(true); // Atualiza lastActivity no backend
+  }, 15000); // Ping a cada 15 segundos
 
-    // Marca como online/offline ao trocar de aba
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        setForumOnline(true);
-      } else {
-        setForumOnline(false);
-      }
-    };
+  // Marca como offline ao sair da aba ou fechar
+  const handleUnload = () => {
+    navigator.sendBeacon('/api/forum/online', JSON.stringify({ isOnline: false }));
+  };
 
-    window.addEventListener('beforeunload', handleUnload);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
+  // Marca como online/offline ao trocar de aba
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === 'visible') {
+      setForumOnline(true);
+    } else {
       setForumOnline(false);
-      window.removeEventListener('beforeunload', handleUnload);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [user]);
+    }
+  };
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
+  window.addEventListener('beforeunload', handleUnload);
+  document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // Função para buscar membros online
-    const fetchMembers = async () => {
-      try {
-        const response = await api.get('/members/featured');
-        const uniqueMembers = response.data.filter(
-          (member: User, index: number, self: User[]) =>
-            index === self.findIndex((m) => m.id === member.id)
-        );
-        setMembers(uniqueMembers);
-      } catch (error) {
-        console.error("Erro ao carregar membros:", error);
-        toast.error("Erro ao carregar membros.");
-        setMembers([]);
-      }
-    };
+  return () => {
+    clearInterval(pingInterval); // Limpa o intervalo ao desmontar
+    setForumOnline(false);
+    window.removeEventListener('beforeunload', handleUnload);
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
+  };
+}, [user]);
+useEffect(() => {
+  let interval: NodeJS.Timeout;
 
-    // Busca inicial
-    fetchMembers();
+  const fetchMembers = async () => {
+    try {
+      const response = await api.get('/members/featured');
+      const uniqueMembers = response.data.filter(
+        (member: User, index: number, self: User[]) =>
+          index === self.findIndex((m) => m.id === member.id)
+      );
+      setMembers(uniqueMembers);
+    } catch (error) {
+      console.error("Erro ao carregar membros:", error);
+      toast.error("Erro ao carregar membros.");
+      setMembers([]);
+    }
+  };
 
-    // Atualiza a cada 5 segundos
-    interval = setInterval(fetchMembers, 5000);
+  fetchMembers();
+  interval = setInterval(fetchMembers, 5000);
 
-    return () => clearInterval(interval);
-  }, []);
+  return () => clearInterval(interval);
+}, []);
 
   const fetchUnreadCount = useCallback(async () => {
     setIsRefreshing(true);
