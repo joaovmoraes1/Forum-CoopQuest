@@ -478,7 +478,7 @@ app.post('/api/auth/logout', authMiddleware, async (req, res) => {
     console.log('Logout solicitado para usuário:', req.userId);
     await prisma.user.update({
       where: { id: req.userId },
-      data: { isOnline: false, lastActivity: new Date() },
+      data: { isOnline: false, isForumOnline: false, lastActivity: new Date() },
     });
     res.json({ message: 'Logout realizado com sucesso' });
   } catch (error) {
@@ -637,8 +637,12 @@ app.get('/api/support-user', async (req, res) => {
 // Listar membros online
 app.get('/api/members/online', async (req, res) => {
   try {
+    const inactivityThreshold = new Date(Date.now() - 5 * 60 * 1000); // 5 minutos
     const onlineMembers = await prisma.user.findMany({
-      where: { isForumOnline: true },
+      where: {
+        isForumOnline: true,
+        lastActivity: { gte: inactivityThreshold },
+      },
       select: {
         id: true,
         name: true,
@@ -668,8 +672,12 @@ app.get('/api/members/online', async (req, res) => {
 app.get('/api/members/featured', async (req, res) => {
   try {
     console.log('Buscando membros em destaque...');
+    const inactivityThreshold = new Date(Date.now() - 5 * 60 * 1000); // 5 minutos
     const featuredMembers = await prisma.user.findMany({
-      where: { isForumOnline: true },
+      where: {
+        isForumOnline: true,
+        lastActivity: { gte: inactivityThreshold },
+      },
       select: {
         id: true,
         name: true,
@@ -683,7 +691,7 @@ app.get('/api/members/featured', async (req, res) => {
         location: true,
         instagramUrl: true,
         linkedinUrl: true,
-        githubUrl: true, // <-- ADICIONE ESTA LINHA
+        githubUrl: true,
         skills: true,
       },
     });
@@ -728,6 +736,7 @@ app.get('/api/members/all', authMiddleware, async (req, res) => {
 
 
 // --- Rotas de Mensagens ---
+// Enviar mensagem
 // Enviar mensagem
 app.post('/api/messages', authMiddleware, async (req, res) => {
   const { recipientId, content } = req.body;
@@ -2735,10 +2744,9 @@ io.on('connection', (socket) => {
   });
 
   // Evento de mensagem privada
-  socket.on('private_message', async ({ toUserId, fromUserId, content }) => {
-    if (typeof content !== 'string' || !content.trim() || content.length > 1000) {
-      return;
-    }
+ socket.on('private_message', async ({ toUserId, fromUserId, content }) => {
+  try {
+    if (typeof content !== 'string' || !content.trim() || content.length > 1000) return;
     const sanitizedContent = DOMPurify.sanitize(content);
 
     const message = await prisma.message.create({
@@ -2751,40 +2759,52 @@ io.on('connection', (socket) => {
       },
     });
 
-    const toSocketId = onlineUsers.get(toUserId);
-    if (toSocketId) {
-      io.to(toSocketId).emit('private_message', {
-        id: message.id,
-        fromUserId,
-        toUserId,
-        content: sanitizedContent,
-        date: message.date,
-      });
-    }
-
-    socket.emit('private_message', {
-      id: message.id,
-      fromUserId,
-      toUserId,
-      content: sanitizedContent,
-      date: message.date,
-    });
-  });
-
-  socket.on('disconnect', async () => {
-    for (const [userId, id] of onlineUsers.entries()) {
-      if (id === socket.id) {
-        onlineUsers.delete(userId);
-        // Atualiza o status isOnline para false no banco de dados
-        await prisma.user.update({
-          where: { id: userId },
-          data: { isOnline: false, lastActivity: new Date() },
+    const supportUser = await prisma.user.findUnique({ where: { email: 'forumcoopquest@gmail.com' } });
+    if (supportUser && toUserId === supportUser.id) {
+      try {
+        await transporter.sendMail({
+          from: 'forumcoopquest@gmail.com',
+          to: 'forumcoopquest@gmail.com',
+          subject: 'Nova mensagem de suporte recebida',
+          text: `Mensagem de suporte recebida:\n\n${sanitizedContent}\n\nEnviada por usuário ID: ${fromUserId}`,
         });
-        console.log(`Usuário ${userId} desconectado e marcado como offline`);
-        break;
+        console.log('E-mail de suporte enviado com sucesso para:', 'forumcoopquest@gmail.com');
+      } catch (emailError) {
+        console.error('Falha ao enviar e-mail de suporte:', emailError.message);
       }
+    } else {
+      console.log('Não foi enviado e-mail de suporte: toUserId', toUserId, 'não corresponde ao ID do suporte', supportUser?.id);
     }
-  });
+
+    [fromUserId, toUserId].forEach(uid => {
+      const socketId = onlineUsers.get(uid);
+      if (socketId) {
+        io.to(socketId).emit('private_message', {
+          id: message.id,
+          fromUserId,
+          toUserId,
+          content: sanitizedContent,
+          date: message.date,
+        });
+      }
+    });
+  } catch (error) {
+    console.error('Erro ao enviar mensagem via Socket.io:', error.message);
+  }
+});
+ socket.on('disconnect', async () => {
+  for (const [userId, id] of onlineUsers.entries()) {
+    if (id === socket.id) {
+      onlineUsers.delete(userId);
+      await prisma.user.update({
+        where: { id: userId },
+        data: { isOnline: false, isForumOnline: false, lastActivity: new Date() },
+      });
+      console.log(`Usuário ${userId} desconectado e marcado como offline`);
+      break;
+    }
+  }
+});
 });
 
 app.post('/api/forum/online', authMiddleware, async (req, res) => {
@@ -2792,7 +2812,7 @@ app.post('/api/forum/online', authMiddleware, async (req, res) => {
   try {
     await prisma.user.update({
       where: { id: req.userId },
-      data: { isForumOnline: !!isOnline, lastActivity: new Date() },
+      data: { isForumOnline: !!isOnline, isOnline: !!isOnline, lastActivity: new Date() },
     });
     res.json({ success: true });
   } catch (error) {
@@ -2816,6 +2836,25 @@ server.listen(PORT, async () => {
     process.exit(1);
   }
 });
+
+// Adicionar tarefa agendada para limpar usuários inativos
+setInterval(async () => {
+  const inactivityThreshold = new Date(Date.now() - 5 * 60 * 1000); // 5 minutos
+  const inactiveUsers = await prisma.user.findMany({
+    where: {
+      isForumOnline: true,
+      lastActivity: { lt: inactivityThreshold },
+    },
+  });
+
+  for (const user of inactiveUsers) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { isForumOnline: false },
+    });
+    console.log(`Usuário ${user.id} marcado como offline devido à inatividade.`);
+  }
+}, 5 * 60 * 1000); // Executa a cada 5 minutos
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
