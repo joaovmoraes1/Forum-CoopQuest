@@ -637,7 +637,7 @@ app.get('/api/support-user', async (req, res) => {
 // Listar membros online
 app.get('/api/members/online', async (req, res) => {
   try {
-    const inactivityThreshold = new Date(Date.now() - 5 * 60 * 1000); // 5 minutos
+    const inactivityThreshold = new Date(Date.now() - 6 * 60 * 1000); // 6 minutos
     const onlineMembers = await prisma.user.findMany({
       where: {
         isForumOnline: true,
@@ -672,7 +672,7 @@ app.get('/api/members/online', async (req, res) => {
 app.get('/api/members/featured', async (req, res) => {
   try {
     console.log('Buscando membros em destaque...');
-    const inactivityThreshold = new Date(Date.now() - 5 * 60 * 1000); // 5 minutos
+    const inactivityThreshold = new Date(Date.now() - 6 * 60 * 1000); // 6 minutos
     const featuredMembers = await prisma.user.findMany({
       where: {
         isForumOnline: true,
@@ -2839,22 +2839,23 @@ server.listen(PORT, async () => {
 
 // Adicionar tarefa agendada para limpar usuários inativos
 setInterval(async () => {
-  const inactivityThreshold = new Date(Date.now() - 5 * 60 * 1000); // 5 minutos
+  const inactivityThreshold = new Date(Date.now() - 6 * 60 * 1000); // 6 minutos
   const inactiveUsers = await prisma.user.findMany({
     where: {
       isForumOnline: true,
       lastActivity: { lt: inactivityThreshold },
     },
   });
-
   for (const user of inactiveUsers) {
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { isForumOnline: false },
-    });
-    console.log(`Usuário ${user.id} marcado como offline devido à inatividade.`);
+    if (!onlineUsers.has(user.id)) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { isForumOnline: false },
+      });
+      console.log(`Usuário ${user.id} marcado como offline devido à inatividade.`);
+    }
   }
-}, 5 * 60 * 1000); // Executa a cada 5 minutos
+}, 6 * 60 * 1000); // Ajuste o intervalo para 6 minutos
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);

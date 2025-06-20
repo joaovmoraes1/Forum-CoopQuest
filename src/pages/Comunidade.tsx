@@ -261,9 +261,9 @@ const Comunidade = () => {
   setForumOnline(true);
 
   // Ping periódico para manter o usuário online
-  const pingInterval = setInterval(() => {
-    setForumOnline(true); // Atualiza lastActivity no backend
-  }, 15000); // Ping a cada 15 segundos
+const pingInterval = setInterval(() => {
+  setForumOnline(true); // Atualiza lastActivity no backend
+}, 10000); // Ping a cada 10 segundos
 
   // Marca como offline ao sair da aba ou fechar
   const handleUnload = () => {
