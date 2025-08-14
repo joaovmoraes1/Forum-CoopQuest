@@ -8,8 +8,11 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Arquivos sensíveis
-
-
+.env
+backend/.env
+backend/seed.js
+backend/updatePasswords.js
+backend/seed.ts
 
 # Dependências
 node_modules
