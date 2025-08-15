@@ -75,7 +75,7 @@ npx prisma migrate deploy
 
 ```sh
 cd backend
-npm start
+node index.js
 ```
 
 ### 6. Rode o frontend
